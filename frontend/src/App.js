@@ -31,6 +31,7 @@ function FlyToPin({ results }) {
 
 export default function App() {
   const [query, setQuery] = useState('');
+  const [zip, setZip] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -40,7 +41,9 @@ export default function App() {
     setLoading(true);
     setSearched(true);
     try {
-      const res = await fetch('https://mediprice-backend.onrender.com/search?procedure=' + encodeURIComponent(query));
+      let url = 'https://mediprice-backend.onrender.com/search?procedure=' + encodeURIComponent(query);
+      if (zip.trim()) url += '&zip=' + encodeURIComponent(zip.trim());
+      const res = await fetch(url);
       const data = await res.json();
       setResults(data);
     } catch (err) {
@@ -65,6 +68,14 @@ export default function App() {
           onChange={e => setQuery(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search()}
         />
+        <input
+          type="text"
+          placeholder="ZIP code (optional)"
+          value={zip}
+          onChange={e => setZip(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && search()}
+          style={{ maxWidth: '140px' }}
+        />
         <button onClick={search}>Search</button>
       </div>
       {loading && <div className="status">Searching...</div>}
@@ -80,6 +91,9 @@ export default function App() {
                   <div className="result-name">{r.name}</div>
                   <div className="result-procedure">{r.procedure_name}</div>
                   <div className="result-address">{r.address}, {r.city}, {r.state}</div>
+                  {r.distance !== null && r.distance !== undefined && (
+                    <div className="result-distance">{r.distance} miles away</div>
+                  )}
                 </div>
                 <div className="result-price" style={{ color: getPinColor(parseFloat(r.discounted_cash), prices) }}>
                   {r.discounted_cash ? '$' + parseFloat(r.discounted_cash).toFixed(2) : 'N/A'}
@@ -101,6 +115,7 @@ export default function App() {
                       <strong>{r.name}</strong><br />
                       {r.procedure_name}<br />
                       {r.discounted_cash ? '$' + parseFloat(r.discounted_cash).toFixed(2) : 'N/A'}
+                      {r.distance !== null && r.distance !== undefined && <><br />{r.distance} miles away</>}
                     </Popup>
                   </CircleMarker>
                 );

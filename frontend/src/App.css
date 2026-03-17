@@ -23,3 +23,4 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .result-address { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
 .result-price { font-size: 1.2rem; font-weight: 700; }
 .map-container { flex: 1; height: 600px; }
+.result-distance { font-size: 0.75rem; color: #3b82f6; margin-top: 2px; }
