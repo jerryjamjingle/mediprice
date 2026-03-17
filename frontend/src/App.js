@@ -40,7 +40,7 @@ export default function App() {
     setLoading(true);
     setSearched(true);
     try {
-      const res = await fetch('http://localhost:3001/search?procedure=' + encodeURIComponent(query));
+      const res = await fetch('https://mediprice-backend.onrender.com/search?procedure=' + encodeURIComponent(query));
       const data = await res.json();
       setResults(data);
     } catch (err) {
