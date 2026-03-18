@@ -51,7 +51,7 @@ app.get('/search', async (req, res) => {
             ? Math.round(calcDistance(location.latitude, location.longitude, parseFloat(r.latitude), parseFloat(r.longitude)) * 10) / 10
             : null
         })).filter(r => r.distance === null || r.distance <= 100);
-        rows.sort((a, b) => (a.distance || 999) - (b.distance || 999));
+        rows.sort((a, b) => parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash));
       }
     }
 
