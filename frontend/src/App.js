@@ -5,6 +5,7 @@ import './App.css';
 
 const PROVIDER_COORDS = {
   'Saint Anthonys Hospital': [38.9076, -90.1721],
+  'Alton Memorial Hospital': [38.8897, -90.1843],
 };
 
 const DEFAULT_CENTER = [38.627, -90.1994];
