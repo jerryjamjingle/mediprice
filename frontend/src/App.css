@@ -54,6 +54,12 @@ body {
 .search-bar .zip-input {
   max-width: 140px;
 }
+.search-bar .zip-input {
+    max-width: 140px;
+  }
+  .search-bar .cpt-input {
+    max-width: 120px;
+  }
 .search-bar button { 
   padding: 14px 32px; 
   background: #3b82f6;

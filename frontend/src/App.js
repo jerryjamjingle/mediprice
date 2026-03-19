@@ -37,6 +37,7 @@ function FlyToBounds({ providerPins }) {
 export default function App() {
   const [query, setQuery] = useState('');
   const [zip, setZip] = useState('');
+  const [cptCode, setCptCode] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -50,6 +51,7 @@ export default function App() {
     try {
       let url = 'https://mediprice-backend.onrender.com/search?procedure=' + encodeURIComponent(query);
       if (zip.trim()) url += '&zip=' + encodeURIComponent(zip.trim());
+      if (cptCode.trim()) url += '&cpt=' + encodeURIComponent(cptCode.trim());
       const res = await fetch(url);
       const data = await res.json();
       setResults(Array.isArray(data) ? data : []);
@@ -140,6 +142,14 @@ export default function App() {
           onChange={e => setZip(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search()}
           className="zip-input"
+        />
+        <input
+          type="text"
+          placeholder="CPT code"
+          value={cptCode}
+          onChange={e => setCptCode(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && search()}
+          className="cpt-input"
         />
         <button onClick={search}>Search</button>
       </div>

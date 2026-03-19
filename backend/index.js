@@ -18,14 +18,15 @@ pool.connect((err, client, release) => {
   else { console.log('DB connected successfully!'); release(); }
 });
 
-function calcDistance(lat1, lon1, lat2, lon2) {
-  const R = 3958.8;
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 3958.8; // Earth radius in miles
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
   const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
 }
 
 app.get('/', (req, res) => {
@@ -33,32 +34,56 @@ app.get('/', (req, res) => {
 });
 
 app.get('/search', async (req, res) => {
-  const { procedure, zip } = req.query;
-  try {
-    const result = await pool.query(
-      'SELECT pr.name, pr.address, pr.city, pr.state, pr.zip, pr.latitude, pr.longitude, p.procedure_name, p.cpt_code, pc.gross_charge, pc.discounted_cash FROM prices pc JOIN providers pr ON pc.provider_id = pr.id JOIN procedures p ON pc.procedure_id = p.id WHERE LOWER(p.procedure_name) LIKE LOWER($1) ORDER BY pc.discounted_cash ASC',
-      ['%' + procedure + '%']
-    );
+  const { procedure, zip, cpt } = req.query;
+  
+  if (!procedure || procedure.trim() === '') {
+    return res.status(400).json({ error: 'Procedure parameter required' });
+  }
 
+  try {
+    let queryText = `
+      SELECT pr.name, pr.address, pr.city, pr.state, pr.zip,
+        pr.latitude, pr.longitude, p.procedure_name, p.cpt_code,
+        pc.gross_charge, pc.discounted_cash
+      FROM prices pc
+      JOIN providers pr ON pc.provider_id = pr.id
+      JOIN procedures p ON pc.procedure_id = p.id
+      WHERE LOWER(p.procedure_name) LIKE LOWER($1)
+    `;
+    
+    let queryParams = [`%${procedure}%`];
+    
+    // If CPT code is provided, add it to the search
+    if (cpt && cpt.trim()) {
+      queryText += ` AND p.cpt_code LIKE $${queryParams.length + 1}`;
+      queryParams.push(`%${cpt.trim()}%`);
+    }
+    
+    queryText += ` ORDER BY pc.discounted_cash ASC`;
+    
+    const result = await pool.query(queryText, queryParams);
     let rows = result.rows;
 
-    if (zip) {
-      const location = zipcodes.lookup(zip);
-      if (location) {
-        rows = rows.map(r => ({
-          ...r,
-          distance: r.latitude && r.longitude
-            ? Math.round(calcDistance(location.latitude, location.longitude, parseFloat(r.latitude), parseFloat(r.longitude)) * 10) / 10
-            : null
-        })).filter(r => r.distance === null || r.distance <= 100);
-        rows.sort((a, b) => parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash));
+    // Distance calculation logic (if ZIP provided)
+    if (zip && zip.trim()) {
+      const zipData = zipcodes.lookup(zip.trim());
+      if (zipData) {
+        const userLat = zipData.latitude;
+        const userLng = zipData.longitude;
+        rows = rows.map(r => {
+          const providerLat = parseFloat(r.latitude);
+          const providerLng = parseFloat(r.longitude);
+          const distance = haversine(userLat, userLng, providerLat, providerLng);
+          return { ...r, distance: distance.toFixed(1) };
+        }).filter(r => r.distance <= 100)
+          .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
       }
     }
 
     res.json(rows);
   } catch (err) {
-    console.error('SEARCH ERROR:', err);
-    res.status(500).json({ error: err.message });
+    console.error('Database error:', err);
+    res.status(500).json({ error: 'Database error' });
   }
 });
 
