@@ -34,58 +34,65 @@ app.get('/', (req, res) => {
 });
 
 app.get('/search', async (req, res) => {
-  const { procedure, zip, cpt } = req.query;
+    const { procedure, zip, cpt } = req.query;
+    
+    // Allow search by either procedure OR cpt code (at least one required)
+    if ((!procedure || procedure.trim() === '') && (!cpt || cpt.trim() === '')) {
+      return res.status(400).json({ error: 'Procedure name or CPT code required' });
+    }
   
-  if (!procedure || procedure.trim() === '') {
-    return res.status(400).json({ error: 'Procedure parameter required' });
-  }
-
-  try {
-    let queryText = `
-      SELECT pr.name, pr.address, pr.city, pr.state, pr.zip,
-        pr.latitude, pr.longitude, p.procedure_name, p.cpt_code,
-        pc.gross_charge, pc.discounted_cash
-      FROM prices pc
-      JOIN providers pr ON pc.provider_id = pr.id
-      JOIN procedures p ON pc.procedure_id = p.id
-      WHERE LOWER(p.procedure_name) LIKE LOWER($1)
-    `;
-    
-    let queryParams = [`%${procedure}%`];
-    
-    // If CPT code is provided, add it to the search
-    if (cpt && cpt.trim()) {
-      queryText += ` AND p.cpt_code LIKE $${queryParams.length + 1}`;
-      queryParams.push(`%${cpt.trim()}%`);
-    }
-    
-    queryText += ` ORDER BY pc.discounted_cash ASC`;
-    
-    const result = await pool.query(queryText, queryParams);
-    let rows = result.rows;
-
-    // Distance calculation logic (if ZIP provided)
-    if (zip && zip.trim()) {
-      const zipData = zipcodes.lookup(zip.trim());
-      if (zipData) {
-        const userLat = zipData.latitude;
-        const userLng = zipData.longitude;
-        rows = rows.map(r => {
-          const providerLat = parseFloat(r.latitude);
-          const providerLng = parseFloat(r.longitude);
-          const distance = haversine(userLat, userLng, providerLat, providerLng);
-          return { ...r, distance: distance.toFixed(1) };
-        }).filter(r => r.distance <= 100)
-          .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+    try {
+      let queryText = `
+        SELECT pr.name, pr.address, pr.city, pr.state, pr.zip,
+          pr.latitude, pr.longitude, p.procedure_name, p.cpt_code,
+          pc.gross_charge, pc.discounted_cash
+        FROM prices pc
+        JOIN providers pr ON pc.provider_id = pr.id
+        JOIN procedures p ON pc.procedure_id = p.id
+        WHERE 1=1
+      `;
+      
+      let queryParams = [];
+      
+      // Add procedure name filter if provided
+      if (procedure && procedure.trim()) {
+        queryParams.push(`%${procedure}%`);
+        queryText += ` AND LOWER(p.procedure_name) LIKE LOWER($${queryParams.length})`;
       }
+      
+      // Add CPT code filter if provided
+      if (cpt && cpt.trim()) {
+        queryParams.push(`%${cpt.trim()}%`);
+        queryText += ` AND p.cpt_code LIKE $${queryParams.length}`;
+      }
+      
+      queryText += ` ORDER BY pc.discounted_cash ASC`;
+      
+      const result = await pool.query(queryText, queryParams);
+      let rows = result.rows;
+  
+      // Distance calculation logic (if ZIP provided)
+      if (zip && zip.trim()) {
+        const zipData = zipcodes.lookup(zip.trim());
+        if (zipData) {
+          const userLat = zipData.latitude;
+          const userLng = zipData.longitude;
+          rows = rows.map(r => {
+            const providerLat = parseFloat(r.latitude);
+            const providerLng = parseFloat(r.longitude);
+            const distance = haversine(userLat, userLng, providerLat, providerLng);
+            return { ...r, distance: distance.toFixed(1) };
+          }).filter(r => r.distance <= 100)
+            .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        }
+      }
+  
+      res.json(rows);
+    } catch (err) {
+      console.error('Database error:', err);
+      res.status(500).json({ error: 'Database error' });
     }
-
-    res.json(rows);
-  } catch (err) {
-    console.error('Database error:', err);
-    res.status(500).json({ error: 'Database error' });
-  }
-});
+  });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, function() {
