@@ -44,14 +44,20 @@ export default function App() {
   const [selectedHospital, setSelectedHospital] = useState(null);
 
   const search = async () => {
-    if (!query.trim()) return;
+    if (!query.trim() && !cptCode.trim()) return;
     setLoading(true);
     setSearched(true);
     setSelectedHospital(null);
     try {
-      let url = 'https://mediprice-backend.onrender.com/search?procedure=' + encodeURIComponent(query);
-      if (zip.trim()) url += '&zip=' + encodeURIComponent(zip.trim());
-      if (cptCode.trim()) url += '&cpt=' + encodeURIComponent(cptCode.trim());
+      let url = 'https://mediprice-backend.onrender.com/search?';
+      let params = [];
+      
+      if (query.trim()) params.push('procedure=' + encodeURIComponent(query));
+      if (zip.trim()) params.push('zip=' + encodeURIComponent(zip.trim()));
+      if (cptCode.trim()) params.push('cpt=' + encodeURIComponent(cptCode.trim()));
+      
+      url += params.join('&');
+      
       const res = await fetch(url);
       const data = await res.json();
       setResults(Array.isArray(data) ? data : []);
