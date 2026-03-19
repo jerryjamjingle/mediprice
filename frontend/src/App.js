@@ -6,6 +6,10 @@ import './App.css';
 const PROVIDER_COORDS = {
   'Saint Anthonys Hospital': [38.9076, -90.1721],
   'Alton Memorial Hospital': [38.8897, -90.1843],
+  'SSM Health Saint Louis University Hospital': [38.6184, -90.2620],
+  'SSM Health St. Clare Hospital': [38.5137, -90.4363],
+  'SSM Health St. Mary\'s Hospital': [38.6351, -90.3182],
+  'SSM Health St. Joseph Hospital': [38.7937, -90.7857],
 };
 
 const DEFAULT_CENTER = [38.627, -90.1994];
