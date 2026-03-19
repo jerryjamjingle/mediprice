@@ -82,6 +82,11 @@ export default function App() {
 
   const pinPrices = providerPins.map(p => p.price);
 
+  // SUMMARY BAR CALCULATIONS
+  const hospitalCount = providerPins.length;
+  const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
+  const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
+
   return (
     <div className="app">
       <div className="header">
@@ -106,48 +111,70 @@ export default function App() {
         />
         <button onClick={search}>Search</button>
       </div>
-      {loading && <div className="status">Searching...</div>}
-      {!loading && searched && results.length === 0 && <div className="status">No results found.</div>}
-      {!loading && results.length > 0 && (
-        <div className="content">
-          <div className="results">
-            <h2>{results.length} results for "{query}"</h2>
-            {results.map((r, i) => (
-              <div className="result-card" key={i}>
-                <div className="result-rank">#{i + 1}</div>
-                <div className="result-info">
-                  <div className="result-name">{r.name}</div>
-                  <div className="result-procedure">{r.procedure_name}</div>
-                  <div className="result-address">{r.address}, {r.city}, {r.state}</div>
-                  {r.distance !== null && r.distance !== undefined && (
-                    <div className="result-distance">{r.distance} miles away</div>
-                  )}
-                </div>
-                <div className="result-price" style={{ color: getPinColor(parseFloat(r.discounted_cash), prices) }}>
-                  {r.discounted_cash ? '$' + parseFloat(r.discounted_cash).toFixed(2) : 'N/A'}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="map-container">
-            <MapContainer center={DEFAULT_CENTER} zoom={9} style={{ height: '100%', width: '100%' }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <FlyToBounds providerPins={providerPins} />
-              {providerPins.map((pin, i) => {
-                const color = getPinColor(pin.price, pinPrices);
-                return (
-                  <CircleMarker key={i} center={pin.coords} radius={14} fillColor={color} color="#fff" weight={2} fillOpacity={0.9}>
-                    <Popup>
-                      <strong>{pin.name}</strong><br />
-                      Lowest: ${pin.price.toFixed(2)}<br />
-                      {pin.r.distance !== null && pin.r.distance !== undefined && <>{pin.r.distance} miles away</>}
-                    </Popup>
-                  </CircleMarker>
-                );
-              })}
-            </MapContainer>
-          </div>
+
+      {/* IMPROVED LOADING STATE */}
+      {loading && (
+        <div className="loading-message">
+          <div className="spinner"></div>
+          <p>Searching prices...</p>
+          <p style={{ fontSize: '0.85rem', marginTop: '8px' }}>
+            (First search may take 30-60 seconds while the server wakes up)
+          </p>
         </div>
+      )}
+
+      {!loading && searched && results.length === 0 && (
+        <div className="status">No results found. Try a different search term.</div>
+      )}
+
+      {!loading && results.length > 0 && (
+        <>
+          {/* SUMMARY BAR */}
+          <div className="summary-bar">
+            Found at {hospitalCount} {hospitalCount === 1 ? 'hospital' : 'hospitals'} · 
+            Prices from ${minPrice.toFixed(2)} to ${maxPrice.toFixed(2)}
+          </div>
+
+          <div className="content">
+            <div className="results">
+              <h2>{results.length} results for "{query}"</h2>
+              {results.map((r, i) => (
+                <div className="result-card" key={i}>
+                  <div className="result-rank">#{i + 1}</div>
+                  <div className="result-info">
+                    <div className="result-name">{r.name}</div>
+                    <div className="result-procedure">{r.procedure_name}</div>
+                    <div className="result-address">{r.address}, {r.city}, {r.state}</div>
+                    {r.distance !== null && r.distance !== undefined && (
+                      <div className="result-distance">{r.distance} miles away</div>
+                    )}
+                  </div>
+                  <div className="result-price" style={{ color: getPinColor(parseFloat(r.discounted_cash), prices) }}>
+                    {r.discounted_cash ? '$' + parseFloat(r.discounted_cash).toFixed(2) : 'N/A'}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="map-container">
+              <MapContainer center={DEFAULT_CENTER} zoom={9} style={{ height: '100%', width: '100%' }}>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <FlyToBounds providerPins={providerPins} />
+                {providerPins.map((pin, i) => {
+                  const color = getPinColor(pin.price, pinPrices);
+                  return (
+                    <CircleMarker key={i} center={pin.coords} radius={14} fillColor={color} color="#fff" weight={2} fillOpacity={0.9}>
+                      <Popup>
+                        <strong>{pin.name}</strong><br />
+                        Lowest: ${pin.price.toFixed(2)}<br />
+                        {pin.r.distance !== null && pin.r.distance !== undefined && <>{pin.r.distance} miles away</>}
+                      </Popup>
+                    </CircleMarker>
+                  );
+                })}
+              </MapContainer>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
