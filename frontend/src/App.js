@@ -63,7 +63,7 @@ export default function App() {
     results.reduce((acc, r) => {
       const lat = parseFloat(r.latitude);
       const lng = parseFloat(r.longitude);
-      if (!lat || !lng || isNaN(lat) || isNaN(lng)) return acc;
+      if (isNaN(lat) || isNaN(lng)) return acc;
       const price = parseFloat(r.discounted_cash);
       if (!acc[r.name] || price < parseFloat(acc[r.name].discounted_cash)) {
         acc[r.name] = r;
@@ -72,7 +72,10 @@ export default function App() {
     }, {})
   ).map(([name, r]) => ({
     name,
-    coords: [parseFloat(r.latitude), parseFloat(r.longitude)],
+    coords: [
+      Number(r.latitude),
+      Number(r.longitude)
+    ],
     price: parseFloat(r.discounted_cash),
     r
   }));
