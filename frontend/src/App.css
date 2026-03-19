@@ -1,44 +1,406 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body, #root { height: 100%; }
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; }
+body { 
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
+  background: #f1f5f9; 
+  color: #0f172a;
+}
 .app { min-height: 100vh; display: flex; flex-direction: column; }
 
-/* CONDENSED HEADER - saves vertical space */
-.header { background: #1e40af; color: white; padding: 16px 24px; text-align: center; }
-.header h1 { font-size: 1.75rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
-.header p { opacity: 0.85; font-size: 0.9rem; }
+/* HEADER */
+.header { 
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: white; 
+  padding: 20px 24px; 
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.header h1 { 
+  font-size: 2rem; 
+  font-weight: 800; 
+  letter-spacing: -0.5px; 
+  margin-bottom: 4px;
+}
+.header p { 
+  opacity: 0.95; 
+  font-size: 0.95rem; 
+  font-weight: 400;
+}
 
-.search-bar { display: flex; justify-content: center; padding: 16px 24px; gap: 8px; background: white; border-bottom: 1px solid #e2e8f0; }
-.search-bar input { width: 100%; max-width: 500px; padding: 12px 16px; font-size: 1rem; border: 2px solid #e2e8f0; border-radius: 8px; outline: none; }
-.search-bar input:focus { border-color: #1e40af; }
-.search-bar button { padding: 12px 24px; background: #1e40af; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; }
-.search-bar button:hover { background: #1e3a8a; }
+/* SEARCH BAR */
+.search-bar { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  padding: 20px 24px; 
+  gap: 12px; 
+  background: white; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.search-bar input { 
+  width: 100%; 
+  max-width: 500px; 
+  padding: 14px 18px; 
+  font-size: 1rem; 
+  border: 2px solid #e2e8f0; 
+  border-radius: 12px; 
+  outline: none;
+  transition: all 0.2s;
+}
+.search-bar input:focus { 
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.search-bar .zip-input {
+  max-width: 140px;
+}
+.search-bar button { 
+  padding: 14px 32px; 
+  background: #3b82f6;
+  color: white; 
+  border: none; 
+  border-radius: 12px; 
+  font-size: 1rem; 
+  font-weight: 600; 
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+.search-bar button:hover { 
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
 
-/* LOADING & STATUS MESSAGES */
-.status { text-align: center; color: #64748b; padding: 40px; }
-.loading-message { text-align: center; padding: 40px; }
-.spinner { display: inline-block; width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top-color: #1e40af; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+/* LOADING */
+.loading-message { 
+  text-align: center; 
+  padding: 60px 20px; 
+}
+.spinner { 
+  display: inline-block; 
+  width: 48px; 
+  height: 48px; 
+  border: 4px solid #e2e8f0; 
+  border-top-color: #3b82f6; 
+  border-radius: 50%; 
+  animation: spin 0.8s linear infinite; 
+  margin-bottom: 20px;
+}
 @keyframes spin { to { transform: rotate(360deg); } }
-.loading-message p { color: #64748b; font-size: 0.95rem; }
-.loading-message p:first-of-type { font-weight: 600; color: #334155; margin-bottom: 4px; }
+.loading-message p { 
+  color: #64748b; 
+  font-size: 0.95rem; 
+}
+.loading-message p:first-of-type { 
+  font-weight: 600; 
+  color: #334155; 
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
+.status { 
+  text-align: center; 
+  color: #64748b; 
+  padding: 60px 20px; 
+  font-size: 1.05rem;
+}
 
 /* SUMMARY BAR */
-.summary-bar { background: #fefce8; border: 1px solid #fde047; padding: 12px 24px; color: #854d0e; font-size: 0.9rem; font-weight: 500; text-align: center; }
+.summary-bar { 
+  background: white;
+  border-bottom: 2px solid #e2e8f0;
+  padding: 14px 24px; 
+  color: #475569; 
+  font-size: 0.9rem; 
+  font-weight: 500; 
+  text-align: center;
+}
+.summary-highlight {
+  color: #0f172a;
+  font-weight: 700;
+}
 
-/* STICKY MAP LAYOUT */
-.content { display: flex; align-items: flex-start; height: calc(100vh - 160px); }
-.results { width: 420px; overflow-y: auto; background: white; border-right: 1px solid #e2e8f0; height: 100%; }
-.results h2 { padding: 16px; font-size: 0.9rem; color: #64748b; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; background: white; z-index: 10; }
+/* LAYOUT */
+.content { 
+  display: flex; 
+  align-items: flex-start; 
+  height: calc(100vh - 190px); 
+}
+.results { 
+  width: 440px; 
+  overflow-y: auto; 
+  background: #f8fafc; 
+  height: 100%;
+  padding: 12px;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.map-container { 
+  position: sticky; 
+  top: 0; 
+  flex: 1; 
+  height: 100%; 
+}
 
-/* MAP STAYS FIXED ON RIGHT */
-.map-container { position: sticky; top: 0; flex: 1; height: 100%; }
+/* HOSPITAL CARDS */
+.hospital-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  border: 2px solid transparent;
+}
+.hospital-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+  border-color: #3b82f6;
+}
 
-.result-card { display: flex; align-items: center; gap: 12px; padding: 16px; border-bottom: 1px solid #f1f5f9; }
-.result-card:hover { background: #f8fafc; }
-.result-rank { font-size: 0.8rem; color: #94a3b8; width: 24px; }
-.result-info { flex: 1; }
-.result-name { font-weight: 600; font-size: 0.95rem; }
-.result-procedure { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
-.result-address { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
-.result-price { font-size: 1.2rem; font-weight: 700; }
-.result-distance { font-size: 0.75rem; color: #3b82f6; margin-top: 2px; }
+.hospital-rank-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.hospital-main-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hospital-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.hospital-address {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.hospital-distance {
+  font-size: 0.8rem;
+  color: #3b82f6;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.hospital-price-box {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.price-label {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+
+.procedure-count {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.hospital-arrow {
+  font-size: 1.5rem;
+  color: #cbd5e1;
+  font-weight: 300;
+  margin-left: 8px;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0); 
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #f1f5f9;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+  transform: rotate(90deg);
+}
+
+.modal-header {
+  padding: 32px 32px 24px 32px;
+  border-bottom: 2px solid #f1f5f9;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.modal-header h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+  padding-right: 40px;
+}
+
+.modal-address {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.modal-distance {
+  font-size: 0.9rem;
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 24px 32px 32px 32px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-body h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+
+.procedure-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.procedure-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  transition: all 0.15s;
+}
+
+.procedure-item:hover {
+  background: #e0f2fe;
+  transform: translateX(4px);
+}
+
+.procedure-item-name {
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 500;
+  flex: 1;
+  padding-right: 16px;
+}
+
+.procedure-item-price {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+/* SCROLLBAR */
+.results::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.results::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.results::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.results::-webkit-scrollbar-thumb:hover,
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

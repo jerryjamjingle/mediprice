@@ -40,13 +40,13 @@ export default function App() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
-  const [expandedHospitals, setExpandedHospitals] = useState({});
+  const [selectedHospital, setSelectedHospital] = useState(null);
 
   const search = async () => {
     if (!query.trim()) return;
     setLoading(true);
     setSearched(true);
-    setExpandedHospitals({}); // Reset expanded state on new search
+    setSelectedHospital(null);
     try {
       let url = 'https://mediprice-backend.onrender.com/search?procedure=' + encodeURIComponent(query);
       if (zip.trim()) url += '&zip=' + encodeURIComponent(zip.trim());
@@ -57,13 +57,6 @@ export default function App() {
       setResults([]);
     }
     setLoading(false);
-  };
-
-  const toggleHospital = (hospitalName) => {
-    setExpandedHospitals(prev => ({
-      ...prev,
-      [hospitalName]: !prev[hospitalName]
-    }));
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p > 0);
@@ -91,7 +84,6 @@ export default function App() {
 
   const pinPrices = providerPins.map(p => p.price);
 
-  // GROUP RESULTS BY HOSPITAL
   const groupedByHospital = results.reduce((acc, r) => {
     if (!acc[r.name]) {
       acc[r.name] = {
@@ -107,7 +99,6 @@ export default function App() {
     return acc;
   }, {});
 
-  // Convert to array and sort by lowest price
   const hospitalCards = Object.values(groupedByHospital).map(hospital => {
     const procedurePrices = hospital.procedures
       .map(p => parseFloat(p.discounted_cash))
@@ -118,14 +109,12 @@ export default function App() {
       ...hospital,
       lowestPrice,
       procedureCount: hospital.procedures.length,
-      // Sort procedures within hospital by price
       procedures: hospital.procedures.sort((a, b) => 
         parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash)
       )
     };
   }).sort((a, b) => a.lowestPrice - b.lowestPrice);
 
-  // SUMMARY BAR CALCULATIONS
   const hospitalCount = providerPins.length;
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
@@ -134,7 +123,7 @@ export default function App() {
     <div className="app">
       <div className="header">
         <h1>MediPrice</h1>
-        <p>Find real cash prices for medical procedures in St. Louis</p>
+        <p>Compare real cash prices across St. Louis hospitals</p>
       </div>
       <div className="search-bar">
         <input
@@ -146,11 +135,11 @@ export default function App() {
         />
         <input
           type="text"
-          placeholder="ZIP code (optional)"
+          placeholder="ZIP code"
           value={zip}
           onChange={e => setZip(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search()}
-          style={{ maxWidth: '140px' }}
+          className="zip-input"
         />
         <button onClick={search}>Search</button>
       </div>
@@ -172,62 +161,47 @@ export default function App() {
       {!loading && results.length > 0 && (
         <>
           <div className="summary-bar">
-            Found at {hospitalCount} {hospitalCount === 1 ? 'hospital' : 'hospitals'} · 
-            Prices from ${minPrice.toFixed(2)} to ${maxPrice.toFixed(2)} · 
-            {results.length} total procedures
+            <span className="summary-highlight">{hospitalCount} hospitals</span> · 
+            <span className="summary-highlight"> ${minPrice.toFixed(0)} - ${maxPrice.toFixed(0)}</span> · 
+            {results.length} procedures
           </div>
 
           <div className="content">
             <div className="results">
-              <h2>{hospitalCards.length} hospitals for "{query}"</h2>
-              
               {hospitalCards.map((hospital, i) => {
-                const isExpanded = expandedHospitals[hospital.hospitalName];
                 const displayColor = getPinColor(hospital.lowestPrice, prices);
                 
                 return (
-                  <div key={hospital.hospitalName} className="hospital-card">
-                    {/* HOSPITAL HEADER - Always visible */}
-                    <div 
-                      className="hospital-header" 
-                      onClick={() => toggleHospital(hospital.hospitalName)}
-                      style={{ cursor: 'pointer' }}
-                    >
-                      <div className="hospital-rank">#{i + 1}</div>
-                      <div className="hospital-info">
-                        <div className="hospital-name">{hospital.hospitalName}</div>
-                        <div className="hospital-address">
-                          {hospital.address}, {hospital.city}, {hospital.state}
-                        </div>
-                        {hospital.distance !== null && hospital.distance !== undefined && (
-                          <div className="result-distance">{hospital.distance} miles away</div>
-                        )}
-                        <div className="hospital-procedure-count">
-                          {hospital.procedureCount} {hospital.procedureCount === 1 ? 'procedure' : 'procedures'} match
-                        </div>
+                  <div 
+                    key={hospital.hospitalName} 
+                    className="hospital-card"
+                    onClick={() => setSelectedHospital(hospital)}
+                  >
+                    <div className="hospital-rank-badge" style={{ backgroundColor: displayColor }}>
+                      #{i + 1}
+                    </div>
+                    
+                    <div className="hospital-main-info">
+                      <h3 className="hospital-name">{hospital.hospitalName}</h3>
+                      <p className="hospital-address">
+                        {hospital.address}, {hospital.city}
+                      </p>
+                      {hospital.distance !== null && hospital.distance !== undefined && (
+                        <p className="hospital-distance">📍 {hospital.distance} miles away</p>
+                      )}
+                    </div>
+
+                    <div className="hospital-price-box">
+                      <div className="price-label">Starting at</div>
+                      <div className="price-amount" style={{ color: displayColor }}>
+                        ${hospital.lowestPrice.toFixed(0)}
                       </div>
-                      <div className="hospital-price-section">
-                        <div className="hospital-lowest-label">From</div>
-                        <div className="hospital-price" style={{ color: displayColor }}>
-                          ${hospital.lowestPrice.toFixed(2)}
-                        </div>
-                        <div className="expand-arrow">{isExpanded ? '▲' : '▼'}</div>
+                      <div className="procedure-count">
+                        {hospital.procedureCount} option{hospital.procedureCount !== 1 ? 's' : ''}
                       </div>
                     </div>
 
-                    {/* EXPANDED PROCEDURES - Only shown when clicked */}
-                    {isExpanded && (
-                      <div className="procedure-list">
-                        {hospital.procedures.map((proc, idx) => (
-                          <div key={idx} className="procedure-item">
-                            <div className="procedure-name">{proc.procedure_name}</div>
-                            <div className="procedure-price">
-                              ${parseFloat(proc.discounted_cash).toFixed(2)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <div className="hospital-arrow">›</div>
                   </div>
                 );
               })}
@@ -243,7 +217,7 @@ export default function App() {
                     <CircleMarker key={i} center={pin.coords} radius={14} fillColor={color} color="#fff" weight={2} fillOpacity={0.9}>
                       <Popup>
                         <strong>{pin.name}</strong><br />
-                        Lowest: ${pin.price.toFixed(2)}<br />
+                        Starting at: ${pin.price.toFixed(2)}<br />
                         {pin.r.distance !== null && pin.r.distance !== undefined && <>{pin.r.distance} miles away</>}
                       </Popup>
                     </CircleMarker>
@@ -253,6 +227,39 @@ export default function App() {
             </div>
           </div>
         </>
+      )}
+
+      {/* MODAL POPUP */}
+      {selectedHospital && (
+        <div className="modal-overlay" onClick={() => setSelectedHospital(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedHospital(null)}>×</button>
+            
+            <div className="modal-header">
+              <h2>{selectedHospital.hospitalName}</h2>
+              <p className="modal-address">
+                {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
+              </p>
+              {selectedHospital.distance !== null && selectedHospital.distance !== undefined && (
+                <p className="modal-distance">📍 {selectedHospital.distance} miles from you</p>
+              )}
+            </div>
+
+            <div className="modal-body">
+              <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
+              <div className="procedure-list">
+                {selectedHospital.procedures.map((proc, idx) => (
+                  <div key={idx} className="procedure-item">
+                    <div className="procedure-item-name">{proc.procedure_name}</div>
+                    <div className="procedure-item-price">
+                      ${parseFloat(proc.discounted_cash).toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
