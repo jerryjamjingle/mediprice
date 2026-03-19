@@ -3,16 +3,8 @@ import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaf
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
-const PROVIDER_COORDS = {
-  'Saint Anthonys Hospital': [38.9076, -90.1721],
-  'Alton Memorial Hospital': [38.8897, -90.1843],
-  'SSM Health Saint Louis University Hospital': [38.6184, -90.2620],
-  'SSM Health St. Clare Hospital': [38.5137, -90.4363],
-  'SSM Health St. Mary\'s Hospital': [38.6351, -90.3182],
-  'SSM Health St. Joseph Hospital': [38.7937, -90.7857],
-};
 
-const DEFAULT_CENTER = [38.627, -90.1994];
+const DEFAULT_CENTER = [38.7, -90.3];
 
 function getPinColor(price, prices) {
   const min = Math.min(...prices);
@@ -25,11 +17,20 @@ function getPinColor(price, prices) {
   return '#ef4444';
 }
 
-function FlyToPin({ results }) {
+function FlyToBounds({ providerPins }) {
   const map = useMap();
-  const first = results.find(r => PROVIDER_COORDS[r.name]);
-  if (first) {
-    map.flyTo(PROVIDER_COORDS[first.name], 13, { duration: 1.2 });
+  if (providerPins.length > 0) {
+    const coords = providerPins.map(p => p.coords);
+    if (coords.length === 1) {
+      map.flyTo(coords[0], 12, { duration: 1.2 });
+    } else {
+      const lats = coords.map(c => c[0]);
+      const lngs = coords.map(c => c[1]);
+      map.flyToBounds([
+        [Math.min(...lats) - 0.05, Math.min(...lngs) - 0.05],
+        [Math.max(...lats) + 0.05, Math.max(...lngs) + 0.05]
+      ], { duration: 1.2 });
+    }
   }
   return null;
 }
@@ -58,6 +59,24 @@ export default function App() {
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(Boolean);
+
+  // Get one pin per hospital (cheapest price)
+  const providerPins = Object.entries(
+    results.reduce((acc, r) => {
+      if (!r.latitude || !r.longitude) return acc;
+      if (!acc[r.name] || parseFloat(r.discounted_cash) < parseFloat(acc[r.name].discounted_cash)) {
+        acc[r.name] = r;
+      }
+      return acc;
+    }, {})
+  ).map(([name, r]) => ({
+    name,
+    coords: [parseFloat(r.latitude), parseFloat(r.longitude)],
+    price: parseFloat(r.discounted_cash),
+    r
+  }));
+
+  const pinPrices = providerPins.map(p => p.price);
 
   return (
     <div className="app">
@@ -107,20 +126,17 @@ export default function App() {
             ))}
           </div>
           <div className="map-container">
-            <MapContainer center={DEFAULT_CENTER} zoom={11} style={{ height: '100%', width: '100%' }}>
+            <MapContainer center={DEFAULT_CENTER} zoom={9} style={{ height: '100%', width: '100%' }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-              <FlyToPin results={results} />
-              {results.map((r, i) => {
-                const coords = PROVIDER_COORDS[r.name];
-                if (!coords) return null;
-                const color = getPinColor(parseFloat(r.discounted_cash), prices);
+              <FlyToBounds providerPins={providerPins} />
+              {providerPins.map((pin, i) => {
+                const color = getPinColor(pin.price, pinPrices);
                 return (
-                  <CircleMarker key={i} center={coords} radius={12} fillColor={color} color="#fff" weight={2} fillOpacity={0.9}>
+                  <CircleMarker key={i} center={pin.coords} radius={14} fillColor={color} color="#fff" weight={2} fillOpacity={0.9}>
                     <Popup>
-                      <strong>{r.name}</strong><br />
-                      {r.procedure_name}<br />
-                      {r.discounted_cash ? '$' + parseFloat(r.discounted_cash).toFixed(2) : 'N/A'}
-                      {r.distance !== null && r.distance !== undefined && <><br />{r.distance} miles away</>}
+                      <strong>{pin.name}</strong><br />
+                      Lowest: ${pin.price.toFixed(2)}<br />
+                      {pin.r.distance !== null && pin.r.distance !== undefined && <>{pin.r.distance} miles away</>}
                     </Popup>
                   </CircleMarker>
                 );
