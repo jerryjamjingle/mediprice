@@ -81,9 +81,6 @@ export default function App() {
   }));
 
   const pinPrices = providerPins.map(p => p.price);
-  console.log('Provider pins:', providerPins);
-  console.log('Raw results count:', results.length);
-  console.log('Sample result:', results[0]);
 
   return (
     <div className="app">
