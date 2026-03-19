@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaf
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 
-
 const DEFAULT_CENTER = [38.7, -90.3];
 
 function getPinColor(price, prices) {
@@ -51,20 +50,22 @@ export default function App() {
       if (zip.trim()) url += '&zip=' + encodeURIComponent(zip.trim());
       const res = await fetch(url);
       const data = await res.json();
-      setResults(data);
+      setResults(Array.isArray(data) ? data : []);
     } catch (err) {
       setResults([]);
     }
     setLoading(false);
   };
 
-  const prices = results.map(r => parseFloat(r.discounted_cash)).filter(Boolean);
+  const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p > 0);
 
-  // Get one pin per hospital (cheapest price)
   const providerPins = Object.entries(
     results.reduce((acc, r) => {
-      if (!r.latitude || !r.longitude) return acc;
-      if (!acc[r.name] || parseFloat(r.discounted_cash) < parseFloat(acc[r.name].discounted_cash)) {
+      const lat = parseFloat(r.latitude);
+      const lng = parseFloat(r.longitude);
+      if (!lat || !lng || isNaN(lat) || isNaN(lng)) return acc;
+      const price = parseFloat(r.discounted_cash);
+      if (!acc[r.name] || price < parseFloat(acc[r.name].discounted_cash)) {
         acc[r.name] = r;
       }
       return acc;
@@ -77,6 +78,7 @@ export default function App() {
   }));
 
   const pinPrices = providerPins.map(p => p.price);
+  console.log('Provider pins:', providerPins);
 
   return (
     <div className="app">
