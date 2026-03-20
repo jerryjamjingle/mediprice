@@ -1,0 +1,100 @@
+.about-page {
+    min-height: 100vh;
+    background: #f8fafc;
+  }
+  
+  .about-header {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    color: white;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .about-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+  
+  .about-nav {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .about-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
+  
+  .about-hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  
+  .about-hero h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+  }
+  
+  .about-body {
+    background: white;
+    padding: 48px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    line-height: 1.8;
+  }
+  
+  .about-body p {
+    font-size: 1.1rem;
+    color: #334155;
+    margin-bottom: 24px;
+  }
+  
+  .about-body p.highlight {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1e40af;
+    text-align: center;
+    margin: 32px 0;
+  }
+  
+  .about-body em {
+    font-style: italic;
+    color: #475569;
+  }
+  
+  .about-body strong {
+    font-weight: 700;
+    color: #0f172a;
+  }
+  
+  .about-cta {
+    text-align: center;
+    margin-top: 48px;
+  }
+  
+  .cta-button {
+    padding: 18px 48px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+  
+  .cta-button:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  }
