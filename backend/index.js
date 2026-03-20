@@ -44,8 +44,9 @@ app.get('/search', async (req, res) => {
     try {
       let queryText = `
         SELECT pr.name, pr.address, pr.city, pr.state, pr.zip,
-          pr.latitude, pr.longitude, p.procedure_name, p.cpt_code,
-          pc.gross_charge, pc.discounted_cash
+  pr.latitude, pr.longitude, pr.phone, pr.website, pr.hours,
+  p.procedure_name, p.cpt_code,
+  pc.gross_charge, pc.discounted_cash
         FROM prices pc
         JOIN providers pr ON pc.provider_id = pr.id
         JOIN procedures p ON pc.procedure_id = p.id

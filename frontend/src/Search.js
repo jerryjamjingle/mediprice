@@ -259,37 +259,79 @@ export default function Search() {
         </>
       )}
 
-      {selectedHospital && (
-        <div className="modal-overlay" onClick={() => setSelectedHospital(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setSelectedHospital(null)}>×</button>
-            
-            <div className="modal-header">
-              <h2>{selectedHospital.hospitalName}</h2>
-              <p className="modal-address">
-                {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
-              </p>
-              {selectedHospital.distance !== null && selectedHospital.distance !== undefined && (
-                <p className="modal-distance">📍 {selectedHospital.distance} miles from you</p>
-              )}
-            </div>
+{selectedHospital && (
+  <div className="modal-overlay" onClick={() => setSelectedHospital(null)}>
+    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <button className="modal-close" onClick={() => setSelectedHospital(null)}>×</button>
+      
+      <div className="modal-header">
+        <h2>{selectedHospital.hospitalName}</h2>
+        
+        {/* Contact Info */}
+        <div className="hospital-contact-info">
+          {selectedHospital.procedures[0]?.phone && (
+            <a href={`tel:${selectedHospital.procedures[0].phone}`} className="contact-link">
+              📞 {selectedHospital.procedures[0].phone}
+            </a>
+          )}
+          
+          {selectedHospital.procedures[0]?.website && (
+            <a 
+              href={selectedHospital.procedures[0].website} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="contact-link"
+            >
+              🌐 Visit Website
+            </a>
+          )}
+        </div>
 
-            <div className="modal-body">
-              <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
-              <div className="procedure-list">
-                {selectedHospital.procedures.map((proc, idx) => (
-                  <div key={idx} className="procedure-item">
-                    <div className="procedure-item-name">{proc.procedure_name}</div>
-                    <div className="procedure-item-price">
-                      ${parseFloat(proc.discounted_cash).toFixed(2)}
-                    </div>
-                  </div>
-                ))}
+        {/* Address - Click to open in Google Maps */}
+        <a 
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHospital.address + ', ' + selectedHospital.city + ', ' + selectedHospital.state)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="modal-address"
+        >
+          📍 {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
+        </a>
+
+        {selectedHospital.distance !== null && selectedHospital.distance !== undefined && (
+          <p className="modal-distance">🚗 {selectedHospital.distance} miles from you</p>
+        )}
+
+        {selectedHospital.procedures[0]?.hours && (
+          <p className="modal-hours">🕒 {selectedHospital.procedures[0].hours}</p>
+        )}
+      </div>
+
+      <div className="modal-body">
+        <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
+        <div className="procedure-list">
+          {selectedHospital.procedures.map((proc, idx) => (
+            <div key={idx} className="procedure-item">
+              <div className="procedure-item-name">{proc.procedure_name}</div>
+              <div className="procedure-item-price">
+                ${parseFloat(proc.discounted_cash).toFixed(2)}
               </div>
             </div>
-          </div>
+          ))}
         </div>
-      )}
+      </div>
+
+      {/* Call to Action */}
+      <div className="modal-footer">
+        <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
+        {selectedHospital.procedures[0]?.phone && (
+          <a 
+            href={`tel:${selectedHospital.procedures[0].phone}`} 
+            className="modal-cta-button"
+          >
+            📞 Call {selectedHospital.hospitalName}
+          </a>
+        )}
+      </div>
     </div>
-  );
-}
+  </div>
+)}
