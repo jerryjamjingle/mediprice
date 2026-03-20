@@ -49,30 +49,24 @@
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     line-height: 1.8;
+    text-align: left;
   }
   
   .about-body p {
     font-size: 1.1rem;
     color: #334155;
     margin-bottom: 24px;
-  }
-  
-  .about-body p.highlight {
-    font-size: 1.3rem;
-    font-weight: 600;
-    color: #1e40af;
-    text-align: center;
-    margin: 32px 0;
+    font-weight: 400;
   }
   
   .about-body em {
     font-style: italic;
-    color: #475569;
+    color: #334155;
   }
   
   .about-body strong {
-    font-weight: 700;
-    color: #0f172a;
+    font-weight: 400;
+    color: #334155;
   }
   
   .about-cta {
