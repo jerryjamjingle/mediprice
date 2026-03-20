@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -38,6 +38,18 @@ export default function Home() {
   const [zip, setZip] = useState('');
   const [cptCode, setCptCode] = useState('');
   const [showCategories, setShowCategories] = useState(false);
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowCategories(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleSearch = () => {
     if (!query.trim() && !cptCode.trim()) return;
@@ -66,12 +78,13 @@ export default function Home() {
         
         <nav className="home-nav">
           <button className="nav-link active">Search</button>
-          <div 
-            className="nav-link-dropdown"
-            onMouseEnter={() => setShowCategories(true)}
-            onMouseLeave={() => setShowCategories(false)}
-          >
-            <button className="nav-link">Categories ▼</button>
+          <div className="nav-link-dropdown" ref={dropdownRef}>
+            <button 
+              className="nav-link"
+              onClick={() => setShowCategories(!showCategories)}
+            >
+              Categories ▼
+            </button>
             {showCategories && (
               <div className="categories-dropdown">
                 {CATEGORIES.map((cat, i) => (
