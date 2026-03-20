@@ -55,9 +55,11 @@ app.get('/search', async (req, res) => {
       let queryParams = [];
       
       // Add procedure name filter if provided
+      // Remove spaces and hyphens for flexible matching
       if (procedure && procedure.trim()) {
-        queryParams.push(`%${procedure}%`);
-        queryText += ` AND LOWER(p.procedure_name) LIKE LOWER($${queryParams.length})`;
+        const cleanedProcedure = procedure.trim().replace(/[\s-]/g, '');
+        queryParams.push(`%${cleanedProcedure}%`);
+        queryText += ` AND REPLACE(REPLACE(LOWER(p.procedure_name), ' ', ''), '-', '') LIKE LOWER($${queryParams.length})`;
       }
       
       // Add CPT code filter if provided
