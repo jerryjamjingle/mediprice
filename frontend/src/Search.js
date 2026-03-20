@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import './App.css';
@@ -36,8 +36,9 @@ function FlyToBounds({ providerPins }) {
 }
 
 export default function Search() {
-  const [searchParams] = useSearchParams();
-  const [query, setQuery] = useState(searchParams.get('procedure') || '');
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();  // ← ADD THIS LINE
+    const [query, setQuery] = useState(searchParams.get('procedure') || '');
   const [zip, setZip] = useState(searchParams.get('zip') || '');
   const [cptCode, setCptCode] = useState(searchParams.get('cpt') || '');
   const [results, setResults] = useState([]);
@@ -143,9 +144,9 @@ export default function Search() {
   return (
     <div className="app">
       <div className="header">
-        <h1>MediPrice</h1>
-        <p>Compare real cash prices across St. Louis hospitals</p>
-      </div>
+  <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>MediPrice</h1>
+  <p>Compare real cash prices across St. Louis hospitals</p>
+</div>
       <div className="search-bar">
         <input
           type="text"
