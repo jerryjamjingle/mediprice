@@ -48,12 +48,12 @@ export default function Search() {
   // Auto-search if URL has parameters
   useEffect(() => {
     const procedure = searchParams.get('procedure');
-    const zipParam = searchParams.get('zip');
     const cptParam = searchParams.get('cpt');
     
     if (procedure || cptParam) {
       search();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount
 
   const search = async () => {
