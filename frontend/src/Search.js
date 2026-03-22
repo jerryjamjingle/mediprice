@@ -36,27 +36,25 @@ function FlyToBounds({ providerPins }) {
 }
 
 export default function Search() {
-    const [searchParams] = useSearchParams();
-    const navigate = useNavigate();  // ← ADD THIS LINE
-    const [query, setQuery] = useState(searchParams.get('procedure') || '');
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [query, setQuery] = useState(searchParams.get('procedure') || '');
   const [zip, setZip] = useState(searchParams.get('zip') || '');
   const [cptCode, setCptCode] = useState(searchParams.get('cpt') || '');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState(null);
-  const [radius, setRadius] = useState(25); // Default 25 miles
+  const [radius, setRadius] = useState(25);
 
-  // Auto-search if URL has parameters
   useEffect(() => {
     const procedure = searchParams.get('procedure');
     const cptParam = searchParams.get('cpt');
-    
     if (procedure || cptParam) {
       search();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run once on mount
+  }, []);
 
   const search = async () => {
     if (!query.trim() && !cptCode.trim()) return;
@@ -66,13 +64,13 @@ export default function Search() {
     try {
       let url = 'https://mediprice-backend.onrender.com/search?';
       let params = [];
-      
       if (query.trim()) params.push('procedure=' + encodeURIComponent(query));
-      if (zip.trim()) params.push('zip=' + encodeURIComponent(zip.trim()));
+      if (zip.trim()) {
+        params.push('zip=' + encodeURIComponent(zip.trim()));
+        params.push('radius=' + radius);
+      }
       if (cptCode.trim()) params.push('cpt=' + encodeURIComponent(cptCode.trim()));
-      
       url += params.join('&');
-      
       const res = await fetch(url);
       const data = await res.json();
       setResults(Array.isArray(data) ? data : []);
@@ -97,10 +95,7 @@ export default function Search() {
     }, {})
   ).map(([name, r]) => ({
     name,
-    coords: [
-      Number(r.latitude),
-      Number(r.longitude)
-    ],
+    coords: [Number(r.latitude), Number(r.longitude)],
     price: parseFloat(r.discounted_cash),
     r
   }));
@@ -118,39 +113,32 @@ export default function Search() {
         procedures: []
       };
     }
-    
-    // Check if we already have this procedure for this hospital
     const existingProc = acc[r.name].procedures.find(
       p => p.procedure_name === r.procedure_name && p.cpt_code === r.cpt_code
     );
-    
-    // If we don't have it, or if this price is lower, use this one
     if (!existingProc) {
       acc[r.name].procedures.push(r);
     } else {
       const existingPrice = parseFloat(existingProc.discounted_cash);
       const newPrice = parseFloat(r.discounted_cash);
       if (newPrice < existingPrice) {
-        // Replace with the lower price
         const index = acc[r.name].procedures.indexOf(existingProc);
         acc[r.name].procedures[index] = r;
       }
     }
-    
     return acc;
   }, {});
 
   const hospitalCards = Object.values(groupedByHospital).map(hospital => {
     const procedurePrices = hospital.procedures
-    .map(p => parseFloat(p.discounted_cash))
-    .filter(p => !isNaN(p) && p >= 1); // Changed from p > 0 to p >= 1
+      .map(p => parseFloat(p.discounted_cash))
+      .filter(p => !isNaN(p) && p >= 1);
     const lowestPrice = procedurePrices.length > 0 ? Math.min(...procedurePrices) : 0;
-    
     return {
       ...hospital,
       lowestPrice,
       procedureCount: hospital.procedures.length,
-      procedures: hospital.procedures.sort((a, b) => 
+      procedures: hospital.procedures.sort((a, b) =>
         parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash)
       )
     };
@@ -163,9 +151,10 @@ export default function Search() {
   return (
     <div className="app">
       <div className="header">
-  <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>MediPrice</h1>
-  <p>Compare real cash prices across St. Louis hospitals</p>
-</div>
+        <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>MediPrice</h1>
+        <p>Compare real cash prices across St. Louis hospitals</p>
+      </div>
+
       <div className="search-bar">
         <input
           type="text"
@@ -181,18 +170,18 @@ export default function Search() {
           onChange={e => setZip(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search()}
           className="zip-input"
-        /><select 
-        value={radius} 
-        onChange={e => setRadius(Number(e.target.value))}
-        className="radius-select"
-      >
-        <option value={5}>5 miles</option>
-        <option value={10}>10 miles</option>
-        <option value={25}>25 miles</option>
-        <option value={50}>50 miles</option>
-        <option value={100}>100 miles</option>
-      </select>
-
+        />
+        <select
+          value={radius}
+          onChange={e => setRadius(Number(e.target.value))}
+          className="radius-select"
+        >
+          <option value={5}>5 miles</option>
+          <option value={10}>10 miles</option>
+          <option value={25}>25 miles</option>
+          <option value={50}>50 miles</option>
+          <option value={100}>100 miles</option>
+        </select>
         <input
           type="text"
           placeholder="CPT code"
@@ -221,8 +210,8 @@ export default function Search() {
       {!loading && results.length > 0 && (
         <>
           <div className="summary-bar">
-            <span className="summary-highlight">{hospitalCount} hospitals</span> · 
-            <span className="summary-highlight"> ${minPrice.toFixed(0)} - ${maxPrice.toFixed(0)}</span> · 
+            <span className="summary-highlight">{hospitalCount} hospitals</span> ·
+            <span className="summary-highlight"> ${minPrice.toFixed(0)} - ${maxPrice.toFixed(0)}</span> ·
             {results.length} procedures
           </div>
 
@@ -230,17 +219,16 @@ export default function Search() {
             <div className="results">
               {hospitalCards.map((hospital, i) => {
                 const displayColor = getPinColor(hospital.lowestPrice, prices);
-                
                 return (
-                  <div 
-                    key={hospital.hospitalName} 
+                  <div
+                    key={hospital.hospitalName}
                     className="hospital-card"
                     onClick={() => setSelectedHospital(hospital)}
                   >
                     <div className="hospital-rank-badge" style={{ backgroundColor: displayColor }}>
                       #{i + 1}
                     </div>
-                    
+
                     <div className="hospital-main-info">
                       <h3 className="hospital-name">{hospital.hospitalName}</h3>
                       <p className="hospital-address">
@@ -254,19 +242,28 @@ export default function Search() {
                     <div className="hospital-price-box">
                       <div className="price-label">Starting at</div>
                       <div className="price-amount" style={{ color: displayColor }}>
-                      {hospital.lowestPrice < 1 ? 'Not Listed' : `$${hospital.lowestPrice.toFixed(0)}`}
+                        {hospital.lowestPrice < 1 ? 'Not Listed' : `$${hospital.lowestPrice.toFixed(0)}`}
                       </div>
                       <div className="procedure-count">
                         {hospital.procedureCount} option{hospital.procedureCount !== 1 ? 's' : ''}
                       </div>
                     </div>
 
-                    <div className="hospital-arrow-container">
-                    <div className="hospital-arrow">›</div>
-                    </div>
+                    <svg
+                      style={{ marginLeft: '8px', marginRight: '20px', flexShrink: 0 }}
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#cbd5e1"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
                   </div>
                 );
-
               })}
             </div>
 
@@ -292,82 +289,80 @@ export default function Search() {
         </>
       )}
 
-{selectedHospital && (
-  <div className="modal-overlay" onClick={() => setSelectedHospital(null)}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="modal-close" onClick={() => setSelectedHospital(null)}>×</button>
-      
-      <div className="modal-header">
-        <h2>{selectedHospital.hospitalName}</h2>
-        
-        {/* Contact Info */}
-        <div className="hospital-contact-info">
-          {selectedHospital.procedures[0]?.phone && (
-            <a href={`tel:${selectedHospital.procedures[0].phone}`} className="contact-link">
-              📞 {selectedHospital.procedures[0].phone}
-            </a>
-          )}
-          
-          {selectedHospital.procedures[0]?.website && (
-            <a 
-              href={selectedHospital.procedures[0].website} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="contact-link"
-            >
-              🌐 Visit Website
-            </a>
-          )}
-        </div>
+      {selectedHospital && (
+        <div className="modal-overlay" onClick={() => setSelectedHospital(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={() => setSelectedHospital(null)}>×</button>
 
-        {/* Address - Click to open in Google Maps */}
-        <a 
-          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHospital.address + ', ' + selectedHospital.city + ', ' + selectedHospital.state)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="modal-address"
-        >
-          📍 {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
-        </a>
+            <div className="modal-header">
+              <h2>{selectedHospital.hospitalName}</h2>
 
-        {selectedHospital.distance !== null && selectedHospital.distance !== undefined && (
-          <p className="modal-distance">🚗 {selectedHospital.distance} miles from you</p>
-        )}
+              <div className="hospital-contact-info">
+                {selectedHospital.procedures[0]?.phone && (
+                  <a href={`tel:${selectedHospital.procedures[0].phone}`} className="contact-link">
+                    📞 {selectedHospital.procedures[0].phone}
+                  </a>
+                )}
+                {selectedHospital.procedures[0]?.website && (
+                  
+                    href={selectedHospital.procedures[0].website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="contact-link"
+                  >
+                    🌐 Visit Website
+                  </a>
+                )}
+              </div>
 
-        {selectedHospital.procedures[0]?.hours && (
-          <p className="modal-hours">🕒 {selectedHospital.procedures[0].hours}</p>
-        )}
-      </div>
+              
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  selectedHospital.address + ', ' + selectedHospital.city + ', ' + selectedHospital.state
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="modal-address"
+              >
+                📍 {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
+              </a>
 
-      <div className="modal-body">
-        <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
-        <div className="procedure-list">
-          {selectedHospital.procedures.map((proc, idx) => (
-            <div key={idx} className="procedure-item">
-              <div className="procedure-item-name">{proc.procedure_name}</div>
-              <div className="procedure-item-price">
-              {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
+              {selectedHospital.distance !== null && selectedHospital.distance !== undefined && (
+                <p className="modal-distance">🚗 {selectedHospital.distance} miles from you</p>
+              )}
+
+              {selectedHospital.procedures[0]?.hours && (
+                <p className="modal-hours">🕒 {selectedHospital.procedures[0].hours}</p>
+              )}
+            </div>
+
+            <div className="modal-body">
+              <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
+              <div className="procedure-list">
+                {selectedHospital.procedures.map((proc, idx) => (
+                  <div key={idx} className="procedure-item">
+                    <div className="procedure-item-name">{proc.procedure_name}</div>
+                    <div className="procedure-item-price">
+                      {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Call to Action */}
-      <div className="modal-footer">
-        <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
-        {selectedHospital.procedures[0]?.phone && (
-          <a 
-            href={`tel:${selectedHospital.procedures[0].phone}`} 
-            className="modal-cta-button"
-          >
-            📞 Call {selectedHospital.hospitalName}
-          </a>
-        )}
-      </div>
-    </div>
-  </div>
-)}
+            <div className="modal-footer">
+              <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
+              {selectedHospital.procedures[0]?.phone && (
+                
+                  href={`tel:${selectedHospital.procedures[0].phone}`}
+                  className="modal-cta-button"
+                >
+                  📞 Call {selectedHospital.hospitalName}
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
