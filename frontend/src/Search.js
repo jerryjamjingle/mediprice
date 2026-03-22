@@ -45,6 +45,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState(null);
+  const [radius, setRadius] = useState(25); // Default 25 miles
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -180,7 +181,18 @@ export default function Search() {
           onChange={e => setZip(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search()}
           className="zip-input"
-        />
+        /><select 
+        value={radius} 
+        onChange={e => setRadius(Number(e.target.value))}
+        className="radius-select"
+      >
+        <option value={5}>5 miles</option>
+        <option value={10}>10 miles</option>
+        <option value={25}>25 miles</option>
+        <option value={50}>50 miles</option>
+        <option value={100}>100 miles</option>
+      </select>
+
         <input
           type="text"
           placeholder="CPT code"

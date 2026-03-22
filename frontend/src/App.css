@@ -77,6 +77,26 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
+.radius-select {
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 130px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  
+  .radius-select:hover {
+    border-color: #3b82f6;
+  }
+  
+  .radius-select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
 
 /* LOADING */
 .loading-message { 
