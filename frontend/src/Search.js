@@ -117,14 +117,32 @@ export default function Search() {
         procedures: []
       };
     }
-    acc[r.name].procedures.push(r);
+    
+    // Check if we already have this procedure for this hospital
+    const existingProc = acc[r.name].procedures.find(
+      p => p.procedure_name === r.procedure_name && p.cpt_code === r.cpt_code
+    );
+    
+    // If we don't have it, or if this price is lower, use this one
+    if (!existingProc) {
+      acc[r.name].procedures.push(r);
+    } else {
+      const existingPrice = parseFloat(existingProc.discounted_cash);
+      const newPrice = parseFloat(r.discounted_cash);
+      if (newPrice < existingPrice) {
+        // Replace with the lower price
+        const index = acc[r.name].procedures.indexOf(existingProc);
+        acc[r.name].procedures[index] = r;
+      }
+    }
+    
     return acc;
   }, {});
 
   const hospitalCards = Object.values(groupedByHospital).map(hospital => {
     const procedurePrices = hospital.procedures
-      .map(p => parseFloat(p.discounted_cash))
-      .filter(p => !isNaN(p) && p > 0);
+    .map(p => parseFloat(p.discounted_cash))
+    .filter(p => !isNaN(p) && p >= 1); // Changed from p > 0 to p >= 1
     const lowestPrice = procedurePrices.length > 0 ? Math.min(...procedurePrices) : 0;
     
     return {
@@ -224,7 +242,7 @@ export default function Search() {
                     <div className="hospital-price-box">
                       <div className="price-label">Starting at</div>
                       <div className="price-amount" style={{ color: displayColor }}>
-                        ${hospital.lowestPrice.toFixed(0)}
+                      {hospital.lowestPrice < 1 ? 'Not Listed' : `$${hospital.lowestPrice.toFixed(0)}`}
                       </div>
                       <div className="procedure-count">
                         {hospital.procedureCount} option{hospital.procedureCount !== 1 ? 's' : ''}
@@ -247,7 +265,7 @@ export default function Search() {
                     <CircleMarker key={i} center={pin.coords} radius={14} fillColor={color} color="#fff" weight={2} fillOpacity={0.9}>
                       <Popup>
                         <strong>{pin.name}</strong><br />
-                        Starting at: ${pin.price.toFixed(2)}<br />
+                        Starting at: {pin.price < 1 ? 'Not Listed' : `$${pin.price.toFixed(2)}`}<br />
                         {pin.r.distance !== null && pin.r.distance !== undefined && <>{pin.r.distance} miles away</>}
                       </Popup>
                     </CircleMarker>
@@ -313,7 +331,7 @@ export default function Search() {
             <div key={idx} className="procedure-item">
               <div className="procedure-item-name">{proc.procedure_name}</div>
               <div className="procedure-item-price">
-                ${parseFloat(proc.discounted_cash).toFixed(2)}
+              {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
               </div>
             </div>
           ))}
