@@ -316,15 +316,15 @@ export default function Search() {
               </div>
 
               
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  selectedHospital.address + ', ' + selectedHospital.city + ', ' + selectedHospital.state
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="modal-address"
-              >
-                📍 {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
-              </a>
+              href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(
+                selectedHospital.address + ', ' + selectedHospital.city + ', ' + selectedHospital.state
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="modal-address"
+            >
+              📍 {selectedHospital.address}, {selectedHospital.city}, {selectedHospital.state}
+            </a>
 
               {selectedHospital.distance !== null && selectedHospital.distance !== undefined && (
                 <p className="modal-distance">🚗 {selectedHospital.distance} miles from you</p>
