@@ -51,6 +51,7 @@ app.get('/search', async (req, res) => {
         JOIN providers pr ON pc.provider_id = pr.id
         JOIN procedures p ON pc.procedure_id = p.id
         WHERE 1=1
+        AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
       `;
       
       let queryParams = [];
