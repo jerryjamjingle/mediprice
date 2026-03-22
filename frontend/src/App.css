@@ -174,7 +174,7 @@ body {
 .hospital-card {
   background: white;
   border-radius: 16px;
-  padding: 20px 0 20px 20px;
+  padding: 20px 20x 20px 20px;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
@@ -266,9 +266,9 @@ body {
   }
   
   .hospital-arrow {
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: #cbd5e1;
-    font-weight: 300;
+    font-weight: 400;
   }
 
 /* MODAL */
