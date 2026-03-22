@@ -262,6 +262,7 @@ body {
   color: #cbd5e1;
   font-weight: 300;
   margin-left: 8px;
+  padding-right: 12px; /* ADD THIS LINE */
 }
 
 /* MODAL */
