@@ -180,7 +180,7 @@ export default function Search() {
           onChange={e => setZip(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && search()}
           className="zip-input"
-
+        />
         <input
           type="text"
           placeholder="CPT code"
