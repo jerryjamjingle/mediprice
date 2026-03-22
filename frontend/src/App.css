@@ -257,13 +257,17 @@ body {
   font-weight: 500;
 }
 
-.hospital-arrow {
-  font-size: 1.5rem;
-  color: #cbd5e1;
-  font-weight: 300;
-  margin-left: 8px;
-  padding-right: 28px;
-}
+.hospital-arrow-container {
+    padding: 0 24px 0 12px; /* top right bottom left */
+    display: flex;
+    align-items: center;
+  }
+  
+  .hospital-arrow {
+    font-size: 1.5rem;
+    color: #cbd5e1;
+    font-weight: 300;
+  }
 
 /* MODAL */
 .modal-overlay {

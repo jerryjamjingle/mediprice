@@ -261,7 +261,8 @@ export default function Search() {
                       </div>
                     </div>
 
-                    <div className="hospital-arrow">›</div>
+                    <div className="hospital-arrow-container">
+  <div className="hospital-arrow">›</div>
                   </div>
                 );
               })}
