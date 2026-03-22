@@ -89,7 +89,7 @@ app.get('/search', async (req, res) => {
             const providerLng = parseFloat(r.longitude);
             const distance = haversine(userLat, userLng, providerLat, providerLng);
             return { ...r, distance: distance.toFixed(1) };
-          }).filter(r => r.distance <= 100)
+        }).filter(r => r.distance <= (req.query.radius || 100))
             .sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
         }
       }
