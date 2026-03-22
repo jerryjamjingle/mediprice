@@ -258,9 +258,11 @@ body {
 }
 
 .hospital-arrow-container {
-    padding: 0 24px 0 12px; /* top right bottom left */
+    flex-shrink: 0;
+    width: 52px;
     display: flex;
     align-items: center;
+    justify-content: center;
   }
   
   .hospital-arrow {
