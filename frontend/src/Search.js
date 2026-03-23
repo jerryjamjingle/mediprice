@@ -378,60 +378,58 @@ export default function Search() {
       </div>
     )}
 
-{comparisonProcedure.data.similar.map((r, i) => {
-  const similarPrices = comparisonProcedure.data.similar
-    .map(s => parseFloat(s.discounted_cash))
-    .filter(p => p >= 1);
-  const sMin = Math.min(...similarPrices);
-  const sMax = Math.max(...similarPrices);
-  const price = parseFloat(r.discounted_cash);
-  const isNA = price < 1;
-  const barWidth = isNA ? 0 : ((price - sMin) / (sMax - sMin || 1)) * 100;
-  const barColor = isNA ? '#e2e8f0' :
-    barWidth < 33 ? '#22c55e' :
-    barWidth < 66 ? '#eab308' : '#ef4444';
-  return (
-    <div key={i} className="comparison-row">
-      <div className="comparison-rank">#{i + 1}</div>
-      <div className="comparison-hospital-name" style={{ fontSize: '0.8rem' }}>
-        {r.procedure_name}
-        <div style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 400 }}>{r.hospital_name}</div>
+{comparisonProcedure.data.similar.length > 0 && (
+          <>
+            <p className="comparison-section-title" style={{ marginTop: '24px' }}>🔍 Similar Procedures</p>
+            {comparisonProcedure.data.similar.map((r, i) => {
+              const similarPrices = comparisonProcedure.data.similar
+                .map(s => parseFloat(s.discounted_cash))
+                .filter(p => p >= 1);
+              const sMin = Math.min(...similarPrices);
+              const sMax = Math.max(...similarPrices);
+              const price = parseFloat(r.discounted_cash);
+              const isNA = price < 1;
+              const barWidth = isNA ? 0 : ((price - sMin) / (sMax - sMin || 1)) * 100;
+              const barColor = isNA ? '#e2e8f0' :
+                barWidth < 33 ? '#22c55e' :
+                barWidth < 66 ? '#eab308' : '#ef4444';
+              return (
+                <div key={i} className="comparison-row">
+                  <div className="comparison-rank">#{i + 1}</div>
+                  <div className="comparison-hospital-name" style={{ fontSize: '0.8rem' }}>
+                    {r.procedure_name}
+                    <div style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 400 }}>{r.hospital_name}</div>
+                  </div>
+                  <div className="comparison-bar-wrap">
+                    <div className="comparison-bar" style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }} />
+                  </div>
+                  <div className="comparison-price" style={{ color: barColor }}>
+                    {isNA ? 'N/A' : '$' + price.toFixed(0)}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </div>
-      <div className="comparison-bar-wrap">
-        <div className="comparison-bar" style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }} />
-      </div>
-      <div className="comparison-price" style={{ color: barColor }}>
-        {isNA ? 'N/A' : '$' + price.toFixed(0)}
-      </div>
-    </div>
-  );
-})}
+    )}
+  </div>
+}
 
-{comparisonProcedure.data.similar.map((r, i) => {
-  const similarPrices = comparisonProcedure.data.similar
-    .map(s => parseFloat(s.discounted_cash))
-    .filter(p => p >= 1);
-  const sMin = Math.min(...similarPrices);
-  const sMax = Math.max(...similarPrices);
-  const price = parseFloat(r.discounted_cash);
-  const isNA = price < 1;
-  const barWidth = isNA ? 0 : ((price - sMin) / (sMax - sMin || 1)) * 100;
-  const barColor = isNA ? '#e2e8f0' :
-    barWidth < 33 ? '#22c55e' :
-    barWidth < 66 ? '#eab308' : '#ef4444';
-  return (
-    <div key={i} className="comparison-row">
-      <div className="comparison-rank">#{i + 1}</div>
-      <div className="comparison-hospital-name" style={{ fontSize: '0.8rem' }}>
-        {r.procedure_name}
-        <div style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 400 }}>{r.hospital_name}</div>
-      </div>
-      <div className="comparison-bar-wrap">
-        <div className="comparison-bar" style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }} />
-      </div>
-      <div className="comparison-price" style={{ color: barColor }}>
-        {isNA ? 'N/A' : '$' + price.toFixed(0)}
-      </div>
+{/* Call to Action */}
+<div className="modal-footer">
+  <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
+  {selectedHospital.procedures[0]?.phone && (
+    <a 
+      href={`tel:${selectedHospital.procedures[0].phone}`} 
+      className="modal-cta-button"
+    >
+      📞 Call {selectedHospital.hospitalName}
+    </a>
+  )}
+</div>
+  </div>
+)}
     </div>
   );
-})}
+}
