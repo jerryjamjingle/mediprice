@@ -63,6 +63,7 @@ export default function Search() {
     setLoading(true);
     setSearched(true);
     setSelectedHospital(null);
+    setComparisonProcedure(null);
     try {
       let url = 'https://mediprice-backend.onrender.com/search?';
       let params = [];
@@ -298,9 +299,10 @@ export default function Search() {
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => setSelectedHospital(null)}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-      <button className="modal-close" onClick={() => setSelectedHospital(null)}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>×</button>
+
       
       <div className="modal-header">
         <h2>{selectedHospital.hospitalName}</h2>
@@ -357,6 +359,81 @@ export default function Search() {
           ))}
         </div>
       </div>
+      {comparisonProcedure && (
+  <div className="comparison-overlay">
+    <div className="comparison-header">
+      <button className="comparison-back" onClick={() => setComparisonProcedure(null)}>
+        ← Back
+      </button>
+      <h3>{comparisonProcedure.procedure?.procedure_name}</h3>
+      {comparisonProcedure.procedure?.cpt_code && (
+        <span className="comparison-cpt">CPT: {comparisonProcedure.procedure.cpt_code}</span>
+      )}
+    </div>
+
+    {comparisonProcedure.loading && (
+      <div className="comparison-loading">
+        <div className="spinner"></div>
+        <p>Finding prices...</p>
+      </div>
+    )}
+
+    {!comparisonProcedure.loading && comparisonProcedure.data && (
+      <div className="comparison-body">
+        {comparisonProcedure.data.exact.length > 0 && (
+          <>
+            <p className="comparison-section-title">💰 Prices Across Hospitals</p>
+            {(() => {
+              const validPrices = comparisonProcedure.data.exact
+                .map(r => parseFloat(r.discounted_cash))
+                .filter(p => p >= 1);
+              const min = Math.min(...validPrices);
+              const max = Math.max(...validPrices);
+              return comparisonProcedure.data.exact.map((r, i) => {
+                const price = parseFloat(r.discounted_cash);
+                const isNotListed = price < 1;
+                const barWidth = isNotListed ? 0 : ((price - min) / (max - min || 1)) * 100;
+                const barColor = isNotListed ? '#e2e8f0' :
+                  barWidth < 33 ? '#22c55e' :
+                  barWidth < 66 ? '#eab308' : '#ef4444';
+                return (
+                  <div key={i} className="comparison-row">
+                    <div className="comparison-rank">#{i + 1}</div>
+                    <div className="comparison-hospital-name">{r.hospital_name}</div>
+                    <div className="comparison-bar-wrap">
+                      <div
+                        className="comparison-bar"
+                        style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }}
+                      />
+                    </div>
+                    <div className="comparison-price" style={{ color: barColor }}>
+                      {isNotListed ? 'N/A' : '$' + price.toFixed(0)}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </>
+        )}
+
+        {comparisonProcedure.data.similar.length > 0 && (
+          <>
+            <p className="comparison-section-title" style={{ marginTop: '24px' }}>🔍 Similar Procedures</p>
+            {comparisonProcedure.data.similar.map((r, i) => (
+              <div key={i} className="comparison-row similar">
+                <div className="comparison-hospital-name">{r.procedure_name}</div>
+                <div className="comparison-hospital-name" style={{ color: '#64748b', fontSize: '0.8rem' }}>{r.hospital_name}</div>
+                <div className="comparison-price">
+                  {parseFloat(r.discounted_cash) < 1 ? 'N/A' : '$' + parseFloat(r.discounted_cash).toFixed(0)}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    )}
+  </div>
+)}
 
       {/* Call to Action */}
       <div className="modal-footer">
