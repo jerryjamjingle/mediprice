@@ -378,56 +378,76 @@ export default function Search() {
       </div>
     )}
 
-{comparisonProcedure.data.similar.length > 0 && (
+    {!comparisonProcedure.loading && comparisonProcedure.data && (
+      <div className="comparison-body">
+        {comparisonProcedure.data.exact.length > 0 && (
+          <>
+            <p className="comparison-section-title">💰 Prices Across Hospitals</p>
+            {(() => {
+              const validPrices = comparisonProcedure.data.exact
+                .map(r => parseFloat(r.discounted_cash))
+                .filter(p => p >= 1);
+              const min = Math.min(...validPrices);
+              const max = Math.max(...validPrices);
+              return comparisonProcedure.data.exact.map((r, i) => {
+                const price = parseFloat(r.discounted_cash);
+                const isNotListed = price < 1;
+                const barWidth = isNotListed ? 0 : ((price - min) / (max - min || 1)) * 100;
+                const barColor = isNotListed ? '#e2e8f0' :
+                  barWidth < 33 ? '#22c55e' :
+                  barWidth < 66 ? '#eab308' : '#ef4444';
+                return (
+                  <div key={i} className="comparison-row">
+                    <div className="comparison-rank">#{i + 1}</div>
+                    <div className="comparison-hospital-name">{r.hospital_name}</div>
+                    <div className="comparison-bar-wrap">
+                      <div
+                        className="comparison-bar"
+                        style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }}
+                      />
+                    </div>
+                    <div className="comparison-price" style={{ color: barColor }}>
+                      {isNotListed ? 'N/A' : '$' + price.toFixed(0)}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </>
+        )}
+
+        {comparisonProcedure.data.similar.length > 0 && (
           <>
             <p className="comparison-section-title" style={{ marginTop: '24px' }}>🔍 Similar Procedures</p>
-            {comparisonProcedure.data.similar.map((r, i) => {
-              const similarPrices = comparisonProcedure.data.similar
-                .map(s => parseFloat(s.discounted_cash))
-                .filter(p => p >= 1);
-              const sMin = Math.min(...similarPrices);
-              const sMax = Math.max(...similarPrices);
-              const price = parseFloat(r.discounted_cash);
-              const isNA = price < 1;
-              const barWidth = isNA ? 0 : ((price - sMin) / (sMax - sMin || 1)) * 100;
-              const barColor = isNA ? '#e2e8f0' :
-                barWidth < 33 ? '#22c55e' :
-                barWidth < 66 ? '#eab308' : '#ef4444';
-              return (
-                <div key={i} className="comparison-row">
-                  <div className="comparison-rank">#{i + 1}</div>
-                  <div className="comparison-hospital-name" style={{ fontSize: '0.8rem' }}>
-                    {r.procedure_name}
-                    <div style={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 400 }}>{r.hospital_name}</div>
-                  </div>
-                  <div className="comparison-bar-wrap">
-                    <div className="comparison-bar" style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }} />
-                  </div>
-                  <div className="comparison-price" style={{ color: barColor }}>
-                    {isNA ? 'N/A' : '$' + price.toFixed(0)}
-                  </div>
+            {comparisonProcedure.data.similar.map((r, i) => (
+              <div key={i} className="comparison-row similar">
+                <div className="comparison-hospital-name">{r.procedure_name}</div>
+                <div className="comparison-hospital-name" style={{ color: '#64748b', fontSize: '0.8rem' }}>{r.hospital_name}</div>
+                <div className="comparison-price">
+                  {parseFloat(r.discounted_cash) < 1 ? 'N/A' : '$' + parseFloat(r.discounted_cash).toFixed(0)}
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </>
         )}
       </div>
     )}
   </div>
-}
+)}
 
-{/* Call to Action */}
-<div className="modal-footer">
-  <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
-  {selectedHospital.procedures[0]?.phone && (
-    <a 
-      href={`tel:${selectedHospital.procedures[0].phone}`} 
-      className="modal-cta-button"
-    >
-      📞 Call {selectedHospital.hospitalName}
-    </a>
-  )}
-</div>
+      {/* Call to Action */}
+      <div className="modal-footer">
+        <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
+        {selectedHospital.procedures[0]?.phone && (
+          <a 
+            href={`tel:${selectedHospital.procedures[0].phone}`} 
+            className="modal-cta-button"
+          >
+            📞 Call {selectedHospital.hospitalName}
+          </a>
+        )}
+      </div>
+    </div>
   </div>
 )}
     </div>
