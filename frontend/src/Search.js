@@ -46,6 +46,7 @@ export default function Search() {
   const [searched, setSearched] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [comparisonProcedure, setComparisonProcedure] = useState(null);
+  const [radius, setRadius] = useState('50');
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -71,6 +72,7 @@ export default function Search() {
       if (query.trim()) params.push('procedure=' + encodeURIComponent(query));
       if (zip.trim()) params.push('zip=' + encodeURIComponent(zip.trim()));
       if (cptCode.trim()) params.push('cpt=' + encodeURIComponent(cptCode.trim()));
+      if (zip.trim() && radius) params.push('radius=' + encodeURIComponent(radius));
       
       url += params.join('&');
       
@@ -207,6 +209,19 @@ export default function Search() {
           onKeyDown={e => e.key === 'Enter' && search()}
           className="cpt-input"
         />
+        {zip.trim() && (
+  <select
+    value={radius}
+    onChange={e => setRadius(e.target.value)}
+    className="radius-select"
+  >
+    <option value="5">5 mi</option>
+    <option value="10">10 mi</option>
+    <option value="25">25 mi</option>
+    <option value="50">50 mi</option>
+    <option value="100">100 mi</option>
+  </select>
+)}
         <button onClick={search}>Search</button>
       </div>
 
