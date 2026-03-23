@@ -101,6 +101,84 @@ app.get('/search', async (req, res) => {
     }
   });
 
+  app.get('/compare-procedure', async (req, res) => {
+    const { name, cpt } = req.query;
+  
+    if (!name && !cpt) {
+      return res.status(400).json({ error: 'Procedure name or CPT code required' });
+    }
+  
+    try {
+      // EXACT matches - this procedure across all hospitals
+      let exactQuery = `
+        SELECT pr.name as hospital_name, pr.address, pr.city, pr.state,
+               pr.latitude, pr.longitude,
+               p.procedure_name, p.cpt_code,
+               MIN(pc.discounted_cash) as discounted_cash
+        FROM prices pc
+        JOIN providers pr ON pc.provider_id = pr.id
+        JOIN procedures p ON pc.procedure_id = p.id
+        WHERE (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
+      `;
+  
+      let exactParams = [];
+  
+      if (name) {
+        exactParams.push(name);
+        exactQuery += ` AND p.procedure_name = $${exactParams.length}`;
+      }
+      if (cpt && cpt.trim()) {
+        exactParams.push(cpt.trim());
+        exactQuery += ` AND p.cpt_code = $${exactParams.length}`;
+      }
+  
+      exactQuery += ` GROUP BY pr.name, pr.address, pr.city, pr.state, pr.latitude, pr.longitude, p.procedure_name, p.cpt_code
+                     ORDER BY discounted_cash ASC`;
+  
+      const exactResult = await pool.query(exactQuery, exactParams);
+  
+      // SIMILAR matches - fuzzy name match, excludes exact matches
+      const words = name ? name.split(' ').filter(w => w.length > 3) : [];
+      let similarRows = [];
+  
+      if (words.length > 0) {
+        let similarQuery = `
+          SELECT pr.name as hospital_name, pr.address, pr.city, pr.state,
+                 p.procedure_name, p.cpt_code,
+                 MIN(pc.discounted_cash) as discounted_cash
+          FROM prices pc
+          JOIN providers pr ON pc.provider_id = pr.id
+          JOIN procedures p ON pc.procedure_id = p.id
+          WHERE (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
+          AND p.procedure_name != $1
+        `;
+  
+        let similarParams = [name];
+  
+        words.forEach((word, i) => {
+          similarParams.push(`%${word}%`);
+          similarQuery += ` AND LOWER(p.procedure_name) LIKE LOWER($${similarParams.length})`;
+        });
+  
+        similarQuery += ` GROUP BY pr.name, pr.address, pr.city, pr.state, p.procedure_name, p.cpt_code
+                          ORDER BY discounted_cash ASC
+                          LIMIT 30`;
+  
+        const similarResult = await pool.query(similarQuery, similarParams);
+        similarRows = similarResult.rows;
+      }
+  
+      res.json({
+        exact: exactResult.rows,
+        similar: similarRows
+      });
+  
+    } catch (err) {
+      console.error('Compare procedure error:', err);
+      res.status(500).json({ error: 'Database error' });
+    }
+  });
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, function() {
   console.log('Server running on port ' + PORT);
