@@ -274,6 +274,7 @@ body {
 }
 
 .modal-content {
+    position: relative;
   background: white;
   border-radius: 20px;
   width: 90%;
@@ -500,7 +501,7 @@ body {
     box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
   }
   /* PROCEDURE COMPARISON */
-.comparison-overlay {
+  .comparison-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -512,6 +513,7 @@ body {
     flex-direction: column;
     animation: slideInLeft 0.25s ease;
     overflow: hidden;
+    z-index: 1;
   }
   
   @keyframes slideInLeft {
