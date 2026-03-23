@@ -108,7 +108,7 @@ export default function Home() {
       {/* HERO SEARCH */}
       <section className="hero">
         <h2 className="hero-title">What medical procedure do you need?</h2>
-        <p className="hero-subtitle">Compare cash prices across 6 St. Louis hospitals instantly</p>
+        <p className="hero-subtitle">Compare cash prices across 13 St. Louis hospitals instantly</p>
         
         <div className="hero-search">
           <input
@@ -167,11 +167,11 @@ export default function Home() {
       {/* STATS BAR */}
       <section className="stats-bar">
         <div className="stat">
-          <strong>50,000+</strong> Procedures
+        <strong>100,000+</strong> Procedures
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
-          <strong>6</strong> Hospitals
+        <strong>13</strong> Hospitals
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
