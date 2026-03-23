@@ -45,6 +45,7 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState(null);
+  const [comparisonProcedure, setComparisonProcedure] = useState(null);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -79,6 +80,22 @@ export default function Search() {
       setResults([]);
     }
     setLoading(false);
+  };
+
+  const compareProcedure = async (proc) => {
+    setComparisonProcedure({ loading: true, procedure: proc, data: null });
+    try {
+      let url = 'https://mediprice-backend.onrender.com/compare-procedure?';
+      let params = [];
+      if (proc.procedure_name) params.push('name=' + encodeURIComponent(proc.procedure_name));
+      if (proc.cpt_code) params.push('cpt=' + encodeURIComponent(proc.cpt_code));
+      url += params.join('&');
+      const res = await fetch(url);
+      const data = await res.json();
+      setComparisonProcedure({ loading: false, procedure: proc, data });
+    } catch (err) {
+      setComparisonProcedure({ loading: false, procedure: proc, data: { exact: [], similar: [] } });
+    }
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p > 0);
@@ -331,7 +348,7 @@ export default function Search() {
         <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
         <div className="procedure-list">
           {selectedHospital.procedures.map((proc, idx) => (
-            <div key={idx} className="procedure-item">
+            <div key={idx} className="procedure-item" onClick={(e) => { e.stopPropagation(); compareProcedure(proc); }}>
               <div className="procedure-item-name">{proc.procedure_name}</div>
               <div className="procedure-item-price">
               {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
