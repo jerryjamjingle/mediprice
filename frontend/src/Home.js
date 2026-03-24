@@ -5,13 +5,20 @@ import 'leaflet/dist/leaflet.css';
 import './Home.css';
 
 const HOSPITALS = [
-  { name: 'Saint Anthonys Hospital', coords: [38.9076, -90.1721] },
-  { name: 'Alton Memorial Hospital', coords: [38.8897, -90.1843] },
-  { name: 'SSM Health Saint Louis University Hospital', coords: [38.6184, -90.2620] },
-  { name: 'SSM Health St. Clare Hospital', coords: [38.5137, -90.4363] },
-  { name: "SSM Health St. Mary's Hospital", coords: [38.6351, -90.3182] },
-  { name: 'SSM Health St. Joseph Hospital', coords: [38.7937, -90.7857] }
-];
+    { name: 'Alton Memorial Hospital', coords: [38.899890, -90.160060] },
+    { name: 'Anderson Hospital', coords: [38.738000, -89.947800] },
+    { name: 'Gateway Regional Medical Center', coords: [38.700700, -90.144500] },
+    { name: "HSHS St. Anthony's Memorial Hospital", coords: [39.126527, -88.552469] },
+    { name: "HSHS St. Elizabeth's Hospital", coords: [38.583791, -89.932180] },
+    { name: 'HSHS St. Francis Hospital', coords: [39.179797, -89.640194] },
+    { name: "HSHS St. Joseph's Hospital Breese", coords: [38.626295, -89.526533] },
+    { name: "HSHS St. Joseph's Hospital Highland", coords: [38.754634, -89.670160] },
+    { name: 'SSM Health Saint Louis University Hospital', coords: [38.624243, -90.239151] },
+    { name: 'SSM Health St. Clare Hospital', coords: [38.528012, -90.475846] },
+    { name: 'SSM Health St. Joseph Hospital', coords: [38.803112, -90.775874] },
+    { name: "SSM Health St. Mary's Hospital", coords: [38.633082, -90.311083] },
+    { name: 'Saint Anthonys Hospital', coords: [38.907626, -90.172100] }
+  ];
 
 const POPULAR_SEARCHES = [
   { label: '🧠 MRI', query: 'MRI' },
