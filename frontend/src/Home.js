@@ -250,7 +250,6 @@ export default function Home() {
       {/* HOW IT WORKS */}
       <section className="how-it-works">
         <div className="how-it-works-panel">
-          <h3 className="panel-title">How It Works</h3>
           <div className="steps">
             <div className="step">
               <div className="step-number">1</div>
