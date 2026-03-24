@@ -48,7 +48,7 @@ export default function FAQ() {
   return (
     <div className="faq-page">
       <header className="faq-header">
-        <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>MediPrice</h1>
+        <h1 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>MedExpense</h1>
         <nav className="faq-nav">
           <button className="nav-link" onClick={() => navigate('/')}>Search</button>
           <button className="nav-link" onClick={() => navigate('/community')}>Community</button>
@@ -60,7 +60,7 @@ export default function FAQ() {
       <div className="faq-content">
         <div className="faq-hero">
           <h2>Frequently Asked Questions</h2>
-          <p>Everything you need to know about MediPrice</p>
+          <p>Everything you need to know about MedExpense</p>
         </div>
 
         <div className="faq-list">
