@@ -467,8 +467,8 @@ body {
     margin-top: 8px;
   }
   
-  /* MODAL FOOTER - CTA */
-  .modal-footer {
+ /* MODAL FOOTER - CTA */
+ .modal-footer {
     padding: 24px 32px;
     background: #f8fafc;
     border-top: 2px solid #e2e8f0;
@@ -493,6 +493,12 @@ body {
     font-weight: 600;
     transition: all 0.2s;
     box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+  }
+  
+  .modal-cta-button:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
   }
   
   .modal-cta-button:hover {
