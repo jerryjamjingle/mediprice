@@ -469,18 +469,7 @@ export default function Search() {
   </div>
 )}
 
-      {/* Call to Action */}
-      <div className="modal-footer">
-        <p className="modal-cta-text">💡 Call the hospital and mention the CPT code to confirm the cash price</p>
-        {selectedHospital.procedures[0]?.phone && (
-          <a 
-            href={`tel:${selectedHospital.procedures[0].phone}`} 
-            className="modal-cta-button"
-          >
-            📞 Call {selectedHospital.hospitalName}
-          </a>
-        )}
-      </div>
+
     </div>
   </div>
 )}
