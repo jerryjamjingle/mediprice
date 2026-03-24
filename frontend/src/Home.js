@@ -268,6 +268,27 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <div className="education-block">
+  <p className="education-highlight">
+    Healthcare pricing isn’t standardized — costs can vary widely between providers.
+  </p>
+
+  <p>
+    Prices for the exact same procedure can change significantly depending on where you go.
+  </p>
+
+  <p>
+    In many cases, paying cash can actually be less expensive than using insurance.
+  </p>
+
+  <p>
+    A quick search could save you hundreds, or even thousands.
+  </p>
+
+  <p className="education-cta">
+    Compare real prices before choosing — it only takes a few seconds.
+  </p>
+</div>
     </div>
   );
 }
