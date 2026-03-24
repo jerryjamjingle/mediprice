@@ -244,7 +244,7 @@ export default function Home() {
           </div>
           
           <p className="panel-footer">1.8x price difference</p>
-          </div>
+        </div>
       </section>
 
       {/* HOW IT WORKS */}
@@ -253,21 +253,18 @@ export default function Home() {
           <h3 className="panel-title">How It Works</h3>
           <div className="steps">
             <div className="step">
-              <div className="step-icon">🔍</div>
               <div className="step-number">1</div>
               <h4 className="step-title">Search</h4>
               <p className="step-desc">Enter any procedure name or CPT code. We'll instantly search real cash prices across all 14 St. Louis area hospitals.</p>
             </div>
             <div className="step-arrow">→</div>
             <div className="step">
-              <div className="step-icon">📊</div>
               <div className="step-number">2</div>
               <h4 className="step-title">Compare</h4>
               <p className="step-desc">See prices ranked cheapest to most expensive, color-coded on a live map. Click any hospital for full procedure details.</p>
             </div>
             <div className="step-arrow">→</div>
             <div className="step">
-              <div className="step-icon">💰</div>
               <div className="step-number">3</div>
               <h4 className="step-title">Save</h4>
               <p className="step-desc">Call your chosen hospital and mention the CPT code to lock in the cash price. Patients save hundreds — sometimes thousands.</p>
