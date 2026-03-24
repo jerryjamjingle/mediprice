@@ -17,7 +17,8 @@ const HOSPITALS = [
     { name: 'SSM Health St. Clare Hospital', coords: [38.528012, -90.475846] },
     { name: 'SSM Health St. Joseph Hospital', coords: [38.803112, -90.775874] },
     { name: "SSM Health St. Mary's Hospital", coords: [38.633082, -90.311083] },
-    { name: 'Saint Anthonys Hospital', coords: [38.907626, -90.172100] }
+    { name: 'Saint Anthonys Hospital', coords: [38.907626, -90.172100] },
+    { name: 'Barnes Jewish Hospital', coords: [38.6348, -90.2630] }
   ];
 
 const POPULAR_SEARCHES = [
@@ -115,7 +116,7 @@ export default function Home() {
       {/* HERO SEARCH */}
       <section className="hero">
         <h2 className="hero-title">What medical procedure do you need?</h2>
-        <p className="hero-subtitle">Compare cash prices across 13 St. Louis hospitals instantly</p>
+        <p className="hero-subtitle">Compare cash prices across 14 St. Louis hospitals instantly</p>
         
         <div className="hero-search">
           <input
@@ -178,7 +179,7 @@ export default function Home() {
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
-        <strong>13</strong> Hospitals
+        <strong>14</strong> Hospitals
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
