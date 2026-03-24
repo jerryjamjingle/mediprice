@@ -62,9 +62,11 @@ app.get('/search', async (req, res) => {
       // Add procedure name filter if provided
       // Remove spaces and hyphens for flexible matching
       if (procedure && procedure.trim()) {
-        const cleanedProcedure = procedure.trim().replace(/[\s-]/g, '');
-        queryParams.push(`%${cleanedProcedure}%`);
-        queryText += ` AND REPLACE(REPLACE(LOWER(p.procedure_name), ' ', ''), '-', '') LIKE LOWER($${queryParams.length})`;
+        const words = procedure.trim().split(/[\s-]+/).filter(w => w.length > 0);
+        words.forEach(word => {
+          queryParams.push(`%${word.toLowerCase()}%`);
+          queryText += ` AND LOWER(p.procedure_name) LIKE $${queryParams.length}`;
+        });
       }
       
       // Add CPT code filter if provided
