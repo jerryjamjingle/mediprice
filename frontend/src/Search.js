@@ -66,7 +66,7 @@ export default function Search() {
     setSelectedHospital(null);
     setComparisonProcedure(null);
     try {
-      let url = 'https://MedExpense-backend.onrender.com/search?';
+      let url = 'https://mediprice-backend.onrender.com/search?';
       let params = [];
       
       if (query.trim()) params.push('procedure=' + encodeURIComponent(query));
@@ -88,7 +88,7 @@ export default function Search() {
   const compareProcedure = async (proc) => {
     setComparisonProcedure({ loading: true, procedure: proc, data: null });
     try {
-      let url = 'https://MedExpense-backend.onrender.com/compare-procedure?';
+      let url = 'https://mediprice-backend.onrender.com/compare-procedure?';
       let params = [];
       if (proc.procedure_name) params.push('name=' + encodeURIComponent(proc.procedure_name));
       if (proc.cpt_code) params.push('cpt=' + encodeURIComponent(proc.cpt_code));

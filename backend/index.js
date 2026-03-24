@@ -30,7 +30,7 @@ function haversine(lat1, lon1, lat2, lon2) {
 }
 
 app.get('/', (req, res) => {
-  res.json({ message: 'MediPrice API is running!' });
+  res.json({ message: 'MedExpense API is running!' });
 });
 // Keep-alive endpoint
 app.get('/ping', (req, res) => {
