@@ -81,7 +81,7 @@ export default function Home() {
     <div className="home">
       {/* HEADER */}
       <header className="home-header">
-        <h1>MedExpense</h1>
+        <h1>MediPrice</h1>
         <p className="tagline">Compare Real Hospital Prices Near You</p>
         
         <nav className="home-nav">
