@@ -5,20 +5,31 @@ import 'leaflet/dist/leaflet.css';
 import './Home.css';
 
 const HOSPITALS = [
+    { name: 'Saint Anthonys Hospital', coords: [38.907626, -90.172100] },
     { name: 'Alton Memorial Hospital', coords: [38.899890, -90.160060] },
-    { name: 'Anderson Hospital', coords: [38.738000, -89.947800] },
-    { name: 'Gateway Regional Medical Center', coords: [38.700700, -90.144500] },
-    { name: "HSHS St. Anthony's Memorial Hospital", coords: [39.126527, -88.552469] },
-    { name: "HSHS St. Elizabeth's Hospital", coords: [38.583791, -89.932180] },
-    { name: 'HSHS St. Francis Hospital', coords: [39.179797, -89.640194] },
-    { name: "HSHS St. Joseph's Hospital Breese", coords: [38.626295, -89.526533] },
-    { name: "HSHS St. Joseph's Hospital Highland", coords: [38.754634, -89.670160] },
     { name: 'SSM Health Saint Louis University Hospital', coords: [38.624243, -90.239151] },
     { name: 'SSM Health St. Clare Hospital', coords: [38.528012, -90.475846] },
-    { name: 'SSM Health St. Joseph Hospital', coords: [38.803112, -90.775874] },
     { name: "SSM Health St. Mary's Hospital", coords: [38.633082, -90.311083] },
-    { name: 'Saint Anthonys Hospital', coords: [38.907626, -90.172100] },
-    { name: 'Barnes Jewish Hospital', coords: [38.6348, -90.2630] }
+    { name: 'SSM Health St. Joseph Hospital', coords: [38.803112, -90.775874] },
+    { name: 'Gateway Regional Medical Center', coords: [38.700700, -90.144500] },
+    { name: "HSHS St. Elizabeth's Hospital", coords: [38.583791, -89.932180] },
+    { name: "HSHS St. Joseph's Hospital Highland", coords: [38.754634, -89.670160] },
+    { name: "HSHS St. Joseph's Hospital Breese", coords: [38.626295, -89.526533] },
+    { name: 'HSHS St. Francis Hospital', coords: [39.179797, -89.640194] },
+    { name: 'Anderson Hospital', coords: [38.738000, -89.947800] },
+    { name: "HSHS St. Anthony's Memorial Hospital", coords: [39.126527, -88.552469] },
+    { name: 'Barnes Jewish Hospital', coords: [38.6348, -90.2630] },
+    { name: 'Christian Hospital', coords: [38.7719, -90.2359] },
+    { name: 'Missouri Baptist Medical Center', coords: [38.6351, -90.4405] },
+    { name: 'Missouri Baptist Sullivan Hospital', coords: [38.2087, -91.1565] },
+    { name: 'Parkland Health Center', coords: [37.7820, -90.4237] },
+    { name: 'Progress West Hospital', coords: [38.7631, -90.6800] },
+    { name: "St. Louis Children's Hospital", coords: [38.6362, -90.2626] },
+    { name: 'Barnes-Jewish West County Hospital', coords: [38.6601, -90.4475] },
+    { name: 'Barnes-Jewish St. Peters Hospital', coords: [38.7888, -90.6288] },
+    { name: 'SSM Health DePaul Hospital', coords: [38.7364, -90.4197] },
+    { name: 'SSM Health St. Joseph Hospital St. Charles', coords: [38.7836, -90.4990] },
+    { name: 'SSM Health St. Joseph Hospital Wentzville', coords: [38.8043, -90.8631] },
   ];
 
 const POPULAR_SEARCHES = [
@@ -116,7 +127,7 @@ export default function Home() {
       {/* HERO SEARCH */}
       <section className="hero">
         <h2 className="hero-title">What medical procedure do you need?</h2>
-        <p className="hero-subtitle">Compare cash prices across 14 St. Louis hospitals instantly</p>
+        <p className="hero-subtitle">Compare cash prices across 25 St. Louis hospitals instantly</p>
         
         <div className="hero-search">
           <input
@@ -179,7 +190,7 @@ export default function Home() {
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
-        <strong>14</strong> Hospitals
+        <strong>25</strong> Hospitals
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
