@@ -186,7 +186,7 @@ export default function Home() {
       {/* STATS BAR */}
       <section className="stats-bar">
         <div className="stat">
-        <strong>100,000+</strong> Procedures
+        <strong>200,000+</strong> Procedures
         </div>
         <div className="stat-divider">|</div>
         <div className="stat">
