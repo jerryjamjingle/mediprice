@@ -406,3 +406,9 @@
     margin-top: 12px;
     flex-shrink: 0;
   }
+  
+  .home {
+    min-height: 100vh;
+    background: #f8fafc;
+    padding-bottom: 60px;
+  }
