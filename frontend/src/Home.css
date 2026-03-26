@@ -416,12 +416,12 @@
   
   .footer-top {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     max-width: 860px;
     margin: 0 auto 16px auto;
     flex-wrap: wrap;
-    gap: 32;
+    gap: 16px;
   }
   
   .footer-brand {
