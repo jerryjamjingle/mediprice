@@ -389,3 +389,27 @@
     margin-top: 12px;
     flex-shrink: 0;
   }
+  .edu-block {
+    max-width: 860px;
+    margin: 0 auto 2.5rem auto;
+    padding: 2rem 2.5rem;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  
+  .edu-block-heading {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e3a5f;
+    margin: 0 0 0.85rem 0;
+    line-height: 1.5;
+  }
+  
+  .edu-block-body {
+    font-size: 0.97rem;
+    color: #4b5563;
+    line-height: 1.75;
+    margin: 0;
+  }

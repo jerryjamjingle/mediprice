@@ -258,6 +258,17 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Educational Block */}
+<div className="edu-block">
+  <p className="edu-block-heading">Healthcare pricing isn't standardized — costs can vary widely between providers.</p>
+  <p className="edu-block-body">
+    Prices for the exact same procedure can change significantly depending on where you go. 
+    In many cases, paying cash can actually be less expensive than using insurance. 
+    A quick search could save you hundreds, or even thousands. 
+    Compare real prices before choosing — it only takes a few seconds.
+  </p>
+</div>
+
       {/* HOW IT WORKS */}
       <section className="how-it-works">
         <div className="how-it-works-panel">
