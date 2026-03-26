@@ -258,38 +258,37 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Educational Block */}
-<div className="edu-block">
-  <p className="edu-block-heading">Healthcare pricing isn't standardized — costs can vary widely between providers.</p>
-  <p className="edu-block-body">
-    Prices for the exact same procedure can change significantly depending on where you go. 
-    In many cases, paying cash can actually be less expensive than using insurance. 
-    A quick search could save you hundreds, or even thousands. 
-    Compare real prices before choosing — it only takes a few seconds.
-  </p>
-</div>
+     {/* COMBINED EDU + HOW IT WORKS */}
+<section className="edu-how-section">
+  <div className="edu-how-panel">
+    <p className="edu-block-heading">Healthcare pricing isn't standardized — costs can vary widely between providers.</p>
+    <p className="edu-block-body">
+      Prices for the exact same procedure can change significantly depending on where you go. 
+      In many cases, paying cash can actually be less expensive than using insurance. 
+      A quick search could save you hundreds, or even thousands. 
+      Compare real prices before choosing — it only takes a few seconds.
+    </p>
 
-      {/* HOW IT WORKS */}
-      <section className="how-it-works">
-        <div className="how-it-works-panel">
-          <div className="steps">
-            <div className="step">
-              <div className="step-number">1</div>
-              <h4 className="step-title">Search</h4>
-            </div>
-            <div className="step-arrow">→</div>
-            <div className="step">
-              <div className="step-number">2</div>
-              <h4 className="step-title">Compare</h4>
-            </div>
-            <div className="step-arrow">→</div>
-            <div className="step">
-              <div className="step-number">3</div>
-              <h4 className="step-title">Save</h4>
-            </div>
-          </div>
-        </div>
-      </section>
+    <div className="edu-divider" />
+
+    <div className="steps">
+      <div className="step">
+        <div className="step-number">1</div>
+        <h4 className="step-title">Search</h4>
+      </div>
+      <div className="step-arrow">→</div>
+      <div className="step">
+        <div className="step-number">2</div>
+        <h4 className="step-title">Compare</h4>
+      </div>
+      <div className="step-arrow">→</div>
+      <div className="step">
+        <div className="step-number">3</div>
+        <h4 className="step-title">Save</h4>
+      </div>
+    </div>
+  </div>
+</section>
     </div>
   );
 }
