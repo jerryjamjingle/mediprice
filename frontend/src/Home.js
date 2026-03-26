@@ -287,26 +287,28 @@ export default function Home() {
         <h4 className="step-title">Save</h4>
       </div>
     </div>
-    {/* FOOTER */}
-<footer className="home-footer">
-  <div className="footer-top">
-    <div className="footer-brand">
-      <span className="footer-logo">MedExpense</span>
-      <span className="footer-copy">© 2026</span>
-    </div>
-    <div className="footer-links">
-      <button className="footer-link" onClick={() => handleSearch()}>Search</button>
-      <button className="footer-link" onClick={() => navigate('/about')}>About</button>
-      <button className="footer-link" onClick={() => navigate('/faq')}>FAQ</button>
-      <button className="footer-link" onClick={() => navigate('/community')}>Community</button>
-    </div>
-  </div>
-  <div className="footer-disclaimer">
-    Data sourced from federally mandated hospital price transparency files. Prices are for informational purposes only.
-  </div>
-</footer>
   </div>
 </section>
+
+{/* FOOTER */}
+<footer className="home-footer">
+    <div className="footer-top">
+      <div className="footer-brand">
+        <span className="footer-logo">MedExpense</span>
+        <span className="footer-copy">© 2026</span>
+      </div>
+      <div className="footer-links">
+        <button className="footer-link" onClick={() => handleSearch()}>Search</button>
+        <button className="footer-link" onClick={() => navigate('/about')}>About</button>
+        <button className="footer-link" onClick={() => navigate('/faq')}>FAQ</button>
+        <button className="footer-link" onClick={() => navigate('/community')}>Community</button>
+      </div>
     </div>
+    <div className="footer-disclaimer">
+      Data sourced from federally mandated hospital price transparency files. Prices are for informational purposes only.
+    </div>
+  </footer>
+
+</div>
   );
 }
