@@ -140,7 +140,7 @@ export default function Explore() {
   const [expandedProcedure, setExpandedProcedure] = useState(null);
 
   // On load, open overlay if category is in URL
-  uuseEffect(() => {
+  useEffect(() => {
     const cat = searchParams.get('category');
     if (cat) {
       const found = CATEGORIES.find(c => c.id === cat);
