@@ -331,10 +331,10 @@ export default function Search() {
   )}
   {selectedHospital.procedures[0]?.website && (
     <a href={selectedHospital.procedures[0].website} target="_blank" rel="noopener noreferrer" className="contact-link">
-      🌐 Visit Website
+      🌐 Website
     </a>
   )}
-  <a href={`https://www.healthgrades.com/search#what=${encodeURIComponent(selectedHospital.hospitalName)}`} target="_blank" rel="noopener noreferrer" className="contact-link">⭐ Healthgrades Reviews</a>
+  <a href={`https://www.healthgrades.com/search#what=${encodeURIComponent(selectedHospital.hospitalName)}`} target="_blank" rel="noopener noreferrer" className="contact-link">⭐ Healthgrades</a>
   <a href={`https://www.google.com/search?q=${encodeURIComponent(selectedHospital.hospitalName + ' ' + selectedHospital.city + ' reviews')}`} target="_blank" rel="noopener noreferrer" className="contact-link">🔍 Google Reviews</a>
 </div>
 
