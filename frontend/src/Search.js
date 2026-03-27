@@ -47,6 +47,9 @@ export default function Search() {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [comparisonProcedure, setComparisonProcedure] = useState(null);
   const [radius, setRadius] = useState('50');
+  const [showCalculator, setShowCalculator] = useState(false);
+const [deductibleTotal, setDeductibleTotal] = useState('');
+const [deductibleMet, setDeductibleMet] = useState('');
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -373,9 +376,9 @@ export default function Search() {
       {comparisonProcedure && (
   <div className="comparison-overlay">
     <div className="comparison-header">
-      <button className="comparison-back" onClick={() => setComparisonProcedure(null)}>
-        ← Back
-      </button>
+    <button className="comparison-back" onClick={() => { setComparisonProcedure(null); setShowCalculator(false); setDeductibleTotal(''); setDeductibleMet(''); }}>
+  ← Back
+</button>
       <h3>{comparisonProcedure.procedure?.procedure_name}</h3>
       {comparisonProcedure.procedure?.cpt_code && (
         <span className="comparison-cpt">CPT: {comparisonProcedure.procedure.cpt_code}</span>
@@ -420,6 +423,87 @@ export default function Search() {
                     <div className="comparison-price" style={{ color: barColor }}>
                       {isNotListed ? 'N/A' : '$' + price.toFixed(0)}
                     </div>
+                    {/* COST ESTIMATOR */}
+<div className="estimator-section">
+  <button
+    className="estimator-toggle-btn"
+    onClick={() => setShowCalculator(!showCalculator)}
+  >
+    📊 Run Cost Estimate
+  </button>
+
+  {showCalculator && (
+    <div className="estimator-body">
+      <p className="estimator-intro">
+        Enter your insurance deductible info to see whether paying cash could save you money.
+      </p>
+
+      <div className="estimator-inputs">
+        <div className="estimator-input-group">
+          <label>My total deductible is</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">$</span>
+            <input
+              type="number"
+              placeholder="e.g. 3000"
+              value={deductibleTotal}
+              onChange={e => setDeductibleTotal(e.target.value)}
+              className="estimator-input"
+            />
+          </div>
+        </div>
+
+        <div className="estimator-input-group">
+          <label>I've already paid</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">$</span>
+            <input
+              type="number"
+              placeholder="e.g. 500"
+              value={deductibleMet}
+              onChange={e => setDeductibleMet(e.target.value)}
+              className="estimator-input"
+            />
+          </div>
+        </div>
+      </div>
+
+      {deductibleTotal && deductibleMet && comparisonProcedure?.data?.exact?.length > 0 && (() => {
+        const cashPrice = parseFloat(comparisonProcedure.data.exact[0]?.discounted_cash);
+        const total = parseFloat(deductibleTotal);
+        const met = parseFloat(deductibleMet);
+        const remaining = Math.max(total - met, 0);
+        const insurancePrice = Math.min(cashPrice, remaining);
+        const cashIsCheaper = cashPrice < insurancePrice;
+        const savings = Math.abs(insurancePrice - cashPrice);
+
+        return (
+          <div className="estimator-result">
+            <div className="estimator-result-row">
+              <span className="estimator-result-label">💵 Cash price</span>
+              <span className="estimator-result-value">${cashPrice.toFixed(0)}</span>
+            </div>
+            <div className="estimator-result-row">
+              <span className="estimator-result-label">🏥 Through insurance (before deductible met)</span>
+              <span className="estimator-result-value">${insurancePrice.toFixed(0)}</span>
+            </div>
+            <div className={`estimator-verdict ${cashIsCheaper ? 'verdict-cash' : 'verdict-insurance'}`}>
+              {cashIsCheaper
+                ? `💰 Cash is cheaper — you'd save $${savings.toFixed(0)} by paying cash`
+                : remaining === 0
+                  ? `✅ Your deductible is fully met — use your insurance!`
+                  : `📋 Insurance and cash are about the same in your case`
+              }
+            </div>
+            <p className="estimator-disclaimer">
+              This is an estimate only. Actual costs may vary based on your specific plan, copays, and coinsurance.
+            </p>
+          </div>
+        );
+      })()}
+    </div>
+  )}
+</div>
                   </div>
                 );
               });
