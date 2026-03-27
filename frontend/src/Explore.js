@@ -131,6 +131,69 @@ const CATEGORIES = [
       { name: 'Group Therapy', query: 'Group Therapy', range: '$40 – $280', hospitals: 10 },
     ]
   },
+  {
+    id: 'orthopedics',
+    icon: '🦴',
+    title: 'Orthopedics',
+    description: 'Bone, joint, and muscle procedures for injuries and chronic conditions.',
+    hospitals: 22,
+    examples: 'Joint Replacement, Fracture Care, Arthroscopy',
+    procedures: [
+      { name: 'Hip Replacement', query: 'Hip Replacement', range: '$18,000 – $52,000', hospitals: 18 },
+      { name: 'Knee Replacement', query: 'Knee Replacement', range: '$20,000 – $58,000', hospitals: 18 },
+      { name: 'Shoulder Arthroscopy', query: 'Shoulder Arthroscopy', range: '$6,800 – $22,000', hospitals: 16 },
+      { name: 'Fracture Repair', query: 'Fracture Repair', range: '$3,200 – $18,000', hospitals: 22 },
+      { name: 'Spinal Fusion', query: 'Spinal Fusion', range: '$28,000 – $72,000', hospitals: 14 },
+      { name: 'Carpal Tunnel Release', query: 'Carpal Tunnel', range: '$2,400 – $9,800', hospitals: 20 },
+    ]
+  },
+  {
+    id: 'neurology',
+    icon: '🧬',
+    title: 'Neurology',
+    description: 'Brain and nervous system diagnostic tests and procedures.',
+    hospitals: 20,
+    examples: 'EEG, Nerve Conduction, Brain MRI',
+    procedures: [
+      { name: 'EEG (Electroencephalogram)', query: 'EEG Electroencephalogram', range: '$480 – $3,200', hospitals: 20 },
+      { name: 'Nerve Conduction Study', query: 'Nerve Conduction Study', range: '$380 – $2,800', hospitals: 19 },
+      { name: 'Brain MRI', query: 'MRI Brain', range: '$340 – $4,200', hospitals: 23 },
+      { name: 'Lumbar Puncture', query: 'Lumbar Puncture', range: '$1,200 – $6,400', hospitals: 16 },
+      { name: 'EMG (Electromyography)', query: 'Electromyography EMG', range: '$320 – $2,400', hospitals: 18 },
+    ]
+  },
+  {
+    id: 'gastroenterology',
+    icon: '🫀',
+    title: 'Gastroenterology',
+    description: 'Digestive system procedures including endoscopy, liver, and colon care.',
+    hospitals: 22,
+    examples: 'Colonoscopy, Endoscopy, Liver Biopsy',
+    procedures: [
+      { name: 'Colonoscopy', query: 'Colonoscopy', range: '$1,200 – $6,800', hospitals: 23 },
+      { name: 'Upper Endoscopy (EGD)', query: 'Upper Endoscopy EGD', range: '$1,000 – $5,200', hospitals: 22 },
+      { name: 'Liver Biopsy', query: 'Liver Biopsy', range: '$7,634 – $13,683', hospitals: 18 },
+      { name: 'Capsule Endoscopy', query: 'Capsule Endoscopy', range: '$1,800 – $8,400', hospitals: 12 },
+      { name: 'Hemorrhoid Removal', query: 'Hemorrhoidectomy', range: '$2,800 – $12,000', hospitals: 16 },
+      { name: 'ERCP', query: 'ERCP Endoscopic', range: '$4,200 – $18,000', hospitals: 14 },
+    ]
+  },
+  {
+    id: 'oncology',
+    icon: '🎗️',
+    title: 'Oncology',
+    description: 'Cancer screenings, biopsies, and diagnostic procedures.',
+    hospitals: 18,
+    examples: 'Biopsy, PET Scan, Cancer Screening',
+    procedures: [
+      { name: 'PET Scan', query: 'PET Scan', range: '$2,800 – $9,200', hospitals: 14 },
+      { name: 'Bone Marrow Biopsy', query: 'Bone Marrow Biopsy', range: '$2,400 – $12,000', hospitals: 12 },
+      { name: 'Breast Biopsy', query: 'Breast Biopsy', range: '$1,200 – $6,800', hospitals: 18 },
+      { name: 'Prostate Biopsy', query: 'Prostate Biopsy', range: '$1,800 – $8,400', hospitals: 16 },
+      { name: 'Tumor Excision', query: 'Tumor Excision', range: '$3,200 – $18,000', hospitals: 15 },
+      { name: 'Lymph Node Biopsy', query: 'Lymph Node Biopsy', range: '$1,400 – $7,200', hospitals: 14 },
+    ]
+  },
 ];
 
 export default function Explore() {

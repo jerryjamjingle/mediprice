@@ -229,6 +229,10 @@ export default function Home() {
 <button className="explore-cat-btn" onClick={() => navigate('/explore?category=maternity')}>Maternity</button>
 <button className="explore-cat-btn" onClick={() => navigate('/explore?category=cardiology')}>Cardiology</button>
 <button className="explore-cat-btn" onClick={() => navigate('/explore?category=mental-health')}>Mental Health</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=orthopedics')}>Orthopedics</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=neurology')}>Neurology</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=gastroenterology')}>Gastroenterology</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=oncology')}>Oncology</button>
     </div>
   </div>
 </section>
