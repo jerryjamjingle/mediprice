@@ -258,7 +258,7 @@ export default function Search() {
                     className="hospital-card"
                     onClick={() => setSelectedHospital(hospital)}
                   >
-                    <div className="hospital-rank-badge" style={{ backgroundColor: displayColor }}>
+                    <div className="hospital-rank-badge">
                       #{i + 1}
                     </div>
                     
