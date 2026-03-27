@@ -4,6 +4,7 @@ import Home from './Home';
 import Search from './Search';
 import About from './About';
 import FAQ from './FAQ';
+import Explore from './Explore';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/faq" element={<FAQ />} />
         <Route path="/community" element={<CommunityPlaceholder />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/explore" element={<Explore />} />
       </Routes>
     </BrowserRouter>
   );

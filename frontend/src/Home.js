@@ -214,6 +214,25 @@ export default function Home() {
         </div>
       </section>
 
+{/* EXPLORE BY TYPE */}
+<section className="explore-block-section">
+  <div className="explore-block-panel">
+    <button className="explore-main-btn" onClick={() => navigate('/explore')}>
+      Explore by Type ↗
+    </button>
+    <div className="explore-category-grid">
+    <button className="explore-cat-btn" onClick={() => navigate('/explore?category=imaging')}>Imaging</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=lab-tests')}>Lab Tests</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=emergency')}>Emergency</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=surgery')}>Surgery</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=preventive')}>Preventive</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=maternity')}>Maternity</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=cardiology')}>Cardiology</button>
+<button className="explore-cat-btn" onClick={() => navigate('/explore?category=mental-health')}>Mental Health</button>
+    </div>
+  </div>
+</section>
+
       {/* PRICE COMPARISON EXAMPLE */}
       <section className="comparison-section">
         <div className="comparison-panel">
