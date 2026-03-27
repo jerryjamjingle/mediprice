@@ -324,23 +324,19 @@ export default function Search() {
         
         {/* Contact Info */}
         <div className="hospital-contact-info">
-          {selectedHospital.procedures[0]?.phone && (
-            <a href={`tel:${selectedHospital.procedures[0].phone}`} className="contact-link">
-              📞 {selectedHospital.procedures[0].phone}
-            </a>
-          )}
-          
-          {selectedHospital.procedures[0]?.website && (
-            <a 
-              href={selectedHospital.procedures[0].website} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="contact-link"
-            >
-              🌐 Visit Website
-            </a>
-          )}
-        </div>
+  {selectedHospital.procedures[0]?.phone && (
+    <a href={`tel:${selectedHospital.procedures[0].phone}`} className="contact-link">
+      📞 {selectedHospital.procedures[0].phone}
+    </a>
+  )}
+  {selectedHospital.procedures[0]?.website && (
+    <a href={selectedHospital.procedures[0].website} target="_blank" rel="noopener noreferrer" className="contact-link">
+      🌐 Visit Website
+    </a>
+  )}
+  <a href={`https://www.healthgrades.com/search#what=${encodeURIComponent(selectedHospital.hospitalName)}`} target="_blank" rel="noopener noreferrer" className="contact-link">⭐ Healthgrades Reviews</a>
+  <a href={`https://www.google.com/search?q=${encodeURIComponent(selectedHospital.hospitalName + ' ' + selectedHospital.city + ' reviews')}`} target="_blank" rel="noopener noreferrer" className="contact-link">🔍 Google Reviews</a>
+</div>
 
         {/* Address - Click to open in Google Maps */}
         <a 
@@ -360,6 +356,7 @@ export default function Search() {
           <p className="modal-hours">🕒 {selectedHospital.procedures[0].hours}</p>
         )}
       </div>
+      
 
       <div className="modal-body">
         <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
