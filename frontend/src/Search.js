@@ -334,8 +334,8 @@ export default function Search() {
       🌐 Website
     </a>
   )}
-  <a href={`https://www.healthgrades.com/search#what=${encodeURIComponent(selectedHospital.hospitalName)}`} target="_blank" rel="noopener noreferrer" className="contact-link">⭐ Healthgrades</a>
   <a href={`https://www.google.com/search?q=${encodeURIComponent(selectedHospital.hospitalName + ' ' + selectedHospital.city + ' reviews')}`} target="_blank" rel="noopener noreferrer" className="contact-link">🔍 Google Reviews</a>
+  <a href={`https://www.healthgrades.com/search#what=${encodeURIComponent(selectedHospital.hospitalName)}`} target="_blank" rel="noopener noreferrer" className="contact-link">⭐ Healthgrades</a>
 </div>
 
         {/* Address - Click to open in Google Maps */}
