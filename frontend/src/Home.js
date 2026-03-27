@@ -33,11 +33,11 @@ const HOSPITALS = [
   ];
 
 const POPULAR_SEARCHES = [
-  { label: '🧠 MRI', query: 'MRI' },
-  { label: '🩻 CT Scan', query: 'CT Scan' },
-  { label: '🦴 X-Ray', query: 'X-Ray' },
-  { label: '💉 Blood Test', query: 'Blood Test' },
-  { label: '🩺 Colonoscopy', query: 'Colonoscopy' }
+  { label: 'MRI', query: 'MRI' },
+  { label: 'CT Scan', query: 'CT Scan' },
+  { label: 'X-Ray', query: 'X-Ray' },
+  { label: 'Blood Test', query: 'Blood Test' },
+  { label: 'Colonoscopy', query: 'Colonoscopy' }
 ];
 
 const CATEGORIES = [
@@ -200,7 +200,7 @@ export default function Home() {
 
       {/* POPULAR SEARCHES */}
       <section className="popular-searches">
-        <h3>Not sure what to search? Try these:</h3>
+      <h3>Frequently Searched Procedures</h3>
         <div className="search-shortcuts">
           {POPULAR_SEARCHES.map((item, i) => (
             <button 
