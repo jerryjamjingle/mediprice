@@ -239,7 +239,7 @@ export default function Home() {
 
       {/* PRICE COMPARISON EXAMPLE */}
       <section className="comparison-section">
-        <div className="comparison-panel">
+      <div className="comparison-panel" onClick={() => navigate('/search?procedure=Liver%20Biopsy')} style={{ cursor: 'pointer' }}>
           <h3 className="panel-title">Liver Biopsy (CPT 47000)</h3>
           <p className="panel-subtitle">Same procedure across 4 hospitals</p>
           
