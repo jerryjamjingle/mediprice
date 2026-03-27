@@ -250,7 +250,8 @@ export default function Explore() {
       {/* PAGE TITLE */}
       <div className="explore-intro">
         <h2>Explore by Type</h2>
-        <p>Browse medical procedures by category. Click any category to see procedures, price ranges, and how many St. Louis hospitals offer them.</p>
+        <p>Browse medical procedures by category. 
+    Click any category to see procedures, price ranges, and how many St. Louis hospitals offer them.</p>
       </div>
 
       {/* CATEGORY CARDS GRID */}
@@ -326,7 +327,7 @@ export default function Explore() {
           </div>
         </div>
       )}
-      
+
       {/* FOOTER */}
       <footer className="home-footer">
         <div className="footer-top">
