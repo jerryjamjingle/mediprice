@@ -50,6 +50,9 @@ export default function Search() {
   const [showCalculator, setShowCalculator] = useState(false);
 const [deductibleTotal, setDeductibleTotal] = useState('');
 const [deductibleMet, setDeductibleMet] = useState('');
+const [coinsurance, setCoinsurance] = useState('');
+const [oopMax, setOopMax] = useState('');
+const [oopMet, setOopMet] = useState('');
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -376,9 +379,17 @@ const [deductibleMet, setDeductibleMet] = useState('');
       {comparisonProcedure && (
   <div className="comparison-overlay">
     <div className="comparison-header">
-      <button className="comparison-back" onClick={() => { setComparisonProcedure(null); setShowCalculator(false); setDeductibleTotal(''); setDeductibleMet(''); }}>
-        ← Back
-      </button>
+    <button className="comparison-back" onClick={() => { 
+  setComparisonProcedure(null); 
+  setShowCalculator(false); 
+  setDeductibleTotal(''); 
+  setDeductibleMet('');
+  setCoinsurance('');
+  setOopMax('');
+  setOopMet('');
+}}>
+  ← Back
+</button>
       <h3>{comparisonProcedure.procedure?.procedure_name}</h3>
       {comparisonProcedure.procedure?.cpt_code && (
         <span className="comparison-cpt">CPT: {comparisonProcedure.procedure.cpt_code}</span>
@@ -387,60 +398,122 @@ const [deductibleMet, setDeductibleMet] = useState('');
 
       {/* COST ESTIMATOR */}
 <div className="estimator-section">
-  <button 
-    className="estimator-toggle-btn" 
+  <button
+    className="estimator-toggle-btn"
     onClick={() => setShowCalculator(!showCalculator)}
     style={{ marginBottom: showCalculator ? '0' : '20px' }}
   >
     📊 Factor in my Insurance <span>{showCalculator ? '▲' : '▼'}</span>
   </button>
-          {showCalculator && (
-            <div className="estimator-body">
-              <p className="estimator-intro">Enter your insurance deductible info to see whether paying cash could save you money.</p>
-              <div className="estimator-inputs">
-                <div className="estimator-input-group">
-                  <label>My total deductible is</label>
-                  <div className="estimator-input-wrap">
-                    <span className="estimator-dollar">$</span>
-                    <input type="number" placeholder="e.g. 3000" value={deductibleTotal} onChange={e => setDeductibleTotal(e.target.value)} className="estimator-input" />
-                  </div>
-                </div>
-                <div className="estimator-input-group">
-                  <label>I've already paid</label>
-                  <div className="estimator-input-wrap">
-                    <span className="estimator-dollar">$</span>
-                    <input type="number" placeholder="e.g. 500" value={deductibleMet} onChange={e => setDeductibleMet(e.target.value)} className="estimator-input" />
-                  </div>
-                </div>
-              </div>
-              {deductibleTotal && deductibleMet && comparisonProcedure?.data?.exact?.length > 0 && (() => {
-                const cashPrice = parseFloat(comparisonProcedure.data.exact[0]?.discounted_cash);
-                const total = parseFloat(deductibleTotal);
-                const met = parseFloat(deductibleMet);
-                const remaining = Math.max(total - met, 0);
-                const insurancePrice = Math.min(cashPrice, remaining);
-                const cashIsCheaper = cashPrice < insurancePrice;
-                const savings = Math.abs(insurancePrice - cashPrice);
-                return (
-                  <div className="estimator-result">
-                    <div className="estimator-result-row">
-                      <span className="estimator-result-label">💵 Cash price</span>
-                      <span className="estimator-result-value">${cashPrice.toFixed(0)}</span>
-                    </div>
-                    <div className="estimator-result-row">
-                      <span className="estimator-result-label">🏥 Through insurance (before deductible met)</span>
-                      <span className="estimator-result-value">${insurancePrice.toFixed(0)}</span>
-                    </div>
-                    <div className={`estimator-verdict ${cashIsCheaper ? 'verdict-cash' : 'verdict-insurance'}`}>
-                      {cashIsCheaper ? `💰 Cash is cheaper — you'd save $${savings.toFixed(0)} by paying cash` : remaining === 0 ? `✅ Your deductible is fully met — use your insurance!` : `📋 Insurance and cash are about the same in your case`}
-                    </div>
-                    <p className="estimator-disclaimer">This is an estimate only. Actual costs may vary based on your specific plan, copays, and coinsurance.</p>
-                  </div>
-                );
-              })()}
-            </div>
-          )}
+
+  {showCalculator && (
+    <div className="estimator-body">
+      <p className="estimator-intro">
+        Enter your insurance details to see what you'd actually pay — and whether cash might be cheaper.
+      </p>
+
+      <div className="estimator-inputs">
+        <div className="estimator-input-group">
+          <label>Total deductible</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">$</span>
+            <input type="number" placeholder="e.g. 3000" value={deductibleTotal} onChange={e => setDeductibleTotal(e.target.value)} className="estimator-input" />
+          </div>
         </div>
+        <div className="estimator-input-group">
+          <label>Deductible met so far</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">$</span>
+            <input type="number" placeholder="e.g. 500" value={deductibleMet} onChange={e => setDeductibleMet(e.target.value)} className="estimator-input" />
+          </div>
+        </div>
+        <div className="estimator-input-group">
+          <label>Coinsurance rate</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">%</span>
+            <input type="number" placeholder="e.g. 20" value={coinsurance} onChange={e => setCoinsurance(e.target.value)} className="estimator-input" />
+          </div>
+        </div>
+        <div className="estimator-input-group">
+          <label>Out-of-pocket max</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">$</span>
+            <input type="number" placeholder="e.g. 6000" value={oopMax} onChange={e => setOopMax(e.target.value)} className="estimator-input" />
+          </div>
+        </div>
+        <div className="estimator-input-group">
+          <label>Out-of-pocket met so far</label>
+          <div className="estimator-input-wrap">
+            <span className="estimator-dollar">$</span>
+            <input type="number" placeholder="e.g. 1000" value={oopMet} onChange={e => setOopMet(e.target.value)} className="estimator-input" />
+          </div>
+        </div>
+      </div>
+
+      {deductibleTotal && deductibleMet && comparisonProcedure?.data?.exact?.length > 0 && (() => {
+        const cashPrice = parseFloat(comparisonProcedure.data.exact[0]?.discounted_cash);
+        const total = parseFloat(deductibleTotal) || 0;
+        const met = parseFloat(deductibleMet) || 0;
+        const coinsuranceRate = parseFloat(coinsurance) / 100 || 0.2;
+        const oop = parseFloat(oopMax) || 999999;
+        const oopMetSoFar = parseFloat(oopMet) || 0;
+
+        const deductibleRemaining = Math.max(total - met, 0);
+        const oopRemaining = Math.max(oop - oopMetSoFar, 0);
+
+        let insuranceCost = 0;
+
+        if (oopRemaining === 0) {
+          // Hit OOP max — insurance pays everything
+          insuranceCost = 0;
+        } else if (cashPrice <= deductibleRemaining) {
+          // Haven't met deductible yet — pay full price
+          insuranceCost = Math.min(cashPrice, oopRemaining);
+        } else {
+          // Met deductible — pay coinsurance on remainder
+          const afterDeductible = cashPrice - deductibleRemaining;
+          insuranceCost = Math.min(deductibleRemaining + (afterDeductible * coinsuranceRate), oopRemaining);
+        }
+
+        const cashIsCheaper = cashPrice < insuranceCost;
+        const savings = Math.abs(insuranceCost - cashPrice);
+
+        return (
+          <div className="estimator-result">
+            <div className="estimator-result-row">
+              <span className="estimator-result-label">💵 Cash price</span>
+              <span className="estimator-result-value">${cashPrice.toFixed(0)}</span>
+            </div>
+            <div className="estimator-result-row">
+              <span className="estimator-result-label">🏥 Estimated cost through insurance</span>
+              <span className="estimator-result-value">${insuranceCost.toFixed(0)}</span>
+            </div>
+
+            {deductibleRemaining > 0 && (
+              <div className="estimator-breakdown">
+                <span>Deductible still owed: <strong>${deductibleRemaining.toFixed(0)}</strong></span>
+                {coinsurance && <span>Coinsurance rate: <strong>{coinsurance}%</strong></span>}
+                {oopMax && oopRemaining < 999999 && <span>Out-of-pocket remaining: <strong>${oopRemaining.toFixed(0)}</strong></span>}
+              </div>
+            )}
+
+            <div className={`estimator-verdict ${cashIsCheaper ? 'verdict-cash' : 'verdict-insurance'}`}>
+              {oopRemaining === 0
+                ? `✅ You've hit your out-of-pocket max — insurance covers this 100%!`
+                : cashIsCheaper
+                  ? `💰 Cash is cheaper — you'd save $${savings.toFixed(0)} by paying cash`
+                  : `🏥 Insurance is cheaper — you'd save $${savings.toFixed(0)} using insurance`
+              }
+            </div>
+            <p className="estimator-disclaimer">
+              This is an estimate only. Actual costs may vary based on your specific plan, copays, and coinsurance terms.
+            </p>
+          </div>
+        );
+      })()}
+    </div>
+  )}
+</div>
 
     {comparisonProcedure.loading && (
       <div className="comparison-loading">
