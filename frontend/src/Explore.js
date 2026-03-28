@@ -207,13 +207,17 @@ export default function Explore() {
     const cat = searchParams.get('category');
     if (cat) {
       const found = CATEGORIES.find(c => c.id === cat);
-      if (found) setActiveCategory(found);
+      if (found) {
+        setActiveCategory(found);
+        window.scrollTo(0, 0);
+      }
     } else {
       setActiveCategory(null);
     }
   }, [searchParams]);
 
   const openCategory = (cat) => {
+    window.scrollTo(0, 0);
     setActiveCategory(cat);
     setExpandedProcedure(null);
     setSearchParams({ category: cat.id });
