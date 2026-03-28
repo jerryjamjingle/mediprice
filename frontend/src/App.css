@@ -155,7 +155,7 @@ body {
 .hospital-card {
   background: white;
   border-radius: 16px;
-  padding: 30px 20x 30px 20px;
+  padding: 30px 20px 30px 20px;
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
