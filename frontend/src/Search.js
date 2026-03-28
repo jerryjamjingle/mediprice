@@ -47,13 +47,11 @@ export default function Search() {
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [comparisonProcedure, setComparisonProcedure] = useState(null);
   const [radius, setRadius] = useState('50');
-  const [showCalculator, setShowCalculator] = useState(false);
 const [deductibleTotal, setDeductibleTotal] = useState('');
 const [deductibleMet, setDeductibleMet] = useState('');
 const [coinsurance, setCoinsurance] = useState('');
 const [oopMax, setOopMax] = useState('');
 const [oopMet, setOopMet] = useState('');
-const [showChecklist, setShowChecklist] = useState(false);
 const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculator' | null
 
   // Auto-search if URL has parameters
