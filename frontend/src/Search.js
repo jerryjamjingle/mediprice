@@ -463,10 +463,14 @@ const [deductibleMet, setDeductibleMet] = useState('');
         )}
 
         {/* COST ESTIMATOR */}
-        <div className="estimator-section">
-          <button className="estimator-toggle-btn" onClick={() => setShowCalculator(!showCalculator)}>
-            📊 Run Cost Estimate
-          </button>
+<div className="estimator-section">
+  <button 
+    className="estimator-toggle-btn" 
+    onClick={() => setShowCalculator(!showCalculator)}
+    style={{ marginBottom: showCalculator ? '0' : '20px' }}
+  >
+    📊 Factor in my Insurance {showCalculator ? '▲' : '▼'}
+  </button>
           {showCalculator && (
             <div className="estimator-body">
               <p className="estimator-intro">Enter your insurance deductible info to see whether paying cash could save you money.</p>

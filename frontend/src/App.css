@@ -915,20 +915,24 @@ body {
 
 .estimator-toggle-btn {
   width: 100%;
-  padding: 12px;
-  background: #1e40af;
-  color: white;
-  border: none;
+  padding: 12px 16px;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 2px solid #bfdbfe;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .estimator-toggle-btn:hover {
-  background: #1d3a9e;
-  transform: translateY(-1px);
+  background: #dbeafe;
+  border-color: #93c5fd;
 }
 
 .estimator-body {
