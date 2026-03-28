@@ -392,7 +392,7 @@ const [deductibleMet, setDeductibleMet] = useState('');
     onClick={() => setShowCalculator(!showCalculator)}
     style={{ marginBottom: showCalculator ? '0' : '20px' }}
   >
-    📊 Factor in my Insurance {showCalculator ? '▲' : '▼'}
+    📊 Factor in my Insurance <span>{showCalculator ? '▲' : '▼'}</span>
   </button>
           {showCalculator && (
             <div className="estimator-body">
