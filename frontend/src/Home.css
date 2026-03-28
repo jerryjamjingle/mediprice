@@ -716,3 +716,7 @@
   overflow-y: auto;
   max-height: 85vh;
 }
+
+.guide-modal-inner::-webkit-scrollbar-button {
+  display: none;
+}
