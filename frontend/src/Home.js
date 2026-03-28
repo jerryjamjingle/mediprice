@@ -329,20 +329,20 @@ export default function Home() {
       <div className="guide-section">
         <h4 className="guide-section-title">❓ Questions to Ask Before You Hang Up</h4>
         <div className="guide-steps">
-          <div className="guide-step">Is the radiologist, anesthesiologist, or assistant surgeon billed separately? (They almost always are.)</div>
-          <div className="guide-step">Is this facility in my insurance network?</div>
-          <div className="guide-step">Do you offer a cash pay discount if I pay upfront?</div>
-          <div className="guide-step">Do you have financial assistance or charity care programs?</div>
+          <div className="guide-step">Will the radiologist, anesthesiologist, or assistant surgeon bill separately? (They typically do.)</div>
+          <div className="guide-step">Is every provider involved in this procedure in-network under my specific plan?</div>
+          <div className="guide-step">Is there a discounted rate available for cash payment at time of service?</div>
+          <div className="guide-step">Does this facility have a financial assistance or charity care program?</div>
         </div>
       </div>
 
       <div className="guide-section">
-        <h4 className="guide-section-title">🧾 If Your Bill Comes Back Wrong</h4>
+        <h4 className="guide-section-title">🧾 If Your Bill Does Not Match What You Were Quoted</h4>
         <div className="guide-steps">
-          <div className="guide-step">Request an <strong>itemized bill</strong> immediately — not just the summary total. Every line item, every code.</div>
-          <div className="guide-step">Compare every charge against your Good Faith Estimate. If something doesn't match — dispute it in writing.</div>
-          <div className="guide-step">Ask for the <strong>billing manager</strong>, not a front line rep. Managers have authority to adjust charges.</div>
-          <div className="guide-step">Know that hospitals negotiate. The first bill is rarely the final bill. Pushing back is normal and expected.</div>
+          <div className="guide-step">Request a fully itemized statement immediately. Not a summary. Every line item, every code, every charge.</div>
+          <div className="guide-step">Compare every charge against your Good Faith Estimate. Any discrepancy is grounds for a formal dispute.</div>
+          <div className="guide-step">Ask for the <strong>Billing Manager</strong>, not a front line rep. Managers have authority to adjust charges.</div>
+          <div className="guide-step">Negotiate. The amount on your first bill is rarely the final number. Hospitals reduce charges regularly — for errors, for financial hardship, and for patients who simply ask. You are expected to push back.</div>
         </div>
       </div>
 
