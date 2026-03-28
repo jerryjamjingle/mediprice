@@ -292,7 +292,6 @@ export default function Home() {
         <p className="guide-block-subtitle">MedExpense does half the work. Here's how to finish it.</p>
       </div>
     </div>
-    <span className="guide-block-arrow">→</span>
   </div>
 </section>
 
