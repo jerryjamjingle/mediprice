@@ -314,12 +314,13 @@ export default function Home() {
       </div>
 
       <div className="guide-section">
-        <h4 className="guide-section-title">📞 After You Find a Price on MedExpense</h4>
+        <h4 className="guide-section-title">📞 After You Find a Price</h4>
         <div className="guide-steps">
-          <div className="guide-step">Call the hospital's <strong>billing department</strong> directly — not scheduling, not the front desk. Billing.</div>
-          <div className="guide-step">Say exactly: <em>"I'd like to confirm the cash price for CPT code [X] and request a Good Faith Estimate in writing."</em></div>
-          <div className="guide-step">You are <strong>legally entitled</strong> to a Good Faith Estimate under the No Surprises Act — they must provide it. If they push back, remind them of this.</div>
-          <div className="guide-step">Get it in writing via email or mail <strong>before</strong> you book anything. Do not proceed without it.</div>
+          <div className="guide-step">Contact the hospital's <strong>Billing Department</strong> directly. Ask for financial services or patient billing.</div>
+          <div className="guide-step">Request a Good Faith Estimate in writing before your appointment. <em>"I'd like to confirm the cash price for CPT code [X] and request a Good Faith Estimate in writing.</em></div>
+          <div className="guide-step">Under the No Surprises Act, you are legally entitled to this document. If the representative is unfamiliar with the requirement, ask to speak with a supervisor.</div>
+          <div className="guide-step">Do not schedule until you have the estimate in hand. A verbal confirmation is not a commitment.
+          </div>
         </div>
       </div>
 
