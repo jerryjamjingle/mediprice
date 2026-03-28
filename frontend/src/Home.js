@@ -301,15 +301,15 @@ export default function Home() {
     <div className="guide-modal" onClick={e => e.stopPropagation()}>
       <button className="guide-modal-close" onClick={() => setShowGuideModal(false)}>✕</button>
       
-      <h2 className="guide-modal-title">Your Complete Pre-Booking Checklist</h2>
+      <h2 className="guide-modal-title">Pre-Booking Price Verification Checklist</h2>
       <p className="guide-modal-subtitle">MedExpense shows you the price. Here's how to lock it in and avoid surprises.</p>
 
       <div className="guide-section">
         <h4 className="guide-section-title">📌 Before You Search</h4>
         <div className="guide-steps">
-          <div className="guide-step">Know your CPT code if possible — it's the universal language hospitals use for billing. MedExpense shows it on every procedure.</div>
-          <div className="guide-step">Know your deductible status — have you met it this year? Use our "Factor in my Insurance" calculator on any procedure to find out what you'd actually owe.</div>
-          <div className="guide-step">Know if you're in-network — your insurance card has a phone number on the back. Call and ask before you book anything.</div>
+          <div className="guide-step">Locate your CPT code. Every procedure has one. It is the only language hospitals and insurers share — and the only way to confirm you are comparing the same service across providers. MedExpense displays it on every result.</div>
+          <div className="guide-step">Determine your deductible position. If your annual deductible has not been met, your insurer will not reduce your cost — you pay the full contracted rate. Use the Factor in my Insurance tool on any procedure to calculate your true out-of-pocket before making any decisions.</div>
+          <div className="guide-step">Confirm network status before assuming coverage. Call the member services number on your insurance card and verify that the specific facility is in-network. A physician can be in-network while the facility they operate out of is not. These are billed separately.</div>
         </div>
       </div>
 
@@ -340,7 +340,6 @@ export default function Home() {
           <div className="guide-step">Compare every charge against your Good Faith Estimate. If something doesn't match — dispute it in writing.</div>
           <div className="guide-step">Ask for the <strong>billing manager</strong>, not a front line rep. Managers have authority to adjust charges.</div>
           <div className="guide-step">Know that hospitals negotiate. The first bill is rarely the final bill. Pushing back is normal and expected.</div>
-          <div className="guide-step">If you're stuck — come back to MedExpense. We're building tools to help you fight every step of the way.</div>
         </div>
       </div>
 
