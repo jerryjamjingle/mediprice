@@ -575,11 +575,12 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
     </div>
   </div>
 )}
+      {comparisonProcedure.loading && (
       <div className="comparison-loading">
         <div className="spinner"></div>
         <p>Finding prices...</p>
       </div>
-    {}
+    )}
 
     {!comparisonProcedure.loading && comparisonProcedure.data && (
       <div className="comparison-body">
