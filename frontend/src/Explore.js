@@ -203,6 +203,11 @@ export default function Explore() {
   const [expandedProcedure, setExpandedProcedure] = useState(null);
   const overlayRef = useRef(null);
 
+  // Scroll to top on page load
+useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // On load, open overlay if category is in URL
   useEffect(() => {
     const cat = searchParams.get('category');
