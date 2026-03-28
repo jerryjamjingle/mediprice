@@ -300,6 +300,7 @@ export default function Home() {
   <div className="guide-modal-overlay" onClick={() => setShowGuideModal(false)}>
     <div className="guide-modal" onClick={e => e.stopPropagation()}>
       <button className="guide-modal-close" onClick={() => setShowGuideModal(false)}>✕</button>
+      <div className="guide-modal-inner">
       
       <h2 className="guide-modal-title">Pre-Booking Price Verification Checklist</h2>
       <p className="guide-modal-subtitle">MedExpense shows you the price. Here's how to lock it in and avoid surprises.</p>
@@ -317,7 +318,8 @@ export default function Home() {
         <h4 className="guide-section-title">📞 After You Find a Price</h4>
         <div className="guide-steps">
           <div className="guide-step">Contact the hospital's <strong>Billing Department</strong> directly. Ask for financial services or patient billing.</div>
-          <div className="guide-step">Request a Good Faith Estimate in writing before your appointment. <em>"I'd like to confirm the cash price for CPT code [X] and request a Good Faith Estimate in writing.</em></div>
+          <div className="guide-step">Request a Good Faith Estimate in writing before your appointment.</div>
+          <div className="guide-step"><em>"I'd like to confirm the cash price for CPT code [X] and request a Good Faith Estimate in writing.</em></div>
           <div className="guide-step">Under the No Surprises Act, you are legally entitled to this document. If the representative is unfamiliar with the requirement, ask to speak with a supervisor.</div>
           <div className="guide-step">Do not schedule until you have the estimate in hand. A verbal confirmation is not a commitment.
           </div>
@@ -346,7 +348,8 @@ export default function Home() {
 
       <div className="guide-footer-note">
         The American healthcare billing system is complicated by design. MedExpense exists to level the playing field — one price at a time.
-      </div>
+        </div>
+      </div> {/* closes guide-modal-inner */}
     </div>
   </div>
 )}
