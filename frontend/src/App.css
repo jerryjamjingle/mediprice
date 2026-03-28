@@ -517,7 +517,7 @@ body {
     display: flex;
     flex-direction: column;
     animation: slideInLeft 0.25s ease;
-    overflow: hidden;
+    overflow-y: auto;
     z-index: 1;
   }
   
