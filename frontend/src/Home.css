@@ -715,8 +715,10 @@
   padding: 40px;
   overflow-y: auto;
   max-height: 85vh;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE */
 }
 
-.guide-modal-inner::-webkit-scrollbar-button {
-  display: none;
+.guide-modal-inner::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
