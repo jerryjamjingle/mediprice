@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Explore.css';
 
@@ -201,6 +201,7 @@ export default function Explore() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState(null);
   const [expandedProcedure, setExpandedProcedure] = useState(null);
+  const overlayRef = useRef(null);
 
   // On load, open overlay if category is in URL
   useEffect(() => {
@@ -209,7 +210,9 @@ export default function Explore() {
       const found = CATEGORIES.find(c => c.id === cat);
       if (found) {
         setActiveCategory(found);
-        window.scrollTo(0, 0);
+        setTimeout(() => {
+          if (overlayRef.current) overlayRef.current.scrollTop = 0;
+        }, 50);
       }
     } else {
       setActiveCategory(null);
@@ -217,11 +220,13 @@ export default function Explore() {
   }, [searchParams]);
 
   const openCategory = (cat) => {
-    window.scrollTo(0, 0);
-    setActiveCategory(cat);
-    setExpandedProcedure(null);
-    setSearchParams({ category: cat.id });
-  };
+  setActiveCategory(cat);
+  setExpandedProcedure(null);
+  setSearchParams({ category: cat.id });
+  setTimeout(() => {
+    if (overlayRef.current) overlayRef.current.scrollTop = 0;
+  }, 50);
+};
 
   const closeOverlay = () => {
     setActiveCategory(null);
@@ -280,7 +285,7 @@ export default function Explore() {
       {/* OVERLAY */}
       {activeCategory && (
         <div className="explore-overlay-backdrop" onClick={closeOverlay}>
-          <div className="explore-overlay" onClick={e => e.stopPropagation()}>
+          <div className="explore-overlay" onClick={e => e.stopPropagation()} ref={overlayRef}>
             <div className="overlay-header">
               <div>
                 <span className="overlay-icon">{activeCategory.icon}</span>
