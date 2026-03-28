@@ -381,8 +381,6 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
     <div className="comparison-header">
     <button className="comparison-back" onClick={() => { 
   setComparisonProcedure(null); 
-  setShowCalculator(false);
-  setShowChecklist(false);
   setActivePanel(null);
   setDeductibleTotal(''); 
   setDeductibleMet('');
