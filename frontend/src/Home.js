@@ -58,6 +58,7 @@ export default function Home() {
   const [cptCode, setCptCode] = useState('');
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
+  const [showGuideModal, setShowGuideModal] = useState(false);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -280,6 +281,76 @@ export default function Home() {
           <p className="panel-footer">1.8x price difference</p>
         </div>
       </section>
+
+{/* GUIDE BLOCK */}
+<section className="guide-block-section">
+  <div className="guide-block-panel" onClick={() => setShowGuideModal(true)}>
+    <div className="guide-block-left">
+      <span className="guide-block-icon">📋</span>
+      <div>
+        <h3 className="guide-block-title">Your Complete Pre-Booking Guide</h3>
+        <p className="guide-block-subtitle">MedExpense does half the work. Here's how to finish it.</p>
+      </div>
+    </div>
+    <span className="guide-block-arrow">→</span>
+  </div>
+</section>
+
+{/* GUIDE MODAL */}
+{showGuideModal && (
+  <div className="guide-modal-overlay" onClick={() => setShowGuideModal(false)}>
+    <div className="guide-modal" onClick={e => e.stopPropagation()}>
+      <button className="guide-modal-close" onClick={() => setShowGuideModal(false)}>✕</button>
+      
+      <h2 className="guide-modal-title">Your Complete Pre-Booking Checklist</h2>
+      <p className="guide-modal-subtitle">MedExpense shows you the price. Here's how to lock it in and avoid surprises.</p>
+
+      <div className="guide-section">
+        <h4 className="guide-section-title">📌 Before You Search</h4>
+        <div className="guide-steps">
+          <div className="guide-step">Know your CPT code if possible — it's the universal language hospitals use for billing. MedExpense shows it on every procedure.</div>
+          <div className="guide-step">Know your deductible status — have you met it this year? Use our "Factor in my Insurance" calculator on any procedure to find out what you'd actually owe.</div>
+          <div className="guide-step">Know if you're in-network — your insurance card has a phone number on the back. Call and ask before you book anything.</div>
+        </div>
+      </div>
+
+      <div className="guide-section">
+        <h4 className="guide-section-title">📞 After You Find a Price on MedExpense</h4>
+        <div className="guide-steps">
+          <div className="guide-step">Call the hospital's <strong>billing department</strong> directly — not scheduling, not the front desk. Billing.</div>
+          <div className="guide-step">Say exactly: <em>"I'd like to confirm the cash price for CPT code [X] and request a Good Faith Estimate in writing."</em></div>
+          <div className="guide-step">You are <strong>legally entitled</strong> to a Good Faith Estimate under the No Surprises Act — they must provide it. If they push back, remind them of this.</div>
+          <div className="guide-step">Get it in writing via email or mail <strong>before</strong> you book anything. Do not proceed without it.</div>
+        </div>
+      </div>
+
+      <div className="guide-section">
+        <h4 className="guide-section-title">❓ Questions to Ask Before You Hang Up</h4>
+        <div className="guide-steps">
+          <div className="guide-step">Is the radiologist, anesthesiologist, or assistant surgeon billed separately? (They almost always are.)</div>
+          <div className="guide-step">Is this facility in my insurance network?</div>
+          <div className="guide-step">Do you offer a cash pay discount if I pay upfront?</div>
+          <div className="guide-step">Do you have financial assistance or charity care programs?</div>
+        </div>
+      </div>
+
+      <div className="guide-section">
+        <h4 className="guide-section-title">🧾 If Your Bill Comes Back Wrong</h4>
+        <div className="guide-steps">
+          <div className="guide-step">Request an <strong>itemized bill</strong> immediately — not just the summary total. Every line item, every code.</div>
+          <div className="guide-step">Compare every charge against your Good Faith Estimate. If something doesn't match — dispute it in writing.</div>
+          <div className="guide-step">Ask for the <strong>billing manager</strong>, not a front line rep. Managers have authority to adjust charges.</div>
+          <div className="guide-step">Know that hospitals negotiate. The first bill is rarely the final bill. Pushing back is normal and expected.</div>
+          <div className="guide-step">If you're stuck — come back to MedExpense. We're building tools to help you fight every step of the way.</div>
+        </div>
+      </div>
+
+      <div className="guide-footer-note">
+        The American healthcare billing system is complicated by design. MedExpense exists to level the playing field — one price at a time.
+      </div>
+    </div>
+  </div>
+)}
 
      {/* COMBINED EDU + HOW IT WORKS */}
 <section className="edu-how-section">

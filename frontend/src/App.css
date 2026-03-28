@@ -819,6 +819,51 @@ body {
     color: #0f172a;
   }
 
+  /* CHECKLIST */
+.checklist-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.checklist-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.checklist-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.checklist-text {
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.checklist-tip {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 0.85rem;
+  color: #1e40af;
+  line-height: 1.6;
+}
+
+.checklist-tip em {
+  font-style: italic;
+  font-weight: 600;
+}
+
   /* ============================================
    MOBILE RESPONSIVE
    ============================================ */

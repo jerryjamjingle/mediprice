@@ -53,6 +53,7 @@ const [deductibleMet, setDeductibleMet] = useState('');
 const [coinsurance, setCoinsurance] = useState('');
 const [oopMax, setOopMax] = useState('');
 const [oopMet, setOopMet] = useState('');
+const [showChecklist, setShowChecklist] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -382,6 +383,7 @@ const [oopMet, setOopMet] = useState('');
     <button className="comparison-back" onClick={() => { 
   setComparisonProcedure(null); 
   setShowCalculator(false); 
+  setShowChecklist(false);
   setDeductibleTotal(''); 
   setDeductibleMet('');
   setCoinsurance('');
@@ -395,6 +397,79 @@ const [oopMet, setOopMet] = useState('');
         <span className="comparison-cpt">CPT: {comparisonProcedure.procedure.cpt_code}</span>
       )}
     </div>
+
+{/* BEFORE YOU BOOK CHECKLIST */}
+<div className="estimator-section">
+  <button
+    className="estimator-toggle-btn"
+    onClick={() => setShowChecklist(!showChecklist)}
+  >
+    📋 Before You Book <span>{showChecklist ? '▲' : '▼'}</span>
+  </button>
+  {showChecklist && (
+    <div className="estimator-body">
+      {(() => {
+        const cpt = comparisonProcedure?.procedure?.cpt_code || '';
+        const name = comparisonProcedure?.procedure?.procedure_name?.toLowerCase() || '';
+        const isImaging = name.includes('mri') || name.includes('ct') || name.includes('x-ray') || name.includes('xray') || name.includes('ultrasound') || name.includes('scan');
+        const isSurgery = name.includes('surgery') || name.includes('repair') || name.includes('replacement') || name.includes('removal') || name.includes('ectomy') || name.includes('otomy');
+        const isLab = name.includes('panel') || name.includes('blood') || name.includes('lab') || name.includes('urinalysis') || name.includes('test');
+
+        const generalSteps = [
+          { icon: '✅', text: `Confirm the cash price matches CPT code ${cpt || 'shown'} before your appointment` },
+          { icon: '✅', text: 'Request a Good Faith Estimate in writing — you are legally entitled to this under the No Surprises Act' },
+          { icon: '✅', text: 'Ask if they have financial assistance or charity care programs' },
+          { icon: '✅', text: 'Ask if paying cash upfront gets you a discount' },
+          { icon: '✅', text: 'Know that hospitals negotiate — the first number is rarely the final number' },
+        ];
+
+        const imagingSteps = [
+          { icon: '✅', text: `Confirm the cash price matches CPT code ${cpt || 'shown'}` },
+          { icon: '✅', text: 'Ask if a radiologist reads separately — that is a separate bill' },
+          { icon: '✅', text: 'Ask if contrast dye is included or billed extra' },
+          { icon: '✅', text: 'Request a Good Faith Estimate in writing — you are legally entitled to this' },
+          { icon: '✅', text: 'Ask if this facility is in-network if using insurance' },
+        ];
+
+        const surgerySteps = [
+          { icon: '✅', text: 'Confirm surgeon, anesthesiologist, and facility are all in-network' },
+          { icon: '✅', text: 'Ask for the anesthesia fee estimate separately — it is almost always a separate bill' },
+          { icon: '✅', text: 'Ask if an assistant surgeon is billed separately' },
+          { icon: '✅', text: 'Request an itemized Good Faith Estimate before booking' },
+          { icon: '✅', text: 'Ask about post-op follow up visit costs' },
+        ];
+
+        const labSteps = [
+          { icon: '✅', text: 'Ask if the lab is in-network — it often is not even if your doctor is' },
+          { icon: '✅', text: 'Request results be sent directly to you' },
+          { icon: '✅', text: 'Ask if there is a cash discount if paying same day' },
+          { icon: '✅', text: 'Confirm which lab is processing your sample — it may not be the one at the facility' },
+        ];
+
+        const steps = isImaging ? imagingSteps : isSurgery ? surgerySteps : isLab ? labSteps : generalSteps;
+
+        return (
+          <>
+            <p className="estimator-intro">
+              MedExpense found you the price. Here's how to confirm it and avoid surprises before you book.
+            </p>
+            <div className="checklist-steps">
+              {steps.map((step, i) => (
+                <div key={i} className="checklist-step">
+                  <span className="checklist-icon">{step.icon}</span>
+                  <span className="checklist-text">{step.text}</span>
+                </div>
+              ))}
+            </div>
+            <div className="checklist-tip">
+              💡 Say this when you call: <em>"I'd like to confirm the cash price for CPT code {cpt || '[shown above]'} and request a Good Faith Estimate in writing."</em>
+            </div>
+          </>
+        );
+      })()}
+    </div>
+  )}
+</div>
 
       {/* COST ESTIMATOR */}
 <div className="estimator-section">
