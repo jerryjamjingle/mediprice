@@ -951,7 +951,33 @@ body {
   color: #334155;
   border-color: #94a3b8;
 }
+.comparison-cta-container {
+  padding: 0 20px; /* Aligns with the margins of the modal */
+  margin-bottom: 12px;
+}
 
+.comparison-share-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #f0f9ff; /* Very light blue */
+  color: #0369a1; /* Deep blue text */
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.comparison-share-btn:hover {
+  background-color: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
+}
   /* ============================================
    MOBILE RESPONSIVE
    ============================================ */

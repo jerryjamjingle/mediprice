@@ -286,33 +286,15 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
                       <div className="procedure-count">
                         {hospital.procedureCount} option{hospital.procedureCount !== 1 ? 's' : ''}
                       </div>
-                    
-                    {/* ADD THIS NEW SECTION BELOW: */}
-        <div className="hospital-card-actions">
-          <button 
-            className="share-match-btn"
-            onClick={(e) => {
-              e.stopPropagation(); // Prevents the card's main onClick from firing
-              navigate('/share', { 
-                state: { 
-                  hospital: hospital.hospitalName, 
-                  procedure: query || hospital.procedures[0]?.procedure_name,
-                  cpt: cptCode || hospital.procedures[0]?.cpt_code 
-                } 
-              });
-            }}
-          >
-            💬 Share what you paid
-          </button>
-        </div>
-      </div>
+                    </div>
 
-      <div className="hospital-arrow-container">
-        <div className="hospital-arrow">›</div>
-      </div>
-    </div>
-  );
-})}
+                    <div className="hospital-arrow-container">
+                    <div className="hospital-arrow">›</div>
+                    </div>
+                  </div>
+                );
+
+              })}
             </div>
 
             <div className="map-container">
@@ -413,6 +395,22 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
         <span className="comparison-cpt">CPT: {comparisonProcedure.procedure.cpt_code}</span>
       )}
     </div>
+
+    {/* --- ADD THIS NEW SECTION --- */}
+<div className="comparison-cta-container">
+  <button 
+    className="comparison-share-btn"
+    onClick={() => navigate('/share', { 
+      state: { 
+        hospital: selectedHospital.hospitalName, 
+        procedure: comparisonProcedure.procedure?.procedure_name,
+        cpt: comparisonProcedure.procedure?.cpt_code 
+      } 
+    })}
+  >
+    💬 Paid a different price? Share it here
+  </button>
+</div>
 
 {/* TWO BUTTONS ROW */}
 {!activePanel && (
