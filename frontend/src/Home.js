@@ -119,7 +119,7 @@ export default function Home() {
               </div>
             )}
           </div>
-          <button className="nav-link" onClick={() => navigate('/community')}>Community</button>
+          <button className="nav-link" onClick={() => navigate('/share')}>Share</button>
           <button className="nav-link" onClick={() => navigate('/about')}>About</button>
           <button className="nav-link" onClick={() => navigate('/faq')}>FAQ</button>
         </nav>
@@ -237,6 +237,36 @@ export default function Home() {
     </div>
   </div>
 </section>
+
+{/* EXPLORE BY TYPE */}
+<section className="explore-block-section">
+        {/* ... your existing explore content ... */}
+      </section>
+
+      {/* PASTE THIS RIGHT HERE: */}
+      <section className="share-cta-section">
+        <div className="share-cta-card">
+          <div className="share-cta-content">
+            <h3>Help Others Save</h3>
+            <p>Did you pay a different price than what's listed? Share your medical bill (anonymously) to help the St. Louis community find the best care.</p>
+            <button onClick={() => navigate('/share')} className="share-now-btn">
+              Share What You Paid
+            </button>
+          </div>
+          <div className="share-cta-stats">
+            <div className="stat-mini">
+              <span className="stat-icon">📈</span>
+              <strong>User Verified</strong>
+              <span>Community Data</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PRICE COMPARISON EXAMPLE */}
+      <section className="comparison-section">
+        {/* ... your existing comparison content ... */}
+      </section>
 
       {/* PRICE COMPARISON EXAMPLE */}
       <section className="comparison-section">
@@ -397,7 +427,7 @@ export default function Home() {
         <button className="footer-link" onClick={() => handleSearch()}>Search</button>
         <button className="footer-link" onClick={() => navigate('/about')}>About</button>
         <button className="footer-link" onClick={() => navigate('/faq')}>FAQ</button>
-        <button className="footer-link" onClick={() => navigate('/community')}>Community</button>
+        <button className="footer-link" onClick={() => navigate('/share')}>Share</button>
       </div>
     </div>
     <div className="footer-disclaimer">

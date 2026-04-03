@@ -181,6 +181,75 @@ app.get('/search', async (req, res) => {
     }
   });
 
+  // --- REVIEWS & SUBMISSIONS ---
+
+// 1. Submit a new review
+app.post('/submit-review', async (req, res) => {
+  const { 
+      hospital_name, procedure_name, service_month, amount_billed, 
+      amount_paid, payment_type, insurance_carrier, price_honored, 
+      comment, display_name 
+  } = req.body;
+
+  try {
+      const query = `
+          INSERT INTO reviews (
+              hospital_name, procedure_name, service_month, amount_billed, 
+              amount_paid, payment_type, insurance_carrier, price_honored, 
+              comment, display_name
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+          RETURNING id;
+      `;
+      
+      const values = [
+          hospital_name, 
+          procedure_name, 
+          service_month, 
+          amount_billed || null, 
+          amount_paid, 
+          payment_type, 
+          insurance_carrier || null, 
+          price_honored, 
+          comment || null, 
+          display_name || 'Anonymous'
+      ];
+
+      const result = await pool.query(query, values);
+      res.status(201).json({ success: true, reviewId: result.rows[0].id });
+  } catch (err) {
+      console.error('Error saving review:', err);
+      res.status(500).json({ error: 'Failed to submit review' });
+  }
+});
+
+// 2. Get reviews for a specific hospital
+app.get('/get-reviews', async (req, res) => {
+  const { hospital } = req.query;
+
+  if (!hospital) {
+      return res.status(400).json({ error: 'Hospital name is required' });
+  }
+
+  try {
+      const query = `
+          SELECT * FROM reviews 
+          WHERE hospital_name = $1 AND flagged = false 
+          ORDER BY created_at DESC;
+      `;
+      const result = await pool.query(query, [hospital]);
+      res.json(result.rows);
+  } catch (err) {
+      console.error('Error fetching reviews:', err);
+      res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+});
+
+// --- SERVER START ---
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, function() {
+console.log('Server running on port ' + PORT);
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, function() {
   console.log('Server running on port ' + PORT);
