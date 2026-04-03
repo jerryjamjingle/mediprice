@@ -396,20 +396,36 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
       )}
     </div>
 
-    {/* --- ADD THIS NEW SECTION --- */}
-<div className="comparison-cta-container">
-  <button 
-    className="comparison-share-btn"
-    onClick={() => navigate('/share', { 
-      state: { 
-        hospital: selectedHospital.hospitalName, 
-        procedure: comparisonProcedure.procedure?.procedure_name,
-        cpt: comparisonProcedure.procedure?.cpt_code 
-      } 
-    })}
-  >
-    💬 Paid a different price? Share it here
-  </button>
+  {/* --- WRAPPER FOR ALL BOTTOM ACTIONS --- */}
+<div className="modal-actions-wrapper">
+  
+  {/* SHARE BUTTON SECTION */}
+  <div className="comparison-cta-container">
+    <button 
+      className="comparison-share-btn"
+      onClick={() => navigate('/share', { 
+        state: { 
+          hospital: selectedHospital.hospitalName, 
+          procedure: comparisonProcedure.procedure?.procedure_name,
+          cpt: comparisonProcedure.procedure?.cpt_code 
+        } 
+      })}
+    >
+      💬 Paid a different price? Share it here
+    </button>
+  </div>
+
+  {/* TWO BUTTONS ROW */}
+  {!activePanel && (
+    <div className="panel-btn-row">
+      <button className="panel-half-btn" onClick={() => setActivePanel('checklist')}>
+        📋 Before You Book
+      </button>
+      <button className="panel-half-btn" onClick={() => setActivePanel('calculator')}>
+        📊 Factor in my Insurance
+      </button>
+    </div>
+  )}
 </div>
 
 {/* TWO BUTTONS ROW */}
