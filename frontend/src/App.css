@@ -952,17 +952,18 @@ body {
   border-color: #94a3b8;
 }
 .comparison-cta-container {
-  padding: 0 20px; /* Aligns with the margins of the modal */
-  margin-bottom: 12px;
+  padding: 16px 32px; /* Matches the 32px padding of the buttons below */
+  border-top: 1px solid #f1f5f9; /* The line is now above the button */
+  margin-top: 8px;
 }
 
 .comparison-share-btn {
   width: 100%;
   padding: 12px;
-  background-color: #f0f9ff; /* Very light blue */
-  color: #0369a1; /* Deep blue text */
+  background-color: #f0f9ff;
+  color: #0369a1;
   border: 1px solid #bae6fd;
-  border-radius: 8px;
+  border-radius: 10px; /* Matches your other buttons */
   font-weight: 600;
   font-size: 0.9rem;
   cursor: pointer;
