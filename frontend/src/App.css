@@ -951,26 +951,33 @@ body {
   color: #334155;
   border-color: #94a3b8;
 }
-/* 1. THE NEW WRAPPER (This creates the single Green Line) */
-.modal-actions-wrapper {
-  border-top: 2px solid #f1f5f9; /* This is your green line */
-  padding-top: 8px;
+.comparison-cta-container {
+  padding: 16px 32px; /* Matches the 32px padding of the buttons below */
+  border-top: 1px solid #f1f5f9; /* The line is now above the button */
   margin-top: 8px;
 }
 
-/* 2. REMOVE THE TOP RED LINE */
-.comparison-cta-container {
-  padding: 8px 32px; /* Reduced padding since wrapper handles margin */
-  border-top: none !important; /* Force remove the border */
-  margin-top: 0;
+.comparison-share-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  border-radius: 10px; /* Matches your other buttons */
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
 }
 
-/* 3. REMOVE THE BOTTOM RED LINE */
-.panel-btn-row {
-  display: flex;
-  gap: 10px;
-  padding: 8px 32px 16px 32px; /* Adjusted padding */
-  border-top: none !important; /* Force remove the border */
+.comparison-share-btn:hover {
+  background-color: #e0f2fe;
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
 }
 
   /* ============================================
