@@ -53,6 +53,9 @@ const [coinsurance, setCoinsurance] = useState('');
 const [oopMax, setOopMax] = useState('');
 const [oopMet, setOopMet] = useState('');
 const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculator' | null
+const [hospitalReviews, setHospitalReviews] = useState([]);
+const [reviewsLoading, setReviewsLoading] = useState(false);
+const [showReviews, setShowReviews] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -105,6 +108,19 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
     } catch (err) {
       setComparisonProcedure({ loading: false, procedure: proc, data: { exact: [], similar: [] } });
     }
+  };
+
+  const fetchReviews = async (hospitalName) => {
+    setReviewsLoading(true);
+    setShowReviews(true);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/get-reviews?hospital=${encodeURIComponent(hospitalName)}`);
+      const data = await res.json();
+      setHospitalReviews(Array.isArray(data) ? data : []);
+    } catch (err) {
+      setHospitalReviews([]);
+    }
+    setReviewsLoading(false);
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
@@ -320,9 +336,9 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setHospitalReviews([]); setShowReviews(false); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setHospitalReviews([]); setShowReviews(false); }}>×</button>
 
       
       <div className="modal-header">
@@ -376,6 +392,67 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
           ))}
         </div>
       </div>
+      {/* PATIENT PRICE REVIEWS */}
+<div className="reviews-section">
+  <div className="reviews-header">
+    <div>
+      <h3 className="reviews-title">📋 Patient Price Reviews</h3>
+      <p className="reviews-subtitle">Community reported — not verified by MedExpense</p>
+    </div>
+    <button 
+      className="reviews-toggle-btn"
+      onClick={() => showReviews ? setShowReviews(false) : fetchReviews(selectedHospital.hospitalName)}
+    >
+      {showReviews ? 'Hide Reviews' : 'Show Reviews'}
+    </button>
+  </div>
+
+  {showReviews && (
+    <div className="reviews-body">
+      {reviewsLoading && (
+        <div className="reviews-loading">
+          <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+          <p>Loading reviews...</p>
+        </div>
+      )}
+
+      {!reviewsLoading && hospitalReviews.length === 0 && (
+        <div className="reviews-empty">
+          <p>No reviews yet for this hospital.</p>
+          <button 
+            className="reviews-be-first-btn"
+            onClick={() => navigate('/share', { state: { hospital: selectedHospital.hospitalName } })}
+          >
+            Be the first to share what you paid →
+          </button>
+        </div>
+      )}
+
+      {!reviewsLoading && hospitalReviews.length > 0 && (
+        <div className="reviews-list">
+          {hospitalReviews.map((review, i) => (
+            <div key={i} className="review-card">
+              <div className="review-top">
+                <span className="review-procedure">{review.procedure_name}</span>
+                <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
+                  {review.price_honored === 'Yes' ? '✓ Price Honored' : review.price_honored === 'No' ? '✗ Price Not Honored' : '— Not Quoted'}
+                </span>
+              </div>
+              <div className="review-details">
+                <span className="review-paid">Paid: <strong>${parseFloat(review.amount_paid).toFixed(0)}</strong></span>
+                <span className="review-type">{review.payment_type}</span>
+                {review.insurance_carrier && <span className="review-carrier">{review.insurance_carrier}</span>}
+                <span className="review-date">{new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+              </div>
+              {review.comment && <p className="review-comment">"{review.comment}"</p>}
+              <p className="review-author">— {review.display_name || 'Anonymous'}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )}
+</div>
       {comparisonProcedure && (
   <div className="comparison-overlay">
     <div className="comparison-header">

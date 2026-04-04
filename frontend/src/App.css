@@ -979,6 +979,154 @@ body {
   border-color: #7dd3fc;
   transform: translateY(-1px);
 }
+/* PATIENT PRICE REVIEWS */
+.reviews-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid #f1f5f9;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.reviews-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.reviews-subtitle {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.reviews-toggle-btn {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 2px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.reviews-toggle-btn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.reviews-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #64748b;
+  font-size: 0.9rem;
+  padding: 16px 0;
+}
+
+.reviews-empty {
+  text-align: center;
+  padding: 24px 0;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.reviews-be-first-btn {
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.review-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.review-procedure {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.review-honored {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+.honored-yes {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.honored-no {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.honored-na {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.review-details {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  color: #475569;
+}
+
+.review-paid strong {
+  color: #0f172a;
+}
+
+.review-comment {
+  font-size: 0.85rem;
+  color: #334155;
+  font-style: italic;
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.review-author {
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
 
   /* ============================================
    MOBILE RESPONSIVE
