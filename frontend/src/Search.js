@@ -53,9 +53,6 @@ const [coinsurance, setCoinsurance] = useState('');
 const [oopMax, setOopMax] = useState('');
 const [oopMet, setOopMet] = useState('');
 const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculator' | null
-const [hospitalReviews, setHospitalReviews] = useState([]);
-const [reviewsLoading, setReviewsLoading] = useState(false);
-const [showReviews, setShowReviews] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -108,19 +105,6 @@ const [showReviews, setShowReviews] = useState(false);
     } catch (err) {
       setComparisonProcedure({ loading: false, procedure: proc, data: { exact: [], similar: [] } });
     }
-  };
-
-  const fetchReviews = async (hospitalName) => {
-    setReviewsLoading(true);
-    setShowReviews(true);
-    try {
-      const res = await fetch(`https://mediprice-backend.onrender.com/get-reviews?hospital=${encodeURIComponent(hospitalName)}`);
-      const data = await res.json();
-      setHospitalReviews(Array.isArray(data) ? data : []);
-    } catch (err) {
-      setHospitalReviews([]);
-    }
-    setReviewsLoading(false);
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
