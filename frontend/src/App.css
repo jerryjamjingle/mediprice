@@ -868,8 +868,7 @@ body {
 .panel-btn-row {
   display: flex;
   gap: 10px;
-  padding: 16px 32px;
-  border-top: 1px solid #f1f5f9;
+  padding: 8px 32px 16px 32px;
 }
 
 .panel-half-btn {
