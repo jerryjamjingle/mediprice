@@ -238,35 +238,21 @@ export default function Home() {
   </div>
 </section>
 
-{/* EXPLORE BY TYPE */}
-<section className="explore-block-section">
-        {/* ... your existing explore content ... */}
-      </section>
-
       {/* PASTE THIS RIGHT HERE: */}
       <section className="share-cta-section">
-        <div className="share-cta-card">
-          <div className="share-cta-content">
-            <h3>Help Others Save</h3>
-            <p>Did you pay a different price than what's listed? Share your medical bill (anonymously) to help the St. Louis community find the best care.</p>
-            <button onClick={() => navigate('/share')} className="share-now-btn">
-              Share What You Paid
-            </button>
-          </div>
-          <div className="share-cta-stats">
-            <div className="stat-mini">
-              <span className="stat-icon">📈</span>
-              <strong>User Verified</strong>
-              <span>Community Data</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* PRICE COMPARISON EXAMPLE */}
-      <section className="comparison-section">
-        {/* ... your existing comparison content ... */}
-      </section>
+  <div className="share-cta-card">
+    <div className="share-cta-left">
+      <span className="share-cta-icon">💬</span>
+      <div>
+        <h3 className="share-cta-title">Help Others Save</h3>
+        <p className="share-cta-subtitle">Paid a different price than what's listed? Share it anonymously to help the St. Louis community.</p>
+      </div>
+    </div>
+    <button onClick={() => navigate('/share')} className="share-cta-btn">
+      Share What You Paid →
+    </button>
+  </div>
+</section>
 
       {/* PRICE COMPARISON EXAMPLE */}
       <section className="comparison-section">
