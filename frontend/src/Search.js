@@ -53,6 +53,14 @@ const [coinsurance, setCoinsurance] = useState('');
 const [oopMax, setOopMax] = useState('');
 const [oopMet, setOopMet] = useState('');
 const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculator' | null
+const [showShareForm, setShowShareForm] = useState(false);
+const [shareAmountPaid, setShareAmountPaid] = useState('');
+const [sharePaymentType, setSharePaymentType] = useState('');
+const [shareInsuranceCarrier, setShareInsuranceCarrier] = useState('');
+const [sharePriceHonored, setSharePriceHonored] = useState('');
+const [shareComment, setShareComment] = useState('');
+const [shareDisplayName, setShareDisplayName] = useState('');
+const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -104,6 +112,35 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
       setComparisonProcedure({ loading: false, procedure: proc, data });
     } catch (err) {
       setComparisonProcedure({ loading: false, procedure: proc, data: { exact: [], similar: [] } });
+    }
+  };
+
+  const submitShareForm = async () => {
+    if (!shareAmountPaid || !sharePaymentType || !sharePriceHonored) return;
+    setShareSubmitStatus('loading');
+    try {
+      const res = await fetch('https://mediprice-backend.onrender.com/submit-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hospital_name: selectedHospital?.hospitalName,
+          procedure_name: comparisonProcedure?.procedure?.procedure_name,
+          service_month: new Date().toISOString().slice(0, 7),
+          amount_paid: parseFloat(shareAmountPaid),
+          payment_type: sharePaymentType,
+          insurance_carrier: shareInsuranceCarrier || null,
+          price_honored: sharePriceHonored === "Wasn't quoted" ? 'N/A' : sharePriceHonored,
+          comment: shareComment || null,
+          display_name: shareDisplayName || null,
+        })
+      });
+      if (res.ok) {
+        setShareSubmitStatus('success');
+      } else {
+        setShareSubmitStatus('error');
+      }
+    } catch {
+      setShareSubmitStatus('error');
     }
   };
 
@@ -320,9 +357,9 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>×</button>
 
       
       <div className="modal-header">
@@ -401,13 +438,7 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
 <div className="comparison-cta-container">
   <button 
     className="comparison-share-btn"
-    onClick={() => navigate('/share', { 
-      state: { 
-        hospital: selectedHospital.hospitalName, 
-        procedure: comparisonProcedure.procedure?.procedure_name,
-        cpt: comparisonProcedure.procedure?.cpt_code 
-      } 
-    })}
+    onClick={() => setShowShareForm(true)}
   >
     💬 Paid a different price? Share it here
   </button>
@@ -589,6 +620,122 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
           </div>
         );
       })()}
+    </div>
+  </div>
+)}
+
+{/* SHARE FORM PANEL */}
+{showShareForm && (
+  <div className="side-panel" style={{ zIndex: 3 }}>
+    <button className="side-panel-back" onClick={() => setShowShareForm(false)}>← Back</button>
+    <div className="share-form-inner">
+      <h3 className="share-form-title">💬 Share What You Paid</h3>
+      <p className="share-form-subtitle">Help others know what to expect. Takes 30 seconds.</p>
+
+      <div className="share-form-group">
+        <label>Hospital</label>
+        <div className="share-form-readonly">{selectedHospital?.hospitalName}</div>
+      </div>
+      <div className="share-form-group">
+        <label>Procedure</label>
+        <div className="share-form-readonly">{comparisonProcedure?.procedure?.procedure_name}</div>
+      </div>
+
+      <div className="share-form-group">
+        <label>Amount you paid <span className="share-form-required">*</span></label>
+        <div className="estimator-input-wrap">
+          <span className="estimator-dollar">$</span>
+          <input
+            type="number"
+            className="estimator-input"
+            placeholder="e.g. 450"
+            value={shareAmountPaid}
+            onChange={e => setShareAmountPaid(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="share-form-group">
+        <label>How did you pay? <span className="share-form-required">*</span></label>
+        <div className="share-form-btn-group">
+          {['Cash', 'Insurance', 'Medicare', 'Medicaid'].map(type => (
+            <button
+              key={type}
+              className={`share-form-option-btn ${sharePaymentType === type ? 'selected' : ''}`}
+              onClick={() => setSharePaymentType(type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {sharePaymentType === 'Insurance' && (
+        <div className="share-form-group">
+          <label>Insurance carrier <span className="share-form-optional">(optional)</span></label>
+          <input
+            type="text"
+            className="share-form-input"
+            placeholder="e.g. Cigna, Aetna, BCBS"
+            value={shareInsuranceCarrier}
+            onChange={e => setShareInsuranceCarrier(e.target.value)}
+          />
+        </div>
+      )}
+
+      <div className="share-form-group">
+        <label>Was the quoted price honored? <span className="share-form-required">*</span></label>
+        <div className="share-form-btn-group">
+          {['Yes', 'No', "Wasn't quoted"].map(opt => (
+            <button
+              key={opt}
+              className={`share-form-option-btn ${sharePriceHonored === opt ? 'selected' : ''}`}
+              onClick={() => setSharePriceHonored(opt)}
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="share-form-group">
+        <label>Any other details? <span className="share-form-optional">(optional)</span></label>
+        <textarea
+          className="share-form-textarea"
+          placeholder="e.g. They tried to bill me more but I negotiated it down..."
+          value={shareComment}
+          onChange={e => setShareComment(e.target.value)}
+          rows={3}
+        />
+      </div>
+
+      <div className="share-form-group">
+        <label>Your name <span className="share-form-optional">(optional)</span></label>
+        <input
+          type="text"
+          className="share-form-input"
+          placeholder="Leave blank to post as Anonymous"
+          value={shareDisplayName}
+          onChange={e => setShareDisplayName(e.target.value)}
+        />
+      </div>
+
+      {shareSubmitStatus === 'success' ? (
+        <div className="share-form-success">
+          ✅ Thanks for sharing! Your review helps others save.
+        </div>
+      ) : (
+        <button
+          className="share-form-submit-btn"
+          onClick={submitShareForm}
+          disabled={shareSubmitStatus === 'loading'}
+        >
+          {shareSubmitStatus === 'loading' ? 'Submitting...' : 'Submit Review →'}
+        </button>
+      )}
+      {shareSubmitStatus === 'error' && (
+        <p className="share-form-error">Something went wrong. Please try again.</p>
+      )}
     </div>
   </div>
 )}

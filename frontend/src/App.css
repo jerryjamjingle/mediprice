@@ -1125,6 +1125,153 @@ body {
   color: #94a3b8;
 }
 
+/* SHARE FORM PANEL */
+.share-form-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.share-form-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.share-form-subtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: -8px;
+}
+
+.share-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.share-form-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.share-form-required {
+  color: #ef4444;
+}
+
+.share-form-optional {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.share-form-readonly {
+  padding: 10px 14px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.share-form-input {
+  padding: 10px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.share-form-input:focus {
+  border-color: #3b82f6;
+}
+
+.share-form-textarea {
+  padding: 10px 14px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.share-form-textarea:focus {
+  border-color: #3b82f6;
+}
+
+.share-form-btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.share-form-option-btn {
+  padding: 8px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.share-form-option-btn:hover {
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.share-form-option-btn.selected {
+  background: #eff6ff;
+  border-color: #3b82f6;
+  color: #1e40af;
+}
+
+.share-form-submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+
+.share-form-submit-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.share-form-submit-btn:disabled {
+  background: #93c5fd;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.share-form-success {
+  padding: 14px;
+  background: #dcfce7;
+  color: #15803d;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.share-form-error {
+  color: #dc2626;
+  font-size: 0.82rem;
+  text-align: center;
+}
+
   /* ============================================
    MOBILE RESPONSIVE
    ============================================ */
