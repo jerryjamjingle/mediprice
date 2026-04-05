@@ -422,7 +422,7 @@ body {
 .hospital-contact-info {
     display: flex;
     gap: 16px;
-    margin: 16px 0;
+    margin: 16px 0 8px 0;
     flex-wrap: wrap;
   }
   
