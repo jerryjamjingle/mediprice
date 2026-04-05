@@ -64,6 +64,9 @@ const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
 const [hospitalReviews, setHospitalReviews] = useState([]);
 const [hospitalReviewsLoading, setHospitalReviewsLoading] = useState(false);
 const [showHospitalReviews, setShowHospitalReviews] = useState(false);
+const [procedureReviews, setProcedureReviews] = useState([]);
+const [procedureReviewsLoading, setProcedureReviewsLoading] = useState(false);
+const [showProcedureReviews, setShowProcedureReviews] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -158,6 +161,19 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
       setHospitalReviews([]);
     }
     setHospitalReviewsLoading(false);
+  };
+
+  const fetchProcedureReviews = async (hospitalName, procedureName) => {
+    setProcedureReviewsLoading(true);
+    setShowProcedureReviews(true);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/get-reviews?hospital=${encodeURIComponent(hospitalName)}&procedure=${encodeURIComponent(procedureName)}`);
+      const data = await res.json();
+      setProcedureReviews(Array.isArray(data) ? data : []);
+    } catch {
+      setProcedureReviews([]);
+    }
+    setProcedureReviewsLoading(false);
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
@@ -373,9 +389,9 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); }}>×</button>
 
       
       <div className="modal-header">
@@ -491,6 +507,8 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
     <button className="comparison-back" onClick={() => { 
   setComparisonProcedure(null); 
   setActivePanel(null);
+  setShowProcedureReviews(false);
+  setProcedureReviews([]);
   setDeductibleTotal(''); 
   setDeductibleMet('');
   setCoinsurance('');
@@ -810,6 +828,59 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
     </div>
   </div>
 )}
+
+{/* PROCEDURE REVIEWS PANEL */}
+{showProcedureReviews && (
+  <div className="side-panel" style={{ zIndex: 3 }}>
+    <button className="side-panel-back" onClick={() => setShowProcedureReviews(false)}>← Back</button>
+    <h3 className="share-form-title">⭐ Patient Reviews</h3>
+    <p className="share-form-subtitle">{comparisonProcedure?.procedure?.procedure_name} — {selectedHospital?.hospitalName}</p>
+
+    {procedureReviewsLoading && (
+      <div className="reviews-loading" style={{ marginTop: '24px' }}>
+        <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+        <p>Loading reviews...</p>
+      </div>
+    )}
+
+    {!procedureReviewsLoading && procedureReviews.length === 0 && (
+      <div className="reviews-empty" style={{ marginTop: '24px' }}>
+        <p>No reviews yet for this procedure.</p>
+        <button
+          className="reviews-be-first-btn"
+          style={{ marginTop: '12px' }}
+          onClick={() => { setShowProcedureReviews(false); setShowShareForm(true); }}
+        >
+          Be the first to share what you paid →
+        </button>
+      </div>
+    )}
+
+    {!procedureReviewsLoading && procedureReviews.length > 0 && (
+      <div className="reviews-list" style={{ marginTop: '16px' }}>
+        {procedureReviews.map((review, i) => (
+          <div key={i} className="review-card">
+            <div className="review-top">
+              <span className="review-procedure">{review.procedure_name}</span>
+              <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
+                {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
+              </span>
+            </div>
+            <div className="review-details">
+              <span className="review-paid">Paid: <strong>${parseFloat(review.amount_paid).toFixed(0)}</strong></span>
+              <span className="review-type">{review.payment_type}</span>
+              {review.insurance_carrier && <span className="review-carrier">{review.insurance_carrier}</span>}
+              <span className="review-date">{new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+            </div>
+            {review.comment && <p className="review-comment">"{review.comment}"</p>}
+            <p className="review-author">— {review.display_name || 'Anonymous'}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
       {comparisonProcedure.loading && (
       <div className="comparison-loading">
         <div className="spinner"></div>
@@ -886,6 +957,17 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
             })}
           </>
         )}
+
+         {/* PROCEDURE REVIEWS BUTTON */}
+         <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #f1f5f9' }}>
+          <button
+            className="hospital-reviews-btn"
+            style={{ width: '100%', justifyContent: 'center' }}
+            onClick={() => fetchProcedureReviews(selectedHospital.hospitalName, comparisonProcedure.procedure?.procedure_name)}
+          >
+            ⭐ See Patient Reviews for This Procedure
+          </button>
+        </div>
 
 
       </div>
