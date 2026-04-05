@@ -833,8 +833,10 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
 {showProcedureReviews && (
   <div className="side-panel" style={{ zIndex: 3 }}>
     <button className="side-panel-back" onClick={() => setShowProcedureReviews(false)}>← Back</button>
-    <h3 className="share-form-title">⭐ Patient Reviews</h3>
-    <p className="share-form-subtitle">{comparisonProcedure?.procedure?.procedure_name} — {selectedHospital?.hospitalName}</p>
+    <h3 className="share-form-title" style={{ marginBottom: '6px' }}>⭐ Patient Reviews</h3>
+    <p className="share-form-subtitle" style={{ marginBottom: '20px', fontSize: '0.82rem', lineHeight: '1.5' }}>
+  {comparisonProcedure?.procedure?.procedure_name} — {selectedHospital?.hospitalName}
+  </p>
 
     {procedureReviewsLoading && (
       <div className="reviews-loading" style={{ marginTop: '24px' }}>
