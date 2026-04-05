@@ -396,6 +396,13 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
   <a href={`https://www.google.com/search?q=${encodeURIComponent(selectedHospital.hospitalName + ' ' + selectedHospital.city + ' reviews')}`} target="_blank" rel="noopener noreferrer" className="contact-link">🔍 Google Reviews</a>
 </div>
 
+<button
+  className="hospital-reviews-btn"
+  onClick={(e) => { e.stopPropagation(); fetchHospitalReviews(selectedHospital.hospitalName); }}
+>
+  ⭐ Patient Price Reviews — See what others paid →
+</button>
+
         {/* Address - Click to open in Google Maps */}
         <a 
           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedHospital.address + ', ' + selectedHospital.city + ', ' + selectedHospital.state)}`}
@@ -414,12 +421,7 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
           <p className="modal-hours">🕒 {selectedHospital.procedures[0].hours}</p>
         )}
       </div>
-      <button
-  className="hospital-reviews-btn"
-  onClick={(e) => { e.stopPropagation(); fetchHospitalReviews(selectedHospital.hospitalName); }}
->
-  ⭐ Patient Price Reviews — See what others paid →
-</button>
+     
       
 
       <div className="modal-body">
