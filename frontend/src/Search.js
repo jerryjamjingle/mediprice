@@ -443,7 +443,6 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
   <div className="side-panel" style={{ zIndex: 3 }}>
     <button className="side-panel-back" onClick={() => setShowHospitalReviews(false)}>← Back</button>
     <h3 className="share-form-title">⭐ Patient Price Reviews</h3>
-    <p className="share-form-subtitle">Community reported — not verified by MedExpense</p>
 
     {hospitalReviewsLoading && (
       <div className="reviews-loading" style={{ marginTop: '24px' }}>
