@@ -400,7 +400,7 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
   className="hospital-reviews-btn"
   onClick={(e) => { e.stopPropagation(); fetchHospitalReviews(selectedHospital.hospitalName); }}
 >
-  ⭐ Patient Price Reviews — See what others paid →
+  ⭐ Patient Price Reviews →
 </button>
 
         {/* Address - Click to open in Google Maps */}
