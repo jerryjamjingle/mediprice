@@ -61,6 +61,9 @@ const [sharePriceHonored, setSharePriceHonored] = useState('');
 const [shareComment, setShareComment] = useState('');
 const [shareDisplayName, setShareDisplayName] = useState('');
 const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
+const [hospitalReviews, setHospitalReviews] = useState([]);
+const [hospitalReviewsLoading, setHospitalReviewsLoading] = useState(false);
+const [showHospitalReviews, setShowHospitalReviews] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -142,6 +145,19 @@ const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
     } catch {
       setShareSubmitStatus('error');
     }
+  };
+
+  const fetchHospitalReviews = async (hospitalName) => {
+    setHospitalReviewsLoading(true);
+    setShowHospitalReviews(true);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/get-reviews?hospital=${encodeURIComponent(hospitalName)}`);
+      const data = await res.json();
+      setHospitalReviews(Array.isArray(data) ? data : []);
+    } catch {
+      setHospitalReviews([]);
+    }
+    setHospitalReviewsLoading(false);
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
@@ -357,9 +373,9 @@ const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); }}>×</button>
 
       
       <div className="modal-header">
@@ -398,6 +414,12 @@ const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
           <p className="modal-hours">🕒 {selectedHospital.procedures[0].hours}</p>
         )}
       </div>
+      <button
+  className="hospital-reviews-btn"
+  onClick={(e) => { e.stopPropagation(); fetchHospitalReviews(selectedHospital.hospitalName); }}
+>
+  ⭐ Patient Price Reviews — See what others paid →
+</button>
       
 
       <div className="modal-body">
@@ -413,6 +435,54 @@ const [shareSubmitStatus, setShareSubmitStatus] = useState(null);
           ))}
         </div>
       </div>
+
+      {/* HOSPITAL REVIEWS PANEL */}
+{showHospitalReviews && (
+  <div className="side-panel" style={{ zIndex: 3 }}>
+    <button className="side-panel-back" onClick={() => setShowHospitalReviews(false)}>← Back</button>
+    <h3 className="share-form-title">⭐ Patient Price Reviews</h3>
+    <p className="share-form-subtitle">Community reported — not verified by MedExpense</p>
+
+    {hospitalReviewsLoading && (
+      <div className="reviews-loading" style={{ marginTop: '24px' }}>
+        <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+        <p>Loading reviews...</p>
+      </div>
+    )}
+
+    {!hospitalReviewsLoading && hospitalReviews.length === 0 && (
+      <div className="reviews-empty" style={{ marginTop: '24px' }}>
+        <p>No reviews yet for this hospital.</p>
+        <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginTop: '8px' }}>
+          Click a procedure and use "Paid a different price?" to be the first.
+        </p>
+      </div>
+    )}
+
+    {!hospitalReviewsLoading && hospitalReviews.length > 0 && (
+      <div className="reviews-list" style={{ marginTop: '16px' }}>
+        {hospitalReviews.map((review, i) => (
+          <div key={i} className="review-card">
+            <div className="review-top">
+              <span className="review-procedure">{review.procedure_name}</span>
+              <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
+                {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
+              </span>
+            </div>
+            <div className="review-details">
+              <span className="review-paid">Paid: <strong>${parseFloat(review.amount_paid).toFixed(0)}</strong></span>
+              <span className="review-type">{review.payment_type}</span>
+              {review.insurance_carrier && <span className="review-carrier">{review.insurance_carrier}</span>}
+              <span className="review-date">{new Date(review.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+            </div>
+            {review.comment && <p className="review-comment">"{review.comment}"</p>}
+            <p className="review-author">— {review.display_name || 'Anonymous'}</p>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
      
       {comparisonProcedure && (
   <div className="comparison-overlay">
