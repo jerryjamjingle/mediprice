@@ -1297,6 +1297,22 @@ body {
   text-align: center;
 }
 
+.review-flag-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.75rem;
+  opacity: 0.3;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.review-flag-btn:hover {
+  opacity: 1;
+}
+
   /* ============================================
    MOBILE RESPONSIVE
    ============================================ */

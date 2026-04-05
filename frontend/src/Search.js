@@ -176,6 +176,18 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
     setProcedureReviewsLoading(false);
   };
 
+  const flagReview = async (reviewId) => {
+    try {
+      await fetch('https://mediprice-backend.onrender.com/flag-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ review_id: reviewId })
+      });
+    } catch (err) {
+      console.error('Flag error:', err);
+    }
+  };
+
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
 
   const providerPins = Object.entries(
@@ -481,6 +493,21 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
         {hospitalReviews.map((review, i) => (
           <div key={i} className="review-card">
             <div className="review-top">
+            <div className="review-top">
+  <span className="review-procedure">{review.procedure_name}</span>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
+      {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
+    </span>
+    <button
+      className="review-flag-btn"
+      onClick={() => flagReview(review.id)}
+      title="Flag this review"
+    >
+      🚩
+    </button>
+  </div>
+</div>
               <span className="review-procedure">{review.procedure_name}</span>
               <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
                 {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
@@ -862,12 +889,21 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
       <div className="reviews-list" style={{ marginTop: '16px' }}>
         {procedureReviews.map((review, i) => (
           <div key={i} className="review-card">
-            <div className="review-top">
-              <span className="review-procedure">{review.procedure_name}</span>
-              <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
-                {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
-              </span>
-            </div>
+<div className="review-top">
+  <span className="review-procedure">{review.procedure_name}</span>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
+      {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
+    </span>
+    <button
+      className="review-flag-btn"
+      onClick={() => flagReview(review.id)}
+      title="Flag this review"
+    >
+      🚩
+    </button>
+  </div>
+</div>
             <div className="review-details">
               <span className="review-paid">Paid: <strong>${parseFloat(review.amount_paid).toFixed(0)}</strong></span>
               <span className="review-type">{review.payment_type}</span>

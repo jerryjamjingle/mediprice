@@ -6,6 +6,7 @@ import About from './About';
 import FAQ from './FAQ';
 import Explore from './Explore';
 import Share from './Share';
+import Admin from './Admin';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/share" element={<Share />} />
         <Route path="/explore" element={<Explore />} />
         <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="/admin-mx-2026" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );

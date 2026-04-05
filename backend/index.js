@@ -302,6 +302,73 @@ app.get('/get-reviews', async (req, res) => {
   }
 });
 
+// Flag a review
+app.post('/flag-review', async (req, res) => {
+  const { review_id } = req.body;
+  if (!review_id) return res.status(400).json({ error: 'Review ID required' });
+
+  try {
+    await pool.query(
+      `UPDATE reviews 
+       SET flag_count = flag_count + 1,
+           flagged = CASE WHEN flag_count + 1 >= 5 THEN true ELSE flagged END
+       WHERE id = $1`,
+      [review_id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Flag review error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Admin - get flagged reviews
+app.get('/admin-reviews', async (req, res) => {
+  const { password } = req.query;
+  if (password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    const result = await pool.query(
+      `SELECT * FROM reviews WHERE flagged = true ORDER BY created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Admin - approve a review
+app.post('/admin-approve', async (req, res) => {
+  const { review_id, password } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    await pool.query(
+      `UPDATE reviews SET flagged = false, flag_count = 0 WHERE id = $1`,
+      [review_id]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
+// Admin - delete a review
+app.post('/admin-delete', async (req, res) => {
+  const { review_id, password } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  try {
+    await pool.query(`DELETE FROM reviews WHERE id = $1`, [review_id]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, function() {
   console.log('Server running on port ' + PORT);
