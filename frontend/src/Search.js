@@ -320,9 +320,9 @@ const [activePanel, setActivePanel] = useState(null); // 'checklist' | 'calculat
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setHospitalReviews([]); setShowReviews(false); }}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setHospitalReviews([]); setShowReviews(false); }}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); }}>×</button>
 
       
       <div className="modal-header">
