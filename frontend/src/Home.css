@@ -248,8 +248,8 @@
   /* COMPARISON PANEL */
   .comparison-section {
     max-width: 800px;
-    margin: 60px auto;
-    padding: 0 24px 5px 24px;
+    margin: 0 auto 32px auto;
+    padding: 0 24px;
   }
   
   .comparison-panel {
