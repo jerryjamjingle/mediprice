@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Share.css';
 
@@ -22,6 +22,10 @@ const Share = () => {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
