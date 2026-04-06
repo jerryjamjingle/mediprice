@@ -97,7 +97,7 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
       url += params.join('&');
       
       const res = await fetch(url);
-      const data = await res.json();
+const _data = await res.json();
       setResults(Array.isArray(data) ? data : []);
     } catch (err) {
       setResults([]);
@@ -140,7 +140,8 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
           display_name: shareDisplayName || null,
         })
       });
-      const data = await res.json();
+      // eslint-disable-next-line no-unused-vars
+const data = await res.json();
       if (res.status === 429) {
         setShareSubmitStatus('duplicate');
       } else if (res.ok) {
