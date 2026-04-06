@@ -86,7 +86,7 @@ export default function Privacy() {
 
           <section style={{ marginBottom: '36px' }}>
             <h2 style={h2}>9. Children's Privacy</h2>
-            <p style={p}>MedExpense is not directed at children under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has submitted information to us, please contact us at [CONTACT EMAIL] and we will promptly delete it.</p>
+            <p style={p}>MedExpense is not directed at individuals under the age of 18. We do not knowingly collect personal information from anyone under 18. If you believe someone under 18 has submitted information to us, please contact us at [CONTACT EMAIL] and we will promptly delete it.</p>
           </section>
 
           <section style={{ marginBottom: '36px' }}>
