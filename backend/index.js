@@ -195,17 +195,35 @@ app.post('/submit-review', async (req, res) => {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
+  // Capture IP address
+  const submitter_ip = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || req.socket.remoteAddress;
+
   try {
+    // Check for duplicate submission in last 24 hours
+    const duplicate = await pool.query(
+      `SELECT id FROM reviews 
+       WHERE submitter_ip = $1 
+       AND LOWER(hospital_name) = LOWER($2) 
+       AND LOWER(procedure_name) = LOWER($3)
+       AND created_at > NOW() - INTERVAL '24 hours'`,
+      [submitter_ip, hospital_name, procedure_name]
+    );
+
+    if (duplicate.rows.length > 0) {
+      return res.status(429).json({ error: 'duplicate' });
+    }
+
     await pool.query(
       `INSERT INTO reviews 
         (hospital_name, procedure_name, service_month, amount_billed, amount_paid, 
-         payment_type, insurance_carrier, price_honored, comment, display_name)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+         payment_type, insurance_carrier, price_honored, comment, display_name, submitter_ip)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
       [
         hospital_name, procedure_name, service_month,
         amount_billed || null, amount_paid, payment_type,
         insurance_carrier || null, price_honored,
-        comment || null, display_name || 'Anonymous'
+        comment || null, display_name || 'Anonymous',
+        submitter_ip
       ]
     );
     res.json({ success: true });

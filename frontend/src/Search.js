@@ -140,7 +140,10 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
           display_name: shareDisplayName || null,
         })
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.status === 429) {
+        setShareSubmitStatus('duplicate');
+      } else if (res.ok) {
         setShareSubmitStatus('success');
       } else {
         setShareSubmitStatus('error');
@@ -837,21 +840,24 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
       </div>
 
       {shareSubmitStatus === 'success' ? (
-        <div className="share-form-success">
-          ✅ Thanks for sharing! Your review helps others save.
-        </div>
-      ) : (
-        <button
-          className="share-form-submit-btn"
-          onClick={submitShareForm}
-          disabled={shareSubmitStatus === 'loading'}
-        >
-          {shareSubmitStatus === 'loading' ? 'Submitting...' : 'Submit Review →'}
-        </button>
-      )}
-      {shareSubmitStatus === 'error' && (
-        <p className="share-form-error">Something went wrong. Please try again.</p>
-      )}
+  <div className="share-form-success">
+    ✅ Thanks for sharing! Your review helps others save.
+  </div>
+) : (
+  <button
+    className="share-form-submit-btn"
+    onClick={submitShareForm}
+    disabled={shareSubmitStatus === 'loading'}
+  >
+    {shareSubmitStatus === 'loading' ? 'Submitting...' : 'Submit Review →'}
+  </button>
+)}
+{shareSubmitStatus === 'error' && (
+  <p className="share-form-error">Something went wrong. Please try again.</p>
+)}
+{shareSubmitStatus === 'duplicate' && (
+  <p className="share-form-error">You've already submitted a review for this procedure at this hospital in the last 24 hours.</p>
+)}
     </div>
   </div>
 )}

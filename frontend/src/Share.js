@@ -45,12 +45,13 @@ const Share = () => {
                 body: JSON.stringify(formData),
             });
 
-            if (response.ok) {
+            if (response.status === 429) {
+                setMessage({ type: 'error', text: "You've already submitted a review for this procedure at this hospital in the last 24 hours." });              } else if (response.ok) {
                 setMessage({ type: 'success', text: 'Thank you! Your experience has been shared to help others.' });
                 setTimeout(() => navigate('/'), 3000);
-            } else {
+              } else {
                 throw new Error('Failed to submit');
-            }
+              }
         } catch (err) {
             setMessage({ type: 'error', text: 'Update failed. Please try again later.' });
         } finally {
