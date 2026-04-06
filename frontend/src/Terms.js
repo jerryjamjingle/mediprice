@@ -115,7 +115,7 @@ export default function Terms() {
 
           <section style={{ marginBottom: '36px' }}>
             <h2 style={h2}>16. Age Requirement</h2>
-            <p style={p}>You must be at least 13 years of age to use the Service. By using the Service, you represent that you are at least 13 years old. If you are under 18, you represent that you have your parent or guardian's permission to use the Service.</p>
+            <p style={p}>You must be at least 18 years of age to use the Service. By using the Service, you represent that you are at least 18 years old.</p>
           </section>
 
           <section>
