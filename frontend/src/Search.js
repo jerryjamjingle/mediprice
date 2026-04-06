@@ -497,7 +497,6 @@ const data = await res.json();
         {hospitalReviews.map((review, i) => (
           <div key={i} className="review-card">
             <div className="review-top">
-            <div className="review-top">
   <span className="review-procedure">{review.procedure_name}</span>
   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
     <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
@@ -512,11 +511,6 @@ const data = await res.json();
     </button>
   </div>
 </div>
-              <span className="review-procedure">{review.procedure_name}</span>
-              <span className={`review-honored ${review.price_honored === 'Yes' ? 'honored-yes' : review.price_honored === 'No' ? 'honored-no' : 'honored-na'}`}>
-                {review.price_honored === 'Yes' ? '✓ Honored' : review.price_honored === 'No' ? '✗ Not Honored' : '— Not Quoted'}
-              </span>
-            </div>
             <div className="review-details">
               <span className="review-paid">Paid: <strong>${parseFloat(review.amount_paid).toFixed(0)}</strong></span>
               <span className="review-type">{review.payment_type}</span>
