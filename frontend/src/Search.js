@@ -97,8 +97,8 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
       url += params.join('&');
       
       const res = await fetch(url);
-const _data = await res.json();
-      setResults(Array.isArray(data) ? data : []);
+      const data = await res.json();
+setResults(Array.isArray(data) ? data : []);
     } catch (err) {
       setResults([]);
     }
