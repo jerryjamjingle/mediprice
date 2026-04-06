@@ -453,10 +453,10 @@
     background: none;
     border: none;
     color: #64748b;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    padding: 6px 12px;
+    padding: 6px 10px;
     border-radius: 6px;
     transition: all 0.15s;
   }
