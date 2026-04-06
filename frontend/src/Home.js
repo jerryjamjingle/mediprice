@@ -410,11 +410,13 @@ export default function Home() {
         <span className="footer-copy">© 2026</span>
       </div>
       <div className="footer-links">
-        <button className="footer-link" onClick={() => handleSearch()}>Search</button>
-        <button className="footer-link" onClick={() => navigate('/about')}>About</button>
-        <button className="footer-link" onClick={() => navigate('/faq')}>FAQ</button>
-        <button className="footer-link" onClick={() => navigate('/share')}>Share</button>
-      </div>
+  <button className="footer-link" onClick={() => handleSearch()}>Search</button>
+  <button className="footer-link" onClick={() => navigate('/about')}>About</button>
+  <button className="footer-link" onClick={() => navigate('/faq')}>FAQ</button>
+  <button className="footer-link" onClick={() => navigate('/share')}>Share</button>
+  <button className="footer-link" onClick={() => navigate('/privacy')}>Privacy Policy</button>
+  <button className="footer-link" onClick={() => navigate('/terms')}>Terms of Service</button>
+</div>
     </div>
     <div className="footer-disclaimer">
       Data sourced from federally mandated hospital price transparency files. Prices are for informational purposes only.
