@@ -134,7 +134,6 @@ export default function Terms() {
 }
 
 const h2 = { fontSize: '1.05rem', fontWeight: '700', color: '#0f172a', marginBottom: '12px', marginTop: '0' };
-const h3 = { fontSize: '0.95rem', fontWeight: '700', color: '#334155', marginBottom: '8px', marginTop: '16px' };
 const p = { fontSize: '0.92rem', color: '#475569', lineHeight: '1.75', marginBottom: '12px' };
 const ul = { paddingLeft: '20px', marginBottom: '12px' };
 const li = { fontSize: '0.92rem', color: '#475569', lineHeight: '1.75', marginBottom: '4px' };
