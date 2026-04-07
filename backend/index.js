@@ -195,7 +195,7 @@ app.get('/hospital-procedures', async (req, res) => {
        WHERE LOWER(pr.name) = LOWER($1)
        AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
        GROUP BY p.procedure_name, p.cpt_code
-       ORDER BY pc.discounted_cash ASC`,
+       ORDER BY MIN(pc.discounted_cash) ASC`,
       [hospital]
     );
     res.json(result.rows);
