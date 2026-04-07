@@ -1313,6 +1313,119 @@ body {
   opacity: 1;
 }
 
+/* BROWSE ALL PROCEDURES PAGE */
+.browse-page {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #fff;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.browse-page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+.browse-back-btn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.browse-page-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.browse-page-subtitle {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 2px 0 0 0;
+}
+.browse-page-controls {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+.browse-search-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  outline: none;
+}
+.browse-search-input:focus {
+  border-color: #3b82f6;
+}
+.browse-sort-select {
+  padding: 10px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #475569;
+  outline: none;
+  cursor: pointer;
+}
+.browse-page-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 24px 24px 24px;
+}
+.browse-procedure-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #f8fafc;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.browse-procedure-item:hover {
+  background: #f8fafc;
+  margin: 0 -24px;
+  padding: 14px 24px;
+}
+.browse-procedure-name {
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 500;
+}
+.browse-procedure-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+.browse-all-btn {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1.5px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.browse-all-btn:hover {
+  background: #dbeafe;
+}
+
   /* ============================================
    MOBILE RESPONSIVE
    ============================================ */

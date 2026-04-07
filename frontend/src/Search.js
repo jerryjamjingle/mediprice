@@ -67,6 +67,9 @@ const [showHospitalReviews, setShowHospitalReviews] = useState(false);
 const [procedureReviews, setProcedureReviews] = useState([]);
 const [procedureReviewsLoading, setProcedureReviewsLoading] = useState(false);
 const [showProcedureReviews, setShowProcedureReviews] = useState(false);
+const [showBrowsePage, setShowBrowsePage] = useState(false);
+const [browseSearch, setBrowseSearch] = useState('');
+const [browseSort, setBrowseSort] = useState('price-asc');
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -457,7 +460,12 @@ const data = await res.json();
       
 
       <div className="modal-body">
-        <h3>All Matching Procedures ({selectedHospital.procedureCount})</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+  <h3 style={{ margin: 0 }}>All Matching Procedures ({selectedHospital.procedureCount})</h3>
+  <button className="browse-all-btn" onClick={() => setShowBrowsePage(true)}>
+    Browse All →
+  </button>
+</div>
         <div className="procedure-list">
           {selectedHospital.procedures.map((proc, idx) => (
             <div key={idx} className="procedure-item" onClick={(e) => { e.stopPropagation(); compareProcedure(proc); }}>
@@ -467,6 +475,59 @@ const data = await res.json();
               </div>
             </div>
           ))}
+
+          {/* BROWSE ALL PROCEDURES PAGE */}
+{showBrowsePage && (
+  <div className="browse-page">
+    <div className="browse-page-header">
+      <button className="browse-back-btn" onClick={() => { setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); }}>
+        ← Back
+      </button>
+      <div>
+        <h2 className="browse-page-title">{selectedHospital.hospitalName}</h2>
+        <p className="browse-page-subtitle">{selectedHospital.procedureCount} procedures</p>
+      </div>
+    </div>
+
+    <div className="browse-page-controls">
+      <input
+        type="text"
+        className="browse-search-input"
+        placeholder="Search procedures..."
+        value={browseSearch}
+        onChange={e => setBrowseSearch(e.target.value)}
+      />
+      <select
+        className="browse-sort-select"
+        value={browseSort}
+        onChange={e => setBrowseSort(e.target.value)}
+      >
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="name-asc">Name: A to Z</option>
+      </select>
+    </div>
+
+    <div className="browse-page-list">
+      {selectedHospital.procedures
+        .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
+        .sort((a, b) => {
+          if (browseSort === 'price-asc') return parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash);
+          if (browseSort === 'price-desc') return parseFloat(b.discounted_cash) - parseFloat(a.discounted_cash);
+          return a.procedure_name.localeCompare(b.procedure_name);
+        })
+        .map((proc, idx) => (
+          <div key={idx} className="browse-procedure-item" onClick={() => { setShowBrowsePage(false); compareProcedure(proc); }}>
+            <div className="browse-procedure-name">{proc.procedure_name}</div>
+            <div className="browse-procedure-price">
+              {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+)}
         </div>
       </div>
 
