@@ -195,6 +195,19 @@ app.get('/hospital-procedures', async (req, res) => {
        WHERE LOWER(pr.name) = LOWER($1)
        AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
        AND p.cpt_code IS NOT NULL AND p.cpt_code != ''
+       AND LOWER(p.procedure_name) NOT LIKE '% mg%'
+       AND LOWER(p.procedure_name) NOT LIKE '% mcg%'
+       AND LOWER(p.procedure_name) NOT LIKE '%tablet%'
+       AND LOWER(p.procedure_name) NOT LIKE '% tab%'
+       AND LOWER(p.procedure_name) NOT LIKE '%capsule%'
+       AND LOWER(p.procedure_name) NOT LIKE '% cap %'
+       AND LOWER(p.procedure_name) NOT LIKE '%injection%'
+       AND LOWER(p.procedure_name) NOT LIKE '% inj%'
+       AND LOWER(p.procedure_name) NOT LIKE '% soln%'
+       AND LOWER(p.procedure_name) NOT LIKE '% oint%'
+       AND LOWER(p.procedure_name) NOT LIKE '% susp%'
+       AND LOWER(p.procedure_name) NOT LIKE '%ml/%'
+       AND LOWER(p.procedure_name) NOT LIKE '% ml%'
        GROUP BY p.procedure_name, p.cpt_code
        ORDER BY MIN(pc.discounted_cash) ASC`,
       [hospital]
