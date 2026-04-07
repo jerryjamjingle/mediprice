@@ -181,41 +181,115 @@ app.get('/search', async (req, res) => {
     }
   });
 
-  // Get all procedures for a hospital
+  // PROCEDURES TAB — clean CPT procedures only
 app.get('/hospital-procedures', async (req, res) => {
   const { hospital } = req.query;
-  if (!hospital) return res.status(400).json({ error: 'Hospital name required' });
+  if (!hospital) return res.status(400).json({ error: 'Missing hospital param' });
 
   try {
-    const result = await pool.query(
-      `SELECT p.procedure_name, p.cpt_code, MIN(pc.discounted_cash) as discounted_cash
-       FROM prices pc
-       JOIN providers pr ON pc.provider_id = pr.id
-       JOIN procedures p ON pc.procedure_id = p.id
-       WHERE LOWER(pr.name) = LOWER($1)
-       AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
-       AND p.cpt_code IS NOT NULL AND p.cpt_code != ''
-       AND LOWER(p.procedure_name) NOT LIKE '% mg%'
-       AND LOWER(p.procedure_name) NOT LIKE '% mcg%'
-       AND LOWER(p.procedure_name) NOT LIKE '%tablet%'
-       AND LOWER(p.procedure_name) NOT LIKE '% tab%'
-       AND LOWER(p.procedure_name) NOT LIKE '%capsule%'
-       AND LOWER(p.procedure_name) NOT LIKE '% cap %'
-       AND LOWER(p.procedure_name) NOT LIKE '%injection%'
-       AND LOWER(p.procedure_name) NOT LIKE '% inj%'
-       AND LOWER(p.procedure_name) NOT LIKE '% soln%'
-       AND LOWER(p.procedure_name) NOT LIKE '% oint%'
-       AND LOWER(p.procedure_name) NOT LIKE '% susp%'
-       AND LOWER(p.procedure_name) NOT LIKE '%ml/%'
-       AND LOWER(p.procedure_name) NOT LIKE '% ml%'
-       GROUP BY p.procedure_name, p.cpt_code
-       ORDER BY MIN(pc.discounted_cash) ASC`,
-      [hospital]
-    );
+    const result = await pool.query(`
+      SELECT pr.procedure_name, MIN(pc.discounted_cash) as price
+      FROM prices pc
+      JOIN providers pv ON pc.provider_id = pv.id
+      JOIN procedures pr ON pc.procedure_id = pr.id
+      WHERE LOWER(pv.name) = LOWER($1)
+        AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
+        AND (
+          pr.cpt_code ~ '^[0-9]{5}$'
+          OR pr.cpt_code ~ '^[0-9]{4}T$'
+          OR pr.cpt_code ~ '^[0-9]{4}U$'
+        )
+        AND NOT (
+          pr.procedure_name ~* '[0-9]+ mg'
+          OR pr.procedure_name ILIKE '% tab %'
+          OR pr.procedure_name ILIKE '% tab[0-9]%'
+          OR pr.procedure_name ILIKE '% cap [0-9]%'
+          OR pr.procedure_name ILIKE '%noncdm%'
+          OR pr.procedure_name ILIKE '%lchg %'
+          OR pr.procedure_name ILIKE '% soln%'
+          OR pr.procedure_name ILIKE '% oint%'
+          OR pr.procedure_name ILIKE '%suppos%'
+          OR pr.procedure_name ILIKE '%ndc description%'
+          OR pr.procedure_name ILIKE '% inj [0-9]%'
+          OR pr.procedure_name ILIKE '% inj[0-9]%'
+        )
+      GROUP BY pr.procedure_name
+      ORDER BY MIN(pc.discounted_cash) ASC
+    `, [hospital]);
+
     res.json(result.rows);
   } catch (err) {
-    console.error('Hospital procedures error:', err);
-    res.status(500).json({ error: 'Database error' });
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// TOTAL STAY TAB — DRG bundle costs
+app.get('/hospital-drgs', async (req, res) => {
+  const { hospital } = req.query;
+  if (!hospital) return res.status(400).json({ error: 'Missing hospital param' });
+
+  try {
+    const result = await pool.query(`
+      SELECT pr.procedure_name, pr.cpt_code, MIN(pc.discounted_cash) as price
+      FROM prices pc
+      JOIN providers pv ON pc.provider_id = pv.id
+      JOIN procedures pr ON pc.procedure_id = pr.id
+      WHERE LOWER(pv.name) = LOWER($1)
+        AND pr.cpt_code ~ '^[0-9]{1,3}$'
+        AND CAST(pr.cpt_code AS INTEGER) BETWEEN 1 AND 999
+        AND pc.discounted_cash > 0
+        AND pr.cpt_code NOT IN ('272','270','278','637','271','250','275','750')
+      GROUP BY pr.procedure_name, pr.cpt_code
+      ORDER BY MIN(pc.discounted_cash) ASC
+    `, [hospital]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// MEDICATIONS TAB — drugs, supplies, everything else
+app.get('/hospital-medications', async (req, res) => {
+  const { hospital } = req.query;
+  if (!hospital) return res.status(400).json({ error: 'Missing hospital param' });
+
+  try {
+    const result = await pool.query(`
+      SELECT pr.procedure_name, MIN(pc.discounted_cash) as price
+      FROM prices pc
+      JOIN providers pv ON pc.provider_id = pv.id
+      JOIN procedures pr ON pc.procedure_id = pr.id
+      WHERE LOWER(pv.name) = LOWER($1)
+        AND pc.discounted_cash > 0
+        AND (
+          (pr.cpt_code ~ '^[0-9]+$' AND CAST(pr.cpt_code AS INTEGER) > 999)
+          OR pr.cpt_code ~ '^[A-Z]'
+          OR (
+            pr.cpt_code ~ '^[0-9]{5}$'
+            AND (
+              pr.procedure_name ~* '[0-9]+ mg'
+              OR pr.procedure_name ILIKE '% tab %'
+              OR pr.procedure_name ILIKE '% tab[0-9]%'
+              OR pr.procedure_name ILIKE '% cap [0-9]%'
+              OR pr.procedure_name ILIKE '% soln%'
+              OR pr.procedure_name ILIKE '% oint%'
+              OR pr.procedure_name ILIKE '%suppos%'
+              OR pr.procedure_name ILIKE '% inj [0-9]%'
+              OR pr.procedure_name ILIKE '% inj[0-9]%'
+            )
+          )
+        )
+      GROUP BY pr.procedure_name
+      ORDER BY pr.procedure_name ASC
+    `, [hospital]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 
