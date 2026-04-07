@@ -70,6 +70,8 @@ const [showProcedureReviews, setShowProcedureReviews] = useState(false);
 const [showBrowsePage, setShowBrowsePage] = useState(false);
 const [browseSearch, setBrowseSearch] = useState('');
 const [browseSort, setBrowseSort] = useState('price-asc');
+const [allHospitalProcedures, setAllHospitalProcedures] = useState([]);
+const [allProceduresLoading, setAllProceduresLoading] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -193,6 +195,18 @@ const data = await res.json();
     } catch (err) {
       console.error('Flag error:', err);
     }
+  };
+
+  const fetchAllHospitalProcedures = async (hospitalName) => {
+    setAllProceduresLoading(true);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/hospital-procedures?hospital=${encodeURIComponent(hospitalName)}`);
+      const data = await res.json();
+      setAllHospitalProcedures(Array.isArray(data) ? data : []);
+    } catch {
+      setAllHospitalProcedures([]);
+    }
+    setAllProceduresLoading(false);
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
@@ -408,9 +422,9 @@ const data = await res.json();
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); }}>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); setAllHospitalProcedures([]); setAllProceduresLoading(false); }}>
     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); }}>×</button>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); setAllHospitalProcedures([]); setAllProceduresLoading(false); }}>×</button>
 
       
       <div className="modal-header">
@@ -462,9 +476,9 @@ const data = await res.json();
       <div className="modal-body">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
   <h3 style={{ margin: 0 }}>All Matching Procedures ({selectedHospital.procedureCount})</h3>
-  <button className="browse-all-btn" onClick={() => setShowBrowsePage(true)}>
-    Browse All →
-  </button>
+  <button className="browse-all-btn" onClick={() => { setShowBrowsePage(true); fetchAllHospitalProcedures(selectedHospital.hospitalName); }}>
+  Browse All →
+</button>
 </div>
         <div className="procedure-list">
           {selectedHospital.procedures.map((proc, idx) => (
@@ -509,23 +523,29 @@ const data = await res.json();
     </div>
 
     <div className="browse-page-list">
-      {selectedHospital.procedures
-        .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
-        .sort((a, b) => {
-          if (browseSort === 'price-asc') return parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash);
-          if (browseSort === 'price-desc') return parseFloat(b.discounted_cash) - parseFloat(a.discounted_cash);
-          return a.procedure_name.localeCompare(b.procedure_name);
-        })
-        .map((proc, idx) => (
-          <div key={idx} className="browse-procedure-item" onClick={() => { setShowBrowsePage(false); compareProcedure(proc); }}>
-            <div className="browse-procedure-name">{proc.procedure_name}</div>
-            <div className="browse-procedure-price">
-              {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
-            </div>
-          </div>
-        ))
-      }
+  {allProceduresLoading ? (
+    <div className="reviews-loading" style={{ marginTop: '24px' }}>
+      <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+      <p>Loading procedures...</p>
     </div>
+  ) : (
+    allHospitalProcedures
+      .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
+      .sort((a, b) => {
+        if (browseSort === 'price-asc') return parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash);
+        if (browseSort === 'price-desc') return parseFloat(b.discounted_cash) - parseFloat(a.discounted_cash);
+        return a.procedure_name.localeCompare(b.procedure_name);
+      })
+      .map((proc, idx) => (
+        <div key={idx} className="browse-procedure-item" onClick={() => { setShowBrowsePage(false); compareProcedure(proc); }}>
+          <div className="browse-procedure-name">{proc.procedure_name}</div>
+          <div className="browse-procedure-price">
+            {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
+          </div>
+        </div>
+      ))
+  )}
+</div>
   </div>
 )}
         </div>

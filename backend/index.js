@@ -181,6 +181,30 @@ app.get('/search', async (req, res) => {
     }
   });
 
+  // Get all procedures for a hospital
+app.get('/hospital-procedures', async (req, res) => {
+  const { hospital } = req.query;
+  if (!hospital) return res.status(400).json({ error: 'Hospital name required' });
+
+  try {
+    const result = await pool.query(
+      `SELECT p.procedure_name, p.cpt_code, MIN(pc.discounted_cash) as discounted_cash
+       FROM prices pc
+       JOIN providers pr ON pc.provider_id = pr.id
+       JOIN procedures p ON pc.procedure_id = p.id
+       WHERE LOWER(pr.name) = LOWER($1)
+       AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
+       GROUP BY p.procedure_name, p.cpt_code
+       ORDER BY pc.discounted_cash ASC`,
+      [hospital]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Hospital procedures error:', err);
+    res.status(500).json({ error: 'Database error' });
+  }
+});
+
   // --- REVIEWS & SUBMISSIONS ---
 
 // Submit a review
