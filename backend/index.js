@@ -194,6 +194,7 @@ app.get('/hospital-procedures', async (req, res) => {
        JOIN procedures p ON pc.procedure_id = p.id
        WHERE LOWER(pr.name) = LOWER($1)
        AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
+       AND p.cpt_code IS NOT NULL AND p.cpt_code != ''
        GROUP BY p.procedure_name, p.cpt_code
        ORDER BY MIN(pc.discounted_cash) ASC`,
       [hospital]
