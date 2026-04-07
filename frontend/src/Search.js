@@ -499,7 +499,7 @@ const data = await res.json();
       </button>
       <div>
         <h2 className="browse-page-title">{selectedHospital.hospitalName}</h2>
-        <p className="browse-page-subtitle">{selectedHospital.procedureCount} procedures</p>
+        <p className="browse-page-subtitle">{allProceduresLoading ? '...' : allHospitalProcedures.length} procedures</p>
       </div>
     </div>
 
@@ -530,7 +530,8 @@ const data = await res.json();
     </div>
   ) : (
     allHospitalProcedures
-      .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
+  .filter(proc => parseFloat(proc.discounted_cash) >= 1)
+  .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
       .sort((a, b) => {
         if (browseSort === 'price-asc') return parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash);
         if (browseSort === 'price-desc') return parseFloat(b.discounted_cash) - parseFloat(a.discounted_cash);
