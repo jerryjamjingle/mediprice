@@ -364,7 +364,7 @@ const data = await res.json();
                   <div 
                     key={hospital.hospitalName} 
                     className="hospital-card"
-                    onClick={() => setSelectedHospital(hospital)}
+                    onClick={() => { setSelectedHospital(hospital); fetchAllHospitalProcedures(hospital.hospitalName); }}
                   >
                     <div className="hospital-rank-badge">
                       #{i + 1}
