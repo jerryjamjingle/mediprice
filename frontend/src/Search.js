@@ -524,7 +524,7 @@ const data = await res.json();
 
     <div className="browse-page-list">
   {allProceduresLoading ? (
-    <div className="reviews-loading" style={{ marginTop: '24px' }}>
+    <div className="reviews-loading" style={{ marginTop: '24px', alignSelf: 'center' }}>
       <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
       <p>Loading procedures...</p>
     </div>
