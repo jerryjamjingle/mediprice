@@ -86,12 +86,12 @@ export default function Privacy() {
 
           <section style={{ marginBottom: '36px' }}>
             <h2 style={h2}>9. Children's Privacy</h2>
-            <p style={p}>MedExpense is not directed at individuals under the age of 18. We do not knowingly collect personal information from anyone under 18. If you believe someone under 18 has submitted information to us, please contact us at [CONTACT EMAIL] and we will promptly delete it.</p>
+            <p style={p}>MedExpense is not directed at individuals under the age of 18. We do not knowingly collect personal information from anyone under 18. If you believe someone under 18 has submitted information to us, please contact us at contact.medexpense@gmail.com and we will promptly delete it.</p>
           </section>
 
           <section style={{ marginBottom: '36px' }}>
             <h2 style={h2}>10. California Privacy Rights (CCPA)</h2>
-            <p style={p}>If you are a California resident, you have the right to request information about the categories of personal data we collect, the purposes for which we use it, and whether we sell it (we do not). You also have the right to request deletion of your personal data. To exercise these rights, contact us at [CONTACT EMAIL].</p>
+            <p style={p}>If you are a California resident, you have the right to request information about the categories of personal data we collect, the purposes for which we use it, and whether we sell it (we do not). You also have the right to request deletion of your personal data. To exercise these rights, contact us at contact.medexpense@gmail.com.</p>
           </section>
 
           <section style={{ marginBottom: '36px' }}>
@@ -106,7 +106,7 @@ export default function Privacy() {
 
           <section>
             <h2 style={h2}>13. Contact Us</h2>
-            <p style={p}>If you have questions or concerns about this Privacy Policy or how your data is handled, please contact us at: <strong>[CONTACT EMAIL]</strong></p>
+            <p style={p}>If you have questions or concerns about this Privacy Policy or how your data is handled, please contact us at: <strong>contact.medexpense@gmail.com</strong></p>
           </section>
 
         </div>
