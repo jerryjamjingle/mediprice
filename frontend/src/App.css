@@ -1428,6 +1428,38 @@ body {
   background: #dbeafe;
 }
 
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 0;
+}
+
+.modal-tab {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #94a3b8;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.modal-tab:hover {
+  color: #3b82f6;
+}
+
+.modal-tab.active {
+  color: #3b82f6;
+  border-bottom-color: #3b82f6;
+  font-weight: 600;
+}
+
   /* ============================================
    MOBILE RESPONSIVE
    ============================================ */

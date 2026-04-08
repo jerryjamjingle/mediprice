@@ -72,6 +72,11 @@ const [browseSearch, setBrowseSearch] = useState('');
 const [browseSort, setBrowseSort] = useState('price-asc');
 const [allHospitalProcedures, setAllHospitalProcedures] = useState([]);
 const [allProceduresLoading, setAllProceduresLoading] = useState(false);
+const [activeTab, setActiveTab] = useState('procedures'); // 'procedures' | 'drgs' | 'medications'
+const [allHospitalDrgs, setAllHospitalDrgs] = useState([]);
+const [allDrgsLoading, setAllDrgsLoading] = useState(false);
+const [allHospitalMedications, setAllHospitalMedications] = useState([]);
+const [allMedicationsLoading, setAllMedicationsLoading] = useState(false);
 
   // Auto-search if URL has parameters
   useEffect(() => {
@@ -207,6 +212,30 @@ const data = await res.json();
       setAllHospitalProcedures([]);
     }
     setAllProceduresLoading(false);
+  };
+
+  const fetchAllHospitalDrgs = async (hospitalName) => {
+    setAllDrgsLoading(true);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/hospital-drgs?hospital=${encodeURIComponent(hospitalName)}`);
+      const data = await res.json();
+      setAllHospitalDrgs(Array.isArray(data) ? data : []);
+    } catch {
+      setAllHospitalDrgs([]);
+    }
+    setAllDrgsLoading(false);
+  };
+  
+  const fetchAllHospitalMedications = async (hospitalName) => {
+    setAllMedicationsLoading(true);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/hospital-medications?hospital=${encodeURIComponent(hospitalName)}`);
+      const data = await res.json();
+      setAllHospitalMedications(Array.isArray(data) ? data : []);
+    } catch {
+      setAllHospitalMedications([]);
+    }
+    setAllMedicationsLoading(false);
   };
 
   const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
@@ -364,7 +393,13 @@ const data = await res.json();
                   <div 
                     key={hospital.hospitalName} 
                     className="hospital-card"
-                    onClick={() => { setSelectedHospital(hospital); fetchAllHospitalProcedures(hospital.hospitalName); }}
+                    onClick={() => { 
+                      setSelectedHospital(hospital); 
+                      setActiveTab('procedures');
+                      fetchAllHospitalProcedures(hospital.hospitalName);
+                      fetchAllHospitalDrgs(hospital.hospitalName);
+                      fetchAllHospitalMedications(hospital.hospitalName);
+                    }}
                   >
                     <div className="hospital-rank-badge">
                       #{i + 1}
@@ -422,9 +457,9 @@ const data = await res.json();
       )}
 
 {selectedHospital && (
-  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); setAllHospitalProcedures([]); setAllProceduresLoading(false); }}>
-    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); setAllHospitalProcedures([]); setAllProceduresLoading(false); }}>×</button>
+  <div className="modal-overlay" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); setAllHospitalProcedures([]); setAllProceduresLoading(false); setActiveTab('procedures'); setAllHospitalDrgs([]); setAllDrgsLoading(false); setAllHospitalMedications([]); setAllMedicationsLoading(false); }}>
+  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <button className="modal-close" onClick={() => { setSelectedHospital(null); setComparisonProcedure(null); setShowShareForm(false); setShowHospitalReviews(false); setHospitalReviews([]); setShareAmountPaid(''); setSharePaymentType(''); setShareInsuranceCarrier(''); setSharePriceHonored(''); setShareComment(''); setShareDisplayName(''); setShareSubmitStatus(null); setShowProcedureReviews(false); setProcedureReviews([]); setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); setAllHospitalProcedures([]); setAllProceduresLoading(false); setActiveTab('procedures'); setAllHospitalDrgs([]); setAllDrgsLoading(false); setAllHospitalMedications([]); setAllMedicationsLoading(false); }}>×</button>
 
       
       <div className="modal-header">
@@ -474,83 +509,173 @@ const data = await res.json();
       
 
       <div className="modal-body">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-  <h3 style={{ margin: 0 }}>All Matching Procedures ({selectedHospital.procedureCount})</h3>
-  <button className="browse-all-btn" onClick={() => { setShowBrowsePage(true); fetchAllHospitalProcedures(selectedHospital.hospitalName); }}>
-  Browse All →
-</button>
-</div>
-        <div className="procedure-list">
-          {selectedHospital.procedures.map((proc, idx) => (
-            <div key={idx} className="procedure-item" onClick={(e) => { e.stopPropagation(); compareProcedure(proc); }}>
-              <div className="procedure-item-name">{proc.procedure_name}</div>
-              <div className="procedure-item-price">
-              {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
-              </div>
-            </div>
-          ))}
 
-          {/* BROWSE ALL PROCEDURES PAGE */}
-{showBrowsePage && (
-  <div className="browse-page">
-    <div className="browse-page-header">
-      <button className="browse-back-btn" onClick={() => { setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); }}>
-        ← Back
-      </button>
-      <div>
-        <h2 className="browse-page-title">{selectedHospital.hospitalName}</h2>
-        <p className="browse-page-subtitle">{allProceduresLoading ? '...' : allHospitalProcedures.length} procedures</p>
+  {/* TAB BAR */}
+  <div className="modal-tabs">
+    <button 
+      className={`modal-tab ${activeTab === 'procedures' ? 'active' : ''}`}
+      onClick={() => setActiveTab('procedures')}
+    >
+      All Procedures
+    </button>
+    <button 
+      className={`modal-tab ${activeTab === 'drgs' ? 'active' : ''}`}
+      onClick={() => setActiveTab('drgs')}
+    >
+      Total Stay Cost
+    </button>
+    <button 
+      className={`modal-tab ${activeTab === 'medications' ? 'active' : ''}`}
+      onClick={() => setActiveTab('medications')}
+    >
+      Medications & Supplies
+    </button>
+  </div>
+
+  {/* TAB HEADER ROW */}
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+    {activeTab === 'procedures' && (
+      <>
+        <h3 style={{ margin: 0 }}>All Matching Procedures ({selectedHospital.procedureCount})</h3>
+        <button className="browse-all-btn" onClick={() => setShowBrowsePage(true)}>Browse All →</button>
+      </>
+    )}
+    {activeTab === 'drgs' && (
+      <>
+        <h3 style={{ margin: 0 }}>All Total Stay Costs ({allDrgsLoading ? '...' : allHospitalDrgs.length})</h3>
+        <button className="browse-all-btn" onClick={() => setShowBrowsePage(true)}>Browse All →</button>
+      </>
+    )}
+    {activeTab === 'medications' && (
+      <>
+        <h3 style={{ margin: 0 }}>Medications & Supplies ({allMedicationsLoading ? '...' : allHospitalMedications.length})</h3>
+        <button className="browse-all-btn" onClick={() => setShowBrowsePage(true)}>Browse All →</button>
+      </>
+    )}
+  </div>
+
+  <div className="procedure-list">
+
+    {/* PROCEDURES TAB */}
+    {activeTab === 'procedures' && selectedHospital.procedures.map((proc, idx) => (
+      <div key={idx} className="procedure-item" onClick={(e) => { e.stopPropagation(); compareProcedure(proc); }}>
+        <div className="procedure-item-name">{proc.procedure_name}</div>
+        <div className="procedure-item-price">
+          {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
+        </div>
       </div>
-    </div>
+    ))}
 
-    <div className="browse-page-controls">
-      <input
-        type="text"
-        className="browse-search-input"
-        placeholder="Search procedures..."
-        value={browseSearch}
-        onChange={e => setBrowseSearch(e.target.value)}
-      />
-      <select
-        className="browse-sort-select"
-        value={browseSort}
-        onChange={e => setBrowseSort(e.target.value)}
-      >
-        <option value="price-asc">Price: Low to High</option>
-        <option value="price-desc">Price: High to Low</option>
-        <option value="name-asc">Name: A to Z</option>
-      </select>
-    </div>
+    {/* DRGS TAB */}
+    {activeTab === 'drgs' && (
+      allDrgsLoading ? (
+        <div className="reviews-loading" style={{ marginTop: '24px' }}>
+          <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+          <p>Loading...</p>
+        </div>
+      ) : allHospitalDrgs.length === 0 ? (
+        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '16px' }}>No total stay cost data available for this hospital.</p>
+      ) : (
+        allHospitalDrgs.map((proc, idx) => (
+          <div key={idx} className="procedure-item" onClick={(e) => { e.stopPropagation(); compareProcedure(proc); }}>
+            <div className="procedure-item-name">{proc.procedure_name}</div>
+            <div className="procedure-item-price">${parseFloat(proc.price).toFixed(0)}</div>
+          </div>
+        ))
+      )
+    )}
 
-    <div className="browse-page-list">
-  {allProceduresLoading ? (
-    <div className="reviews-loading" style={{ marginTop: '24px', alignSelf: 'center' }}>
-      <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
-      <p>Loading procedures...</p>
-    </div>
-  ) : (
-    allHospitalProcedures
-  .filter(proc => parseFloat(proc.discounted_cash) >= 1)
-  .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
-      .sort((a, b) => {
-        if (browseSort === 'price-asc') return parseFloat(a.discounted_cash) - parseFloat(b.discounted_cash);
-        if (browseSort === 'price-desc') return parseFloat(b.discounted_cash) - parseFloat(a.discounted_cash);
-        return a.procedure_name.localeCompare(b.procedure_name);
-      })
-      .map((proc, idx) => (
-        <div key={idx} className="browse-procedure-item" onClick={() => { setShowBrowsePage(false); compareProcedure(proc); }}>
-          <div className="browse-procedure-name">{proc.procedure_name}</div>
-          <div className="browse-procedure-price">
-            {parseFloat(proc.discounted_cash) < 1 ? 'Not Listed' : `$${parseFloat(proc.discounted_cash).toFixed(2)}`}
+    {/* MEDICATIONS TAB */}
+    {activeTab === 'medications' && (
+      allMedicationsLoading ? (
+        <div className="reviews-loading" style={{ marginTop: '24px' }}>
+          <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+          <p>Loading...</p>
+        </div>
+      ) : allHospitalMedications.length === 0 ? (
+        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '16px' }}>No medication data available for this hospital.</p>
+      ) : (
+        allHospitalMedications.map((proc, idx) => (
+          <div key={idx} className="procedure-item">
+            <div className="procedure-item-name">{proc.procedure_name}</div>
+            <div className="procedure-item-price">${parseFloat(proc.price).toFixed(0)}</div>
+          </div>
+        ))
+      )
+    )}
+
+    {/* BROWSE ALL PAGE */}
+    {showBrowsePage && (
+      <div className="browse-page">
+        <div className="browse-page-header">
+          <button className="browse-back-btn" onClick={() => { setShowBrowsePage(false); setBrowseSearch(''); setBrowseSort('price-asc'); }}>
+            ← Back
+          </button>
+          <div>
+            <h2 className="browse-page-title">{selectedHospital.hospitalName}</h2>
+            <p className="browse-page-subtitle">
+              {activeTab === 'procedures' && (allProceduresLoading ? '...' : allHospitalProcedures.length) + ' procedures'}
+              {activeTab === 'drgs' && (allDrgsLoading ? '...' : allHospitalDrgs.length) + ' total stay costs'}
+              {activeTab === 'medications' && (allMedicationsLoading ? '...' : allHospitalMedications.length) + ' items'}
+            </p>
           </div>
         </div>
-      ))
-  )}
-</div>
-  </div>
-)}
+
+        <div className="browse-page-controls">
+          <input
+            type="text"
+            className="browse-search-input"
+            placeholder="Search..."
+            value={browseSearch}
+            onChange={e => setBrowseSearch(e.target.value)}
+          />
+          <select
+            className="browse-sort-select"
+            value={browseSort}
+            onChange={e => setBrowseSort(e.target.value)}
+          >
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A to Z</option>
+          </select>
+        </div>
+
+        <div className="browse-page-list">
+          {(() => {
+            const isLoading = activeTab === 'procedures' ? allProceduresLoading : activeTab === 'drgs' ? allDrgsLoading : allMedicationsLoading;
+            if (isLoading) return (
+              <div className="reviews-loading" style={{ marginTop: '24px', alignSelf: 'center' }}>
+                <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
+                <p>Loading...</p>
+              </div>
+            );
+
+            const rawData = activeTab === 'procedures' ? allHospitalProcedures : activeTab === 'drgs' ? allHospitalDrgs : allHospitalMedications;
+            const priceKey = activeTab === 'procedures' ? 'discounted_cash' : 'price';
+
+            return rawData
+              .filter(proc => parseFloat(proc[priceKey]) >= 1)
+              .filter(proc => proc.procedure_name.toLowerCase().includes(browseSearch.toLowerCase()))
+              .sort((a, b) => {
+                if (browseSort === 'price-asc') return parseFloat(a[priceKey]) - parseFloat(b[priceKey]);
+                if (browseSort === 'price-desc') return parseFloat(b[priceKey]) - parseFloat(a[priceKey]);
+                return a.procedure_name.localeCompare(b.procedure_name);
+              })
+              .map((proc, idx) => (
+                <div key={idx} className="browse-procedure-item" onClick={() => { 
+                  if (activeTab !== 'medications') { setShowBrowsePage(false); compareProcedure(proc); }
+                }}>
+                  <div className="browse-procedure-name">{proc.procedure_name}</div>
+                  <div className="browse-procedure-price">${parseFloat(proc[priceKey]).toFixed(2)}</div>
+                </div>
+              ));
+          })()}
         </div>
       </div>
+    )}
+
+  </div>
+</div>
 
       {/* HOSPITAL REVIEWS PANEL */}
 {showHospitalReviews && (
