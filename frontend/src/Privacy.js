@@ -64,7 +64,7 @@ export default function Privacy() {
 
           <section style={{ marginBottom: '36px' }}>
             <h2 style={h2}>6. Data Retention</h2>
-            <p style={p}>We retain user-submitted reviews indefinitely to maintain the usefulness of the Service. If you would like to request deletion of a review you submitted, please contact us at [CONTACT EMAIL] with details about your submission. We will make reasonable efforts to locate and delete the requested data, though we cannot guarantee deletion of data that has already been aggregated or anonymized.</p>
+            <p style={p}>We retain user-submitted reviews indefinitely to maintain the usefulness of the Service. If you would like to request deletion of a review you submitted, please contact us at contact.medexpense@gmail.com with details about your submission. We will make reasonable efforts to locate and delete the requested data, though we cannot guarantee deletion of data that has already been aggregated or anonymized.</p>
           </section>
 
           <section style={{ marginBottom: '36px' }}>
