@@ -120,7 +120,7 @@ export default function Terms() {
 
           <section>
             <h2 style={h2}>17. Contact Us</h2>
-            <p style={p}>If you have questions about these Terms, please contact us at: <strong>[CONTACT EMAIL]</strong></p>
+            <p style={p}>If you have questions about these Terms, please contact us at: <strong>contact.medexpense@gmail.com</strong></p>
           </section>
 
         </div>
