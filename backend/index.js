@@ -69,6 +69,7 @@ app.get('/search', async (req, res) => {
         });
       }
       
+      
       // Add CPT code filter if provided
       if (cpt && cpt.trim()) {
         queryParams.push(`%${cpt.trim()}%`);
