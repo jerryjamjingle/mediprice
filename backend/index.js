@@ -226,11 +226,9 @@ app.get('/hospital-procedures', async (req, res) => {
 
 // TOTAL STAY TAB — DRG bundle costs
 app.get('/hospital-drgs', async (req, res) => {
-  const { hospital } = req.query;
+  const { hospital, drgs } = req.query;
   if (!hospital) return res.status(400).json({ error: 'Missing hospital param' });
 
-  // These hospitals use sequential item numbers instead of real DRG codes
-  // Their 1-3 digit codes are medications, not DRGs — return empty instead of bad data
   const noDrgData = [
     'ssm health depaul hospital',
     'ssm health saint louis university hospital',
@@ -241,7 +239,8 @@ app.get('/hospital-drgs', async (req, res) => {
     'ssm health st. mary\'s hospital',
     'anderson hospital',
     'gateway regional medical center',
-    'saint anthonys hospital'
+    'saint anthonys hospital',
+    'hshs st. joseph\'s hospital breese'
   ];
 
   if (noDrgData.includes(hospital.toLowerCase())) {
@@ -249,7 +248,7 @@ app.get('/hospital-drgs', async (req, res) => {
   }
 
   try {
-    const result = await pool.query(`
+    let query = `
       SELECT pr.procedure_name, pr.cpt_code, MIN(pc.discounted_cash) as price
       FROM prices pc
       JOIN providers pv ON pc.provider_id = pv.id
@@ -258,11 +257,24 @@ app.get('/hospital-drgs', async (req, res) => {
         AND pr.cpt_code ~ '^[0-9]{1,3}$'
         AND CAST(pr.cpt_code AS INTEGER) BETWEEN 1 AND 999
         AND pc.discounted_cash > 0
-        AND pr.cpt_code NOT IN ('272','270','278','637','271','250','275','750')
-      GROUP BY pr.procedure_name, pr.cpt_code
-      ORDER BY MIN(pc.discounted_cash) ASC
-    `, [hospital]);
+    `;
 
+    const params = [hospital];
+
+    if (drgs && drgs.trim()) {
+      const drgList = drgs.split(',').map(d => d.trim()).filter(d => d);
+      if (drgList.length > 0) {
+        query += ` AND pr.cpt_code = ANY($2)`;
+        params.push(drgList);
+      }
+    }
+
+    query += `
+      GROUP BY pr.procedure_name, pr.cpt_code
+      ORDER BY CAST(pr.cpt_code AS INTEGER) ASC
+    `;
+
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error(err);

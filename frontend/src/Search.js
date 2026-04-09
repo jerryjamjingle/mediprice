@@ -35,6 +35,143 @@ function FlyToBounds({ providerPins }) {
   return null;
 }
 
+const DRG_PROCEDURE_MAP = [
+  {
+    keywords: ['hip', 'knee', 'replacement', 'arthroplasty', 'joint replacement', 'total hip', 'total knee'],
+    drgs: ['469', '470'],
+    label: 'Hip & Knee Replacement',
+    stayRange: '2–5 days',
+    included: 'Surgery, implant, anesthesia, operating room, hospital stay, nursing care, physical therapy during admission, labs and imaging during stay.',
+    notIncluded: "Surgeon's fee (billed separately), post-discharge physical therapy, follow-up visits.",
+    note: 'DRG 469 includes major complications or comorbidities. DRG 470 is the standard uncomplicated replacement.'
+  },
+  {
+    keywords: ['c-section', 'cesarean', 'csection', 'birth', 'delivery', 'pregnancy', 'ob ', 'obstetric', 'labour', 'labor'],
+    drgs: ['783', '784', '785'],
+    label: 'C-Section (Cesarean Delivery)',
+    stayRange: '3–4 days',
+    included: 'Surgery, anesthesia, operating room, hospital stay, nursing care, newborn care during admission, labs.',
+    notIncluded: "OB/GYN surgeon's fee (billed separately), pediatrician fee, post-discharge follow-up.",
+    note: 'These DRGs include sterilization. Standard C-sections without sterilization may be billed under different codes.'
+  },
+  {
+    keywords: ['gallbladder', 'cholecystectomy', 'gall bladder', 'gallstone'],
+    drgs: ['414', '417', '418', '419'],
+    label: 'Gallbladder Removal',
+    stayRange: '1–4 days',
+    included: 'Surgery, anesthesia, operating room, hospital stay, nursing care, labs.',
+    notIncluded: "Surgeon's fee (billed separately), post-discharge follow-up.",
+    note: 'DRG 417–419 are laparoscopic (minimally invasive). DRG 414 is open surgery, which is less common and more expensive.'
+  },
+  {
+    keywords: ['heart failure', 'chf', 'congestive', 'cardiac failure'],
+    drgs: ['291', '292', '293'],
+    label: 'Heart Failure',
+    stayRange: '4–6 days',
+    included: 'Hospital stay, nursing care, medications administered during stay, labs, imaging, monitoring.',
+    notIncluded: 'Cardiologist fee (billed separately), post-discharge medications, follow-up visits.',
+    note: 'MCC = Major complication or comorbidity (e.g. kidney failure, respiratory failure). CC = complication or comorbidity.'
+  },
+  {
+    keywords: ['heart attack', 'myocardial', 'infarction', ' mi ', 'ami', 'chest pain', 'cardiac arrest'],
+    drgs: ['280', '281', '282'],
+    label: 'Heart Attack (Acute Myocardial Infarction)',
+    stayRange: '3–6 days',
+    included: 'Hospital stay, emergency care, nursing, medications, labs, imaging, cardiac monitoring.',
+    notIncluded: 'Cardiologist fee, any procedures performed (e.g. stent placement billed separately), follow-up.',
+    note: 'These DRGs apply to patients discharged alive. Severity levels affect the price significantly.'
+  },
+  {
+    keywords: ['pneumonia', 'lung infection', 'respiratory infection'],
+    drgs: ['177', '178', '179'],
+    label: 'Pneumonia',
+    stayRange: '4–6 days',
+    included: 'Hospital stay, nursing care, IV antibiotics, oxygen therapy, labs, chest imaging, respiratory therapy.',
+    notIncluded: 'Physician/hospitalist fee (billed separately), post-discharge medications.',
+    note: 'MCC cases (DRG 177) often involve ICU stays or ventilator support and cost significantly more.'
+  },
+  {
+    keywords: ['sepsis', 'septicemia', 'blood infection', 'bloodstream infection'],
+    drgs: ['870', '871', '872'],
+    label: 'Sepsis',
+    stayRange: '5–10 days',
+    included: 'Hospital stay, ICU care if needed, IV antibiotics, nursing, labs, imaging, monitoring.',
+    notIncluded: 'Physician/hospitalist fee, any surgical procedures billed separately.',
+    note: 'DRG 870 requires mechanical ventilation for more than 96 hours — the most severe and expensive category.'
+  },
+  {
+    keywords: ['copd', 'pulmonary disease', 'emphysema', 'chronic bronchitis', 'breathing', 'shortness of breath'],
+    drgs: ['190', '191', '192'],
+    label: 'COPD (Chronic Obstructive Pulmonary Disease)',
+    stayRange: '3–5 days',
+    included: 'Hospital stay, nursing care, breathing treatments, oxygen therapy, medications, labs.',
+    notIncluded: 'Pulmonologist fee (billed separately), post-discharge medications and oxygen equipment.',
+    note: 'Severity level (MCC/CC/none) depends on complicating conditions like respiratory failure or pneumonia.'
+  },
+  {
+    keywords: ['kidney infection', 'urinary tract', 'uti', 'bladder infection', 'pyelonephritis'],
+    drgs: ['689', '690'],
+    label: 'Kidney / Urinary Tract Infection',
+    stayRange: '3–5 days',
+    included: 'Hospital stay, nursing care, IV antibiotics, labs, imaging.',
+    notIncluded: 'Physician fee (billed separately), post-discharge oral antibiotics.',
+    note: 'DRG 689 includes a major complication or comorbidity. DRG 690 is the standard uncomplicated admission.'
+  },
+  {
+    keywords: ['renal failure', 'kidney failure', 'renal disease', 'acute kidney'],
+    drgs: ['682', '683', '684'],
+    label: 'Renal Failure',
+    stayRange: '4–7 days',
+    included: 'Hospital stay, nursing care, dialysis if needed, labs, fluid management, medications.',
+    notIncluded: 'Nephrologist fee (billed separately), post-discharge dialysis, follow-up.',
+    note: 'MCC cases often involve ICU care or dialysis initiation and are significantly more expensive.'
+  },
+  {
+    keywords: ['stroke', 'cerebral', 'ischemic', 'tia', 'brain attack', 'cerebrovascular'],
+    drgs: ['61', '62', '63', '64', '65', '66'],
+    label: 'Stroke',
+    stayRange: '4–7 days',
+    included: 'Hospital stay, emergency care, imaging (CT/MRI), nursing, physical/speech/occupational therapy during stay, medications.',
+    notIncluded: 'Neurologist fee (billed separately), post-discharge rehabilitation.',
+    note: 'DRGs 61–63 involve thrombolytic (clot-busting) treatment. DRGs 64–66 are intracranial hemorrhage or cerebral infarction.'
+  },
+  {
+    keywords: ['cardiac cath', 'catheterization', 'angiogram', 'angiography', 'coronary'],
+    drgs: ['247', '248', '249'],
+    label: 'Cardiac Catheterization',
+    stayRange: '1–2 days',
+    included: 'Procedure, cath lab, hospital stay, nursing care, contrast dye, imaging, monitoring.',
+    notIncluded: 'Cardiologist fee (billed separately), any stent or intervention billed separately.',
+    note: 'This covers diagnostic catheterization. If a stent is placed during the same admission, a different DRG applies.'
+  },
+  {
+    keywords: ['appendix', 'appendectomy', 'appendicitis', 'abdominal surgery'],
+    drgs: ['341', '342', '343'],
+    label: 'Appendectomy',
+    stayRange: '1–3 days',
+    included: 'Surgery, anesthesia, operating room, hospital stay, nursing care, labs.',
+    notIncluded: "Surgeon's fee (billed separately), post-discharge follow-up.",
+    note: 'Laparoscopic appendectomy is most common. Open surgery or complications increase cost and stay length.'
+  },
+  {
+    keywords: ['spinal fusion', 'spine fusion', 'spinal', 'lumbar fusion', 'cervical fusion', 'back surgery', 'vertebra', 'disc surgery'],
+    drgs: ['453', '454', '455', '459', '460'],
+    label: 'Spinal Fusion',
+    stayRange: '3–7 days',
+    included: 'Surgery, implant/hardware, anesthesia, operating room, hospital stay, nursing care, physical therapy during stay.',
+    notIncluded: "Surgeon's fee (billed separately), post-discharge physical therapy, follow-up imaging.",
+    note: 'Combined anterior/posterior fusion (453–455) is more complex and expensive than single-approach fusion (459–460).'
+  }
+];
+
+function getMatchedProcedure(searchQuery) {
+  if (!searchQuery || !searchQuery.trim()) return null;
+  const lower = searchQuery.toLowerCase();
+  return DRG_PROCEDURE_MAP.find(proc =>
+    proc.keywords.some(keyword => lower.includes(keyword.toLowerCase()))
+  ) || null;
+}
+
 export default function Search() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();  // ← ADD THIS LINE
@@ -214,10 +351,14 @@ const data = await res.json();
     setAllProceduresLoading(false);
   };
 
-  const fetchAllHospitalDrgs = async (hospitalName) => {
+  const fetchAllHospitalDrgs = async (hospitalName, drgCodes) => {
     setAllDrgsLoading(true);
     try {
-      const res = await fetch(`https://mediprice-backend.onrender.com/hospital-drgs?hospital=${encodeURIComponent(hospitalName)}`);
+      let url = `https://mediprice-backend.onrender.com/hospital-drgs?hospital=${encodeURIComponent(hospitalName)}`;
+      if (drgCodes && drgCodes.length > 0) {
+        url += `&drgs=${encodeURIComponent(drgCodes.join(','))}`;
+      }
+      const res = await fetch(url);
       const data = await res.json();
       setAllHospitalDrgs(Array.isArray(data) ? data : []);
     } catch {
@@ -397,7 +538,7 @@ const data = await res.json();
                       setSelectedHospital(hospital); 
                       setActiveTab('procedures');
                       fetchAllHospitalProcedures(hospital.hospitalName);
-                      fetchAllHospitalDrgs(hospital.hospitalName);
+                      fetchAllHospitalDrgs(hospital.hospitalName, getMatchedProcedure(query)?.drgs); 
                       fetchAllHospitalMedications(hospital.hospitalName);
                     }}
                   >
@@ -518,12 +659,14 @@ const data = await res.json();
     >
       All Procedures
     </button>
-    <button 
-      className={`modal-tab ${activeTab === 'drgs' ? 'active' : ''}`}
-      onClick={() => setActiveTab('drgs')}
-    >
-      Total Stay Cost
-    </button>
+    {getMatchedProcedure(query) && (
+      <button 
+        className={`modal-tab ${activeTab === 'drgs' ? 'active' : ''}`}
+        onClick={() => setActiveTab('drgs')}
+      >
+        Total Stay Cost
+      </button>
+    )}
     <button 
       className={`modal-tab ${activeTab === 'medications' ? 'active' : ''}`}
       onClick={() => setActiveTab('medications')}
@@ -567,23 +710,61 @@ const data = await res.json();
     ))}
 
     {/* DRGS TAB */}
-    {activeTab === 'drgs' && (
-      allDrgsLoading ? (
+    {activeTab === 'drgs' && (() => {
+      const matched = getMatchedProcedure(query);
+      if (allDrgsLoading) return (
         <div className="reviews-loading" style={{ marginTop: '24px' }}>
           <div className="spinner" style={{ width: '24px', height: '24px', borderWidth: '3px' }}></div>
           <p>Loading...</p>
         </div>
-      ) : allHospitalDrgs.length === 0 ? (
-        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '16px' }}>No total stay cost data available for this hospital.</p>
-      ) : (
-        allHospitalDrgs.map((proc, idx) => (
-          <div key={idx} className="procedure-item" onClick={(e) => { e.stopPropagation(); compareProcedure(proc); }}>
-            <div className="procedure-item-name">{proc.procedure_name}</div>
-            <div className="procedure-item-price">${parseFloat(proc.price).toFixed(0)}</div>
-          </div>
-        ))
-      )
-    )}
+      );
+      if (allHospitalDrgs.length === 0) return (
+        <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginTop: '16px' }}>
+          No total stay cost data available for this hospital.
+        </p>
+      );
+      return (
+        <>
+          {matched && (
+            <div style={{ background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', padding: '14px 16px', marginBottom: '16px' }}>
+              <p style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0369a1', marginBottom: '6px' }}>
+                📋 What's included in this price
+              </p>
+              <p style={{ fontSize: '0.82rem', color: '#334155', lineHeight: '1.6', marginBottom: '6px' }}>
+                ✅ {matched.included}
+              </p>
+              <p style={{ fontSize: '0.82rem', color: '#334155', lineHeight: '1.6', marginBottom: '6px' }}>
+                ❌ Not included: {matched.notIncluded}
+              </p>
+              <p style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: '1.5', marginBottom: '0', fontStyle: 'italic' }}>
+                🕒 Typical stay: {matched.stayRange} &nbsp;·&nbsp; {matched.note}
+              </p>
+            </div>
+          )}
+          {allHospitalDrgs.map((proc, idx) => {
+            const severityLabel =
+              proc.procedure_name.includes('WITH MCC') || proc.procedure_name.includes('WITH MV') ? '🔴 With major complications'
+              : proc.procedure_name.includes('WITH CC') ? '🟡 With complications'
+              : proc.procedure_name.includes('WITHOUT CC') || proc.procedure_name.includes('WITHOUT MCC') ? '🟢 No major complications'
+              : '';
+            return (
+              <div key={idx} className="procedure-item" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                  <div className="procedure-item-name" style={{ fontSize: '0.85rem' }}>{proc.procedure_name}</div>
+                  <div className="procedure-item-price">${parseFloat(proc.price).toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                </div>
+                {severityLabel && (
+                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{severityLabel}</div>
+                )}
+              </div>
+            );
+          })}
+          <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '16px', lineHeight: '1.5' }}>
+            ⚠️ These are estimated total inpatient stay costs based on federally mandated price transparency data. Actual costs vary based on your specific diagnosis, length of stay, and complications.
+          </p>
+        </>
+      );
+    })()}
 
     {/* MEDICATIONS TAB */}
     {activeTab === 'medications' && (
