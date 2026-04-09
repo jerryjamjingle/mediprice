@@ -55,11 +55,6 @@ app.get('/search', async (req, res) => {
         JOIN procedures p ON pc.procedure_id = p.id
         WHERE 1=1
         AND (pc.discounted_cash >= 10 OR pc.discounted_cash < 1)
-        AND (
-          p.cpt_code ~ '^[0-9]{5}$'
-          OR p.cpt_code ~ '^[0-9]{4}T$'
-          OR p.cpt_code ~ '^[0-9]{4}U$'
-        )
       `;
       
       let queryParams = [];
