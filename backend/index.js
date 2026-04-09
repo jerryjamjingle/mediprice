@@ -229,6 +229,25 @@ app.get('/hospital-drgs', async (req, res) => {
   const { hospital } = req.query;
   if (!hospital) return res.status(400).json({ error: 'Missing hospital param' });
 
+  // These hospitals use sequential item numbers instead of real DRG codes
+  // Their 1-3 digit codes are medications, not DRGs — return empty instead of bad data
+  const noDrgData = [
+    'ssm health depaul hospital',
+    'ssm health saint louis university hospital',
+    'ssm health st. clare hospital',
+    'ssm health st. joseph hospital',
+    'ssm health st. joseph hospital st. charles',
+    'ssm health st. joseph hospital wentzville',
+    'ssm health st. mary\'s hospital',
+    'anderson hospital',
+    'gateway regional medical center',
+    'saint anthonys hospital'
+  ];
+
+  if (noDrgData.includes(hospital.toLowerCase())) {
+    return res.json([]);
+  }
+
   try {
     const result = await pool.query(`
       SELECT pr.procedure_name, pr.cpt_code, MIN(pc.discounted_cash) as price
