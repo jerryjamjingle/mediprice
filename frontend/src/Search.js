@@ -659,7 +659,7 @@ const data = await res.json();
     >
       All Procedures
     </button>
-    {getMatchedProcedure(query) && (
+    {getMatchedProcedure(query) && allHospitalDrgs.length > 0 && (
       <button 
         className={`modal-tab ${activeTab === 'drgs' ? 'active' : ''}`}
         onClick={() => setActiveTab('drgs')}
