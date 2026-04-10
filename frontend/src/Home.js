@@ -67,6 +67,8 @@ export default function Home() {
   const [medSelected, setMedSelected] = useState(null);
   const [medCompare, setMedCompare] = useState([]);
   const [medCompareLoading, setMedCompareLoading] = useState(false);
+  const [medTotal, setMedTotal] = useState(0);
+  const [medOffset, setMedOffset] = useState(0);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -97,20 +99,30 @@ export default function Home() {
     setShowCategories(false);
   };
 
-  const searchMedications = async (q, cat) => {
+  const searchMedications = async (q, cat, append = false) => {
     setMedLoading(true);
-    setMedResults([]);
-    setMedSelected(null);
-    setMedCompare([]);
+    if (!append) {
+      setMedResults([]);
+      setMedSelected(null);
+      setMedCompare([]);
+      setMedOffset(0);
+      setMedTotal(0);
+    }
     try {
+      const offset = append ? medOffset + 50 : 0;
       let url = 'https://mediprice-backend.onrender.com/medications-search?';
       const params = [];
       if (q && q.trim()) params.push('query=' + encodeURIComponent(q.trim()));
       if (cat) params.push('category=' + encodeURIComponent(cat));
+      params.push('offset=' + offset);
       url += params.join('&');
       const res = await fetch(url);
       const data = await res.json();
-      setMedResults(Array.isArray(data) ? data : []);
+      if (data && data.results) {
+        setMedResults(prev => append ? [...prev, ...data.results] : data.results);
+        setMedTotal(data.total);
+        setMedOffset(offset);
+      }
     } catch {
       setMedResults([]);
     }
@@ -426,8 +438,8 @@ export default function Home() {
   </div>
 )}
 
-)) 
-{/* closes showGuideModal */}
+
+
       {/* MEDICATIONS MODAL */}
       {showMedModal && (
         <div className="guide-modal-overlay" onClick={() => { setShowMedModal(false); setMedQuery(''); setMedCategory(null); setMedResults([]); setMedSelected(null); setMedCompare([]); }}>
@@ -505,7 +517,7 @@ export default function Home() {
               {/* RESULTS LIST */}
               {!medLoading && medResults.length > 0 && !medSelected && (
                 <div>
-                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '12px' }}>{medResults.length} results — click any item to compare prices across hospitals</p>
+                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '12px' }}>{medResults.length} of {medTotal} results — click any item to compare prices across hospitals</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
                     {medResults.map((item, i) => (
                       <div
@@ -523,7 +535,16 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
-                  <button onClick={() => { setMedResults([]); setMedCategory(null); setMedQuery(''); }} style={{ marginTop: '16px', background: 'none', border: 'none', color: '#94a3b8', fontSize: '0.85rem', cursor: 'pointer' }}>← Back to search</button>
+                  {medResults.length < medTotal && (
+                    <button
+                      onClick={() => searchMedications(medQuery, medCategory, true)}
+                      disabled={medLoading}
+                      style={{ marginTop: '16px', width: '100%', padding: '12px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', color: '#1e40af', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer' }}
+                    >
+                      {medLoading ? 'Loading...' : `Load 50 More (${medTotal - medResults.length} remaining)`}
+                    </button>
+                  )}
+                  <button onClick={() => { setMedResults([]); setMedCategory(null); setMedQuery(''); setMedOffset(0); setMedTotal(0); }} style={{ position: 'absolute', top: '16px', right: '56px', background: 'none', border: 'none', color: '#1e40af', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer' }}>← Back</button>
                 </div>
               )}
 
