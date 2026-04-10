@@ -69,7 +69,7 @@ app.get('/search', async (req, res) => {
         });
       }
       
-      
+
       // Add CPT code filter if provided
       if (cpt && cpt.trim()) {
         queryParams.push(`%${cpt.trim()}%`);
@@ -323,6 +323,140 @@ app.get('/hospital-medications', async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// MEDICATIONS SEARCH — cross-hospital price lookup
+app.get('/medications-search', async (req, res) => {
+  const { query, category } = req.query;
+  if (!query && !category) return res.status(400).json({ error: 'Query or category required' });
+
+  const noDrgData = [
+    'ssm health depaul hospital',
+    'ssm health saint louis university hospital',
+    'ssm health st. clare hospital',
+    'ssm health st. joseph hospital',
+    'ssm health st. joseph hospital st. charles',
+    'ssm health st. joseph hospital wentzville',
+    'ssm health st. mary\'s hospital',
+    'anderson hospital',
+    'saint anthonys hospital',
+    'hshs st. joseph\'s hospital breese'
+  ];
+
+  try {
+    let whereClause = `
+      AND pc.discounted_cash > 0
+      AND (
+        (pr.cpt_code ~ '^[0-9]+$' AND CAST(pr.cpt_code AS INTEGER) > 999)
+        OR pr.cpt_code ~ '^[A-Z]'
+        OR (
+          pr.cpt_code ~ '^[0-9]{5}$'
+          AND (
+            pr.procedure_name ~* '[0-9]+ mg'
+            OR pr.procedure_name ILIKE '% tab %'
+            OR pr.procedure_name ILIKE '% tab[0-9]%'
+            OR pr.procedure_name ILIKE '% cap %'
+            OR pr.procedure_name ILIKE '% soln%'
+            OR pr.procedure_name ILIKE '% oint%'
+            OR pr.procedure_name ILIKE '%suppos%'
+            OR pr.procedure_name ILIKE '% inj %'
+            OR pr.procedure_name ILIKE '%inhal%'
+            OR pr.procedure_name ILIKE '%infusion%'
+          )
+        )
+      )
+    `;
+
+    const params = [];
+
+    if (query && query.trim()) {
+      const words = query.trim().split(/\s+/).filter(w => w.length > 1);
+      words.forEach(word => {
+        params.push(`%${word.toLowerCase()}%`);
+        whereClause += ` AND LOWER(pr.procedure_name) LIKE $${params.length}`;
+      });
+    }
+
+    if (category && category.trim()) {
+      const categoryFilters = {
+        oral: `(pr.procedure_name ILIKE '% tab %' OR pr.procedure_name ILIKE '% cap %' OR pr.procedure_name ~* '[0-9]+ mg')`,
+        iv: `(pr.procedure_name ILIKE '%IV Soln%' OR pr.procedure_name ILIKE '%infusion%' OR pr.procedure_name ILIKE '%for IV%')`,
+        injections: `(pr.procedure_name ILIKE '% inj %' OR pr.procedure_name ILIKE '%injection%')`,
+        catheters: `(pr.procedure_name ILIKE '%cath%' OR pr.procedure_name ILIKE '%catheter%')`,
+        surgical: `(pr.procedure_name ILIKE '%suture%' OR pr.procedure_name ILIKE '%staple%' OR pr.procedure_name ILIKE '%dressing%' OR pr.procedure_name ILIKE '%bandage%' OR pr.procedure_name ILIKE '%gauze%')`,
+        implants: `(pr.procedure_name ILIKE '%implant%' OR pr.procedure_name ILIKE '%device%' OR pr.procedure_name ILIKE '%prosthes%')`,
+        respiratory: `(pr.procedure_name ILIKE '%inhal%' OR pr.procedure_name ILIKE '%nebul%' OR pr.procedure_name ILIKE '%inhaler%' OR pr.procedure_name ILIKE '%oxygen%')`,
+        vaccines: `(pr.procedure_name ILIKE '%vaccine%' OR pr.procedure_name ILIKE '%immunoglobulin%' OR pr.procedure_name ILIKE '%vaccin%')`
+      };
+      if (categoryFilters[category]) {
+        whereClause += ` AND ${categoryFilters[category]}`;
+      }
+    }
+
+    const sqlQuery = `
+      SELECT 
+        pr.procedure_name,
+        COUNT(DISTINCT pv.id) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) as hospital_count,
+        MIN(pc.discounted_cash) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) as min_price,
+        MAX(pc.discounted_cash) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) as max_price
+      FROM prices pc
+      JOIN providers pv ON pc.provider_id = pv.id
+      JOIN procedures pr ON pc.procedure_id = pr.id
+      WHERE 1=1
+      ${whereClause}
+      GROUP BY pr.procedure_name
+      HAVING COUNT(DISTINCT pv.id) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) > 0
+      ORDER BY COUNT(DISTINCT pv.id) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) DESC, pr.procedure_name ASC
+      LIMIT 50
+    `;
+
+    params.push(noDrgData);
+    const result = await pool.query(sqlQuery, params);
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Medications search error:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// MEDICATIONS COMPARE — cross-hospital prices for one item
+app.get('/medications-compare', async (req, res) => {
+  const { name } = req.query;
+  if (!name) return res.status(400).json({ error: 'Name required' });
+
+  const noDrgData = [
+    'ssm health depaul hospital',
+    'ssm health saint louis university hospital',
+    'ssm health st. clare hospital',
+    'ssm health st. joseph hospital',
+    'ssm health st. joseph hospital st. charles',
+    'ssm health st. joseph hospital wentzville',
+    'ssm health st. mary\'s hospital',
+    'anderson hospital',
+    'saint anthonys hospital',
+    'hshs st. joseph\'s hospital breese'
+  ];
+
+  try {
+    const result = await pool.query(`
+      SELECT 
+        pv.name as hospital_name,
+        MIN(pc.discounted_cash) as price
+      FROM prices pc
+      JOIN providers pv ON pc.provider_id = pv.id
+      JOIN procedures pr ON pc.procedure_id = pr.id
+      WHERE pr.procedure_name = $1
+        AND pc.discounted_cash > 0
+        AND NOT LOWER(pv.name) = ANY($2)
+      GROUP BY pv.name
+      ORDER BY MIN(pc.discounted_cash) ASC
+    `, [name, noDrgData]);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error('Medications compare error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });

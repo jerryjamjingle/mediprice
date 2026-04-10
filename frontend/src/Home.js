@@ -59,6 +59,14 @@ export default function Home() {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showMedModal, setShowMedModal] = useState(false);
+  const [medQuery, setMedQuery] = useState('');
+  const [medCategory, setMedCategory] = useState(null);
+  const [medResults, setMedResults] = useState([]);
+  const [medLoading, setMedLoading] = useState(false);
+  const [medSelected, setMedSelected] = useState(null);
+  const [medCompare, setMedCompare] = useState([]);
+  const [medCompareLoading, setMedCompareLoading] = useState(false);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -87,6 +95,40 @@ export default function Home() {
   const handleCategoryClick = (categoryQuery) => {
     navigate(`/search?procedure=${encodeURIComponent(categoryQuery)}`);
     setShowCategories(false);
+  };
+
+  const searchMedications = async (q, cat) => {
+    setMedLoading(true);
+    setMedResults([]);
+    setMedSelected(null);
+    setMedCompare([]);
+    try {
+      let url = 'https://mediprice-backend.onrender.com/medications-search?';
+      const params = [];
+      if (q && q.trim()) params.push('query=' + encodeURIComponent(q.trim()));
+      if (cat) params.push('category=' + encodeURIComponent(cat));
+      url += params.join('&');
+      const res = await fetch(url);
+      const data = await res.json();
+      setMedResults(Array.isArray(data) ? data : []);
+    } catch {
+      setMedResults([]);
+    }
+    setMedLoading(false);
+  };
+
+  const compareMedication = async (name) => {
+    setMedSelected(name);
+    setMedCompareLoading(true);
+    setMedCompare([]);
+    try {
+      const res = await fetch(`https://mediprice-backend.onrender.com/medications-compare?name=${encodeURIComponent(name)}`);
+      const data = await res.json();
+      setMedCompare(Array.isArray(data) ? data : []);
+    } catch {
+      setMedCompare([]);
+    }
+    setMedCompareLoading(false);
   };
 
   return (
@@ -238,6 +280,20 @@ export default function Home() {
   </div>
 </section>
 
+{/* MEDICATIONS & SUPPLIES TOOL */}
+<section className="med-tool-section">
+        <div className="med-tool-card" onClick={() => setShowMedModal(true)}>
+          <div className="med-tool-left">
+            <span className="med-tool-icon">💊</span>
+            <div>
+              <h3 className="med-tool-title">Medication & Supply Prices</h3>
+              <p className="med-tool-subtitle">See what 25 St. Louis hospitals charge for medications, supplies, and equipment</p>
+            </div>
+          </div>
+          <div className="med-tool-arrow">›</div>
+        </div>
+      </section>
+
       {/* PASTE THIS RIGHT HERE: */}
       <section className="share-cta-section">
   <div className="share-cta-card">
@@ -369,6 +425,163 @@ export default function Home() {
     </div>
   </div>
 )}
+
+)) 
+{/* closes showGuideModal */}
+      {/* MEDICATIONS MODAL */}
+      {showMedModal && (
+        <div className="guide-modal-overlay" onClick={() => { setShowMedModal(false); setMedQuery(''); setMedCategory(null); setMedResults([]); setMedSelected(null); setMedCompare([]); }}>
+          <div className="guide-modal" style={{ maxWidth: '700px' }} onClick={e => e.stopPropagation()}>
+            <button className="guide-modal-close" onClick={() => { setShowMedModal(false); setMedQuery(''); setMedCategory(null); setMedResults([]); setMedSelected(null); setMedCompare([]); }}>✕</button>
+            
+            <div className="guide-modal-inner">
+              <h2 className="guide-modal-title">💊 Medication & Supply Prices</h2>
+              <p className="guide-modal-subtitle">Search what hospitals charge for any medication, supply, or equipment across 25 St. Louis hospitals.</p>
+
+              {/* SEARCH BAR */}
+              <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+                <input
+                  type="text"
+                  placeholder="Search (e.g. Tylenol, catheter, insulin...)"
+                  value={medQuery}
+                  onChange={e => setMedQuery(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { setMedCategory(null); searchMedications(medQuery, null); }}}
+                  style={{ flex: 1, padding: '12px 16px', fontSize: '0.95rem', border: '2px solid #e2e8f0', borderRadius: '10px', outline: 'none' }}
+                />
+                <button
+                  onClick={() => { setMedCategory(null); searchMedications(medQuery, null); }}
+                  style={{ padding: '12px 20px', background: '#1e40af', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '0.95rem' }}
+                >
+                  Search
+                </button>
+              </div>
+
+              {/* CATEGORY GRID */}
+              {!medLoading && medResults.length === 0 && !medSelected && (
+                <div>
+                  <p style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '12px', fontWeight: '500' }}>Or browse by category:</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '24px' }}>
+                    {[
+                      { label: '💊 Oral Meds', key: 'oral' },
+                      { label: '🩺 IV & Infusions', key: 'iv' },
+                      { label: '💉 Injections', key: 'injections' },
+                      { label: '🔬 Catheters', key: 'catheters' },
+                      { label: '🩹 Surgical Supplies', key: 'surgical' },
+                      { label: '🦾 Implants & Devices', key: 'implants' },
+                      { label: '😮‍💨 Respiratory', key: 'respiratory' },
+                      { label: '🧬 Vaccines', key: 'vaccines' },
+                    ].map(cat => (
+                      <button
+                        key={cat.key}
+                        onClick={() => { setMedCategory(cat.key); setMedQuery(''); searchMedications('', cat.key); }}
+                        style={{
+                          padding: '12px 8px',
+                          background: medCategory === cat.key ? '#eff6ff' : '#f8fafc',
+                          border: medCategory === cat.key ? '2px solid #3b82f6' : '1.5px solid #e2e8f0',
+                          borderRadius: '10px',
+                          fontSize: '0.82rem',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          color: medCategory === cat.key ? '#1e40af' : '#334155',
+                          transition: 'all 0.15s',
+                          textAlign: 'center'
+                        }}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* LOADING */}
+              {medLoading && (
+                <div style={{ textAlign: 'center', padding: '32px 0', color: '#94a3b8' }}>
+                  <div style={{ width: '28px', height: '28px', border: '3px solid #e2e8f0', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 12px auto' }} />
+                  <p style={{ fontSize: '0.9rem' }}>Searching...</p>
+                </div>
+              )}
+
+              {/* RESULTS LIST */}
+              {!medLoading && medResults.length > 0 && !medSelected && (
+                <div>
+                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '12px' }}>{medResults.length} results — click any item to compare prices across hospitals</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
+                    {medResults.map((item, i) => (
+                      <div
+                        key={i}
+                        onClick={() => compareMedication(item.procedure_name)}
+                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', cursor: 'pointer', transition: 'all 0.15s' }}
+                        onMouseEnter={e => e.currentTarget.style.borderColor = '#3b82f6'}
+                        onMouseLeave={e => e.currentTarget.style.borderColor = '#e2e8f0'}
+                      >
+                        <div style={{ fontSize: '0.88rem', color: '#0f172a', fontWeight: '500', flex: 1, paddingRight: '12px' }}>{item.procedure_name}</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px', flexShrink: 0 }}>
+                          <div style={{ fontSize: '0.82rem', color: '#22c55e', fontWeight: '700' }}>${parseFloat(item.min_price).toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>{item.hospital_count} hospitals</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <button onClick={() => { setMedResults([]); setMedCategory(null); setMedQuery(''); }} style={{ marginTop: '16px', background: 'none', border: 'none', color: '#94a3b8', fontSize: '0.85rem', cursor: 'pointer' }}>← Back to search</button>
+                </div>
+              )}
+
+              {/* COMPARE SIDE PANEL */}
+              {medSelected && (
+                <div>
+                  <button onClick={() => { setMedSelected(null); setMedCompare([]); }} style={{ background: 'none', border: 'none', color: '#1e40af', fontWeight: '700', cursor: 'pointer', fontSize: '0.9rem', marginBottom: '16px', padding: 0 }}>← Back to results</button>
+                  <h3 style={{ fontSize: '1rem', fontWeight: '700', color: '#0f172a', marginBottom: '4px' }}>{medSelected}</h3>
+                  <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '20px' }}>Price comparison across hospitals</p>
+
+                  {medCompareLoading && (
+                    <div style={{ textAlign: 'center', padding: '24px 0', color: '#94a3b8' }}>
+                      <div style={{ width: '24px', height: '24px', border: '3px solid #e2e8f0', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 10px auto' }} />
+                      <p style={{ fontSize: '0.85rem' }}>Loading...</p>
+                    </div>
+                  )}
+
+                  {!medCompareLoading && medCompare.length > 0 && (() => {
+                    const prices = medCompare.map(r => parseFloat(r.price));
+                    const min = Math.min(...prices);
+                    const max = Math.max(...prices);
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '380px', overflowY: 'auto' }}>
+                        {medCompare.map((r, i) => {
+                          const price = parseFloat(r.price);
+                          const barWidth = ((price - min) / (max - min || 1)) * 100;
+                          const barColor = barWidth < 33 ? '#22c55e' : barWidth < 66 ? '#eab308' : '#ef4444';
+                          return (
+                            <div key={i} style={{ display: 'grid', gridTemplateColumns: '160px 1fr 80px', alignItems: 'center', gap: '12px' }}>
+                              <div style={{ fontSize: '0.8rem', color: '#475569', fontWeight: '500', lineHeight: '1.3' }}>{r.hospital_name}</div>
+                              <div style={{ background: '#f1f5f9', height: '28px', borderRadius: '6px', overflow: 'hidden' }}>
+                                <div style={{ width: Math.max(barWidth, 4) + '%', height: '100%', backgroundColor: barColor, borderRadius: '6px', transition: 'width 0.4s ease' }} />
+                              </div>
+                              <div style={{ fontSize: '0.95rem', fontWeight: '700', color: barColor, textAlign: 'right' }}>${price.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                            </div>
+                          );
+                        })}
+                        <p style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '12px', lineHeight: '1.5' }}>
+                          ⚠️ Prices are from federally mandated hospital price transparency files. Actual charges may vary.
+                        </p>
+                      </div>
+                    );
+                  })()}
+
+                  {!medCompareLoading && medCompare.length === 0 && (
+                    <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>No price data available for this item.</p>
+                  )}
+                </div>
+              )}
+
+              {/* NO RESULTS */}
+              {!medLoading && medResults.length === 0 && medQuery && !medSelected && (
+                <p style={{ color: '#94a3b8', fontSize: '0.9rem', textAlign: 'center', padding: '24px 0' }}>No results found. Try a different search term.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
      {/* COMBINED EDU + HOW IT WORKS */}
 <section className="edu-how-section">

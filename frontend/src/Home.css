@@ -797,4 +797,60 @@
     width: 100%;
     text-align: center;
   }
+
+  /* MEDICATIONS TOOL CARD */
+.med-tool-section {
+  max-width: 800px;
+  margin: 0 auto 32px auto;
+  padding: 0 24px;
+}
+
+.med-tool-card {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.med-tool-card:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59,130,246,0.12);
+}
+
+.med-tool-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.med-tool-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+
+.med-tool-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.med-tool-subtitle {
+  font-size: 0.88rem;
+  color: #64748b;
+}
+
+.med-tool-arrow {
+  font-size: 1.8rem;
+  color: #3b82f6;
+  font-weight: 300;
+  flex-shrink: 0;
+}
 }
