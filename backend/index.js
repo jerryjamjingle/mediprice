@@ -409,12 +409,26 @@ app.get('/medications-search', async (req, res) => {
       GROUP BY pr.procedure_name
       HAVING COUNT(DISTINCT pv.id) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) > 0
       ORDER BY COUNT(DISTINCT pv.id) FILTER (WHERE NOT LOWER(pv.name) = ANY($${params.length + 1})) DESC, pr.procedure_name ASC
-      LIMIT 50
     `;
 
     params.push(noDrgData);
-    const result = await pool.query(sqlQuery, params);
-    res.json(result.rows);
+
+    const offset = parseInt(req.query.offset) || 0;
+    const limit = 50;
+
+    const countQuery = `SELECT COUNT(*) FROM (${sqlQuery}) as total`;
+    const dataQuery = `${sqlQuery} LIMIT ${limit} OFFSET ${offset}`;
+
+    const [countResult, dataResult] = await Promise.all([
+      pool.query(countQuery, params),
+      pool.query(dataQuery, params)
+    ]);
+
+    res.json({
+      total: parseInt(countResult.rows[0].count),
+      offset,
+      results: dataResult.rows
+    });
   } catch (err) {
     console.error('Medications search error:', err);
     res.status(500).json({ error: 'Server error' });
