@@ -537,7 +537,15 @@ export default function Home() {
                   </div>
                   {medResults.length < medTotal && (
                     <button
-                      onClick={() => searchMedications(medQuery, medCategory, true)}
+                    onClick={() => {
+                      const list = document.getElementById('med-results-list');
+                      const scrollPos = list ? list.scrollTop : 0;
+                      searchMedications(medQuery, medCategory, true).then(() => {
+                        setTimeout(() => {
+                          if (list) list.scrollTop = scrollPos;
+                        }, 50);
+                      });
+                    }}
                       disabled={medLoading}
                       style={{ marginTop: '16px', width: '100%', padding: '12px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', color: '#1e40af', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer' }}
                     >
