@@ -518,7 +518,7 @@ export default function Home() {
               {!medLoading && medResults.length > 0 && !medSelected && (
                 <div>
                   <p style={{ fontSize: '0.82rem', color: '#94a3b8', marginBottom: '12px' }}>{medResults.length} of {medTotal} results — click any item to compare prices across hospitals</p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
+                  <div id="med-results-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '380px', overflowY: 'auto' }}>
                     {medResults.map((item, i) => (
                       <div
                         key={i}
