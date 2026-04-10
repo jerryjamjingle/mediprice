@@ -69,6 +69,7 @@ export default function Home() {
   const [medCompareLoading, setMedCompareLoading] = useState(false);
   const [medTotal, setMedTotal] = useState(0);
   const [medOffset, setMedOffset] = useState(0);
+  const [medLoadingMore, setMedLoadingMore] = useState(false);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -100,8 +101,10 @@ export default function Home() {
   };
 
   const searchMedications = async (q, cat, append = false) => {
-    setMedLoading(true);
-    if (!append) {
+    if (append) {
+      setMedLoadingMore(true);
+    } else {
+      setMedLoading(true);
       setMedResults([]);
       setMedSelected(null);
       setMedCompare([]);
@@ -124,9 +127,13 @@ export default function Home() {
         setMedOffset(offset);
       }
     } catch {
-      setMedResults([]);
+      if (!append) setMedResults([]);
     }
-    setMedLoading(false);
+    if (append) {
+      setMedLoadingMore(false);
+    } else {
+      setMedLoading(false);
+    }
   };
 
   const compareMedication = async (name) => {
@@ -537,20 +544,12 @@ export default function Home() {
                   </div>
                   {medResults.length < medTotal && (
                     <button
-                    onClick={() => {
-                      const list = document.getElementById('med-results-list');
-                      const scrollPos = list ? list.scrollTop : 0;
-                      searchMedications(medQuery, medCategory, true).then(() => {
-                        setTimeout(() => {
-                          if (list) list.scrollTop = scrollPos;
-                        }, 50);
-                      });
-                    }}
-                      disabled={medLoading}
-                      style={{ marginTop: '16px', width: '100%', padding: '12px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', color: '#1e40af', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer' }}
-                    >
-                      {medLoading ? 'Loading...' : `Load 50 More (${medTotal - medResults.length} remaining)`}
-                    </button>
+                    onClick={() => searchMedications(medQuery, medCategory, true)}
+                    disabled={medLoadingMore}
+                    style={{ marginTop: '16px', width: '100%', padding: '12px', background: '#f8fafc', border: '1.5px solid #e2e8f0', borderRadius: '10px', color: '#1e40af', fontWeight: '700', fontSize: '0.9rem', cursor: 'pointer' }}
+                  >
+                    {medLoadingMore ? 'Loading...' : `Load 50 More (${medTotal - medResults.length} remaining)`}
+                  </button>
                   )}
                   <button onClick={() => { setMedResults([]); setMedCategory(null); setMedQuery(''); setMedOffset(0); setMedTotal(0); }} style={{ position: 'absolute', top: '16px', right: '56px', background: 'none', border: 'none', color: '#1e40af', fontSize: '0.85rem', fontWeight: '700', cursor: 'pointer' }}>← Back</button>
                 </div>
