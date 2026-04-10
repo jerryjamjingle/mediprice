@@ -797,8 +797,9 @@
     width: 100%;
     text-align: center;
   }
+}
 
-  /* MEDICATIONS TOOL CARD */
+/* MEDICATIONS TOOL CARD */
 .med-tool-section {
   max-width: 800px;
   margin: 0 auto 32px auto;
@@ -852,5 +853,4 @@
   color: #3b82f6;
   font-weight: 300;
   flex-shrink: 0;
-}
 }
