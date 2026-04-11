@@ -394,14 +394,12 @@ export default function Home() {
         </div>
 
 <div style={{ textAlign: 'center', marginTop: '20px' }}>
-  <button
-    onClick={() => setShowHowItWorks(true)}
-    style={{ background: 'none', border: '1.5px solid #e2e8f0', color: '#64748b', padding: '10px 24px', borderRadius: '10px', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
-    onMouseEnter={e => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.color = '#1e40af'; }}
-    onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#64748b'; }}
-  >
-    ❓ How does MedExpense work?
-  </button>
+<button
+  onClick={() => setShowHowItWorks(true)}
+  className="shortcut-btn"
+>
+  ❓ How does MedExpense work?
+</button>
 </div>
 </section>
 
