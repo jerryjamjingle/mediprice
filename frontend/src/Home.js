@@ -59,6 +59,73 @@ export default function Home() {
   const [showCategories, setShowCategories] = useState(false);
   const dropdownRef = useRef(null);
   const [showGuideModal, setShowGuideModal] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [priceExampleIndex, setPriceExampleIndex] = useState(0);
+
+  const PRICE_EXAMPLES = [
+    {
+      procedure: 'Hip Replacement',
+      multiplier: '2.7',
+      hospitals: [
+        { name: 'Missouri Baptist Sullivan', price: 35627 },
+        { name: 'Progress West', price: 37760 },
+        { name: 'Barnes-Jewish St. Peters', price: 52112 },
+        { name: 'Barnes Jewish', price: 96000 },
+      ]
+    },
+    {
+      procedure: 'Gallbladder Removal',
+      multiplier: '3.4',
+      hospitals: [
+        { name: 'Missouri Baptist Sullivan', price: 18852 },
+        { name: 'Progress West', price: 25432 },
+        { name: 'Missouri Baptist Medical', price: 27451 },
+        { name: 'Barnes Jewish', price: 64100 },
+      ]
+    },
+    {
+      procedure: 'Pneumonia Treatment',
+      multiplier: '2.8',
+      hospitals: [
+        { name: 'Missouri Baptist Sullivan', price: 13045 },
+        { name: 'Parkland Health', price: 19209 },
+        { name: 'Missouri Baptist Medical', price: 27766 },
+        { name: 'Barnes Jewish', price: 41430 },
+      ]
+    },
+    {
+      procedure: 'C-Section',
+      multiplier: '3.0',
+      hospitals: [
+        { name: 'Progress West', price: 9166 },
+        { name: 'Parkland Health', price: 15001 },
+        { name: 'Missouri Baptist Medical', price: 10414 },
+        { name: 'Barnes Jewish', price: 23318 },
+      ]
+    },
+    {
+      procedure: 'Sepsis Treatment',
+      multiplier: '8.1',
+      hospitals: [
+        { name: 'Missouri Baptist Sullivan', price: 38931 },
+        { name: 'Parkland Health', price: 67761 },
+        { name: 'Barnes-Jewish St. Peters', price: 127903 },
+        { name: 'Barnes Jewish', price: 169360 },
+      ]
+    },
+    {
+      procedure: 'Heart Failure',
+      multiplier: '3.5',
+      hospitals: [
+        { name: 'Missouri Baptist Sullivan', price: 11637 },
+        { name: 'Parkland Health', price: 16847 },
+        { name: 'Missouri Baptist Medical', price: 23243 },
+        { name: 'St. Louis Children\'s', price: 36834 },
+      ]
+    },
+  ];
+  const [animatedPlaceholder, setAnimatedPlaceholder] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
   const [showMedModal, setShowMedModal] = useState(false);
   const [medQuery, setMedQuery] = useState('');
   const [medCategory, setMedCategory] = useState(null);
@@ -80,6 +147,53 @@ export default function Home() {
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const SEARCH_SUGGESTIONS = [
+    'MRI', 'X-Ray', 'CT Scan', 'Knee Replacement',
+    'Blood Test', 'Hip Replacement', 'Colonoscopy'
+  ];
+
+  useEffect(() => {
+    if (searchFocused) return;
+    let suggestionIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    let timeout;
+
+    const type = () => {
+      const current = SEARCH_SUGGESTIONS[suggestionIndex];
+      if (!isDeleting) {
+        setAnimatedPlaceholder(current.slice(0, charIndex + 1));
+        charIndex++;
+        if (charIndex === current.length) {
+          isDeleting = true;
+          timeout = setTimeout(type, 1800);
+        } else {
+          timeout = setTimeout(type, 100);
+        }
+      } else {
+        setAnimatedPlaceholder(current.slice(0, charIndex - 1));
+        charIndex--;
+        if (charIndex === 0) {
+          isDeleting = false;
+          suggestionIndex = (suggestionIndex + 1) % SEARCH_SUGGESTIONS.length;
+          timeout = setTimeout(type, 400);
+        } else {
+          timeout = setTimeout(type, 60);
+        }
+      }
+    };
+
+    timeout = setTimeout(type, 600);
+    return () => clearTimeout(timeout);
+  }, [searchFocused]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPriceExampleIndex(prev => (prev + 1) % PRICE_EXAMPLES.length);
+    }, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleSearch = () => {
@@ -192,12 +306,14 @@ export default function Home() {
         <p className="hero-subtitle">Compare cash prices across 25 St. Louis hospitals instantly</p>
         
         <div className="hero-search">
-          <input
+        <input
             type="text"
-            placeholder="Search procedure (e.g. MRI, CT Scan, X-Ray)..."
+            placeholder={animatedPlaceholder}
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && handleSearch()}
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
             className="hero-input"
           />
           <input
@@ -274,7 +390,18 @@ export default function Home() {
             </button>
           ))}
         </div>
-      </section>
+
+<div style={{ textAlign: 'center', marginTop: '20px' }}>
+  <button
+    onClick={() => setShowHowItWorks(true)}
+    style={{ background: 'none', border: '1.5px solid #e2e8f0', color: '#64748b', padding: '10px 24px', borderRadius: '10px', fontSize: '0.88rem', fontWeight: '600', cursor: 'pointer', transition: 'all 0.2s' }}
+    onMouseEnter={e => { e.currentTarget.style.borderColor = '#3b82f6'; e.currentTarget.style.color = '#1e40af'; }}
+    onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#64748b'; }}
+  >
+    ❓ How does MedExpense work?
+  </button>
+</div>
+</section>
 
 {/* EXPLORE BY TYPE */}
 <section className="explore-block-section">
@@ -329,47 +456,43 @@ export default function Home() {
   </div>
 </section>
 
-      {/* PRICE COMPARISON EXAMPLE */}
+      {/* ROTATING PRICE COMPARISON */}
       <section className="comparison-section">
-      <div className="comparison-panel" onClick={() => navigate('/search?procedure=Liver%20Biopsy')} style={{ cursor: 'pointer' }}>
-          <h3 className="panel-title">Liver Biopsy (CPT 47000)</h3>
-          <p className="panel-subtitle">Same procedure across 4 hospitals</p>
-          
+        <div className="comparison-panel" style={{ cursor: 'pointer' }} onClick={() => navigate(`/search?procedure=${encodeURIComponent(PRICE_EXAMPLES[priceExampleIndex].procedure)}`)}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+            <h3 className="panel-title" style={{ marginBottom: 0 }}>{PRICE_EXAMPLES[priceExampleIndex].procedure}</h3>
+            <span style={{ fontSize: '0.8rem', color: '#94a3b8', fontWeight: '500' }}>Live example ·  Search this →</span>
+          </div>
+          <p className="panel-subtitle">Real prices from St. Louis hospitals</p>
+
           <div className="price-bars">
-            <div className="price-bar-item">
-              <span className="bar-label">Hospital A</span>
-              <div className="bar-wrapper">
-                <div className="bar" style={{ width: '56%', backgroundColor: '#22c55e' }}></div>
-              </div>
-              <span className="bar-price">$7,634</span>
-            </div>
-            
-            <div className="price-bar-item">
-              <span className="bar-label">Hospital B</span>
-              <div className="bar-wrapper">
-                <div className="bar" style={{ width: '78%', backgroundColor: '#eab308' }}></div>
-              </div>
-              <span className="bar-price">$10,500</span>
-            </div>
-            
-            <div className="price-bar-item">
-              <span className="bar-label">Hospital C</span>
-              <div className="bar-wrapper">
-                <div className="bar" style={{ width: '92%', backgroundColor: '#f59e0b' }}></div>
-              </div>
-              <span className="bar-price">$12,400</span>
-            </div>
-            
-            <div className="price-bar-item">
-              <span className="bar-label">Hospital D</span>
-              <div className="bar-wrapper">
-                <div className="bar" style={{ width: '100%', backgroundColor: '#ef4444' }}></div>
-              </div>
-              <span className="bar-price">$13,683</span>
+            {PRICE_EXAMPLES[priceExampleIndex].hospitals.map((h, i) => {
+              const max = Math.max(...PRICE_EXAMPLES[priceExampleIndex].hospitals.map(x => x.price));
+              const min = Math.min(...PRICE_EXAMPLES[priceExampleIndex].hospitals.map(x => x.price));
+              const barWidth = ((h.price - min) / (max - min || 1)) * 100;
+              const barColor = barWidth < 33 ? '#22c55e' : barWidth < 66 ? '#eab308' : '#ef4444';
+              return (
+                <div key={i} className="price-bar-item">
+                  <span className="bar-label" style={{ fontSize: '0.82rem' }}>{h.name}</span>
+                  <div className="bar-wrapper">
+                    <div className="bar" style={{ width: Math.max(barWidth, 4) + '%', backgroundColor: barColor }} />
+                  </div>
+                  <span className="bar-price" style={{ color: barColor }}>${h.price.toLocaleString()}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
+            <p className="panel-footer" style={{ borderTop: 'none', paddingTop: 0, margin: 0 }}>
+              {PRICE_EXAMPLES[priceExampleIndex].multiplier}x price difference
+            </p>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {PRICE_EXAMPLES.map((_, i) => (
+                <div key={i} onClick={e => { e.stopPropagation(); setPriceExampleIndex(i); }} style={{ width: '8px', height: '8px', borderRadius: '50%', background: i === priceExampleIndex ? '#3b82f6' : '#e2e8f0', cursor: 'pointer', transition: 'all 0.2s' }} />
+              ))}
             </div>
           </div>
-          
-          <p className="panel-footer">1.8x price difference</p>
         </div>
       </section>
 
@@ -385,6 +508,57 @@ export default function Home() {
     </div>
   </div>
 </section>
+
+{/* HOW IT WORKS MODAL */}
+{showHowItWorks && (
+  <div className="guide-modal-overlay" onClick={() => setShowHowItWorks(false)}>
+    <div className="guide-modal" onClick={e => e.stopPropagation()}>
+      <button className="guide-modal-close" onClick={() => setShowHowItWorks(false)}>✕</button>
+      <div className="guide-modal-inner">
+        <h2 className="guide-modal-title">How MedExpense Works</h2>
+        <p className="guide-modal-subtitle">Hospitals are required by federal law to publish their prices. Most people don't know that — or where to find them. MedExpense does the work for you.</p>
+
+        <div className="guide-section">
+          <h4 className="guide-section-title">🔍 What it is</h4>
+          <div className="guide-steps">
+            <div className="guide-step">MedExpense is a free price transparency tool for the St. Louis area. We collect real cash prices from 25 local hospitals and put them in one place so you can compare before you go.</div>
+            <div className="guide-step">The prices you see are the hospitals' own published cash prices — not estimates, not averages. Real numbers from their own files.</div>
+          </div>
+        </div>
+
+        <div className="guide-section">
+          <h4 className="guide-section-title">⚡ How to use it</h4>
+          <div className="guide-steps">
+            <div className="guide-step"><strong>1. Search any procedure</strong> — type what you need (MRI, blood test, knee replacement) and see prices from every hospital that has published one.</div>
+            <div className="guide-step"><strong>2. Compare hospitals</strong> — click any hospital card to see all their matching procedures, total stay costs, and medication prices.</div>
+            <div className="guide-step"><strong>3. Click any procedure</strong> — see a side-by-side price comparison across all 25 hospitals with a color-coded bar chart.</div>
+            <div className="guide-step"><strong>4. Factor in your insurance</strong> — use the built-in calculator to see whether cash or insurance is cheaper for your situation.</div>
+            <div className="guide-step"><strong>5. Book with confidence</strong> — use the pre-booking checklist to confirm the price before your appointment.</div>
+          </div>
+        </div>
+
+        <div className="guide-section">
+          <h4 className="guide-section-title">💬 Community prices</h4>
+          <div className="guide-steps">
+            <div className="guide-step">Official prices don't always tell the whole story. That's why MedExpense lets patients share what they actually paid — anonymously. The more people share, the more accurate the picture gets.</div>
+          </div>
+        </div>
+
+        <div className="guide-section">
+          <h4 className="guide-section-title">💊 Medication & supply prices</h4>
+          <div className="guide-steps">
+            <div className="guide-step">Ever been charged $45 for a Tylenol on a hospital bill? Use our Medication & Supply Prices tool to look up what any hospital charges for any medication or supply — and compare across all 25 hospitals.</div>
+          </div>
+        </div>
+
+        <div className="guide-footer-note">
+          MedExpense is free, independent, and doesn't charge hospitals to be listed. We exist because you deserve to know what healthcare costs before you get the bill.
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
 
 {/* GUIDE MODAL */}
 {showGuideModal && (
