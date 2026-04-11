@@ -187,14 +187,16 @@ export default function Home() {
 
     timeout = setTimeout(type, 600);
     return () => clearTimeout(timeout);
-  }, [searchFocused]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [searchFocused]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setPriceExampleIndex(prev => (prev + 1) % PRICE_EXAMPLES.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   const handleSearch = () => {
     if (!query.trim() && !cptCode.trim()) return;
