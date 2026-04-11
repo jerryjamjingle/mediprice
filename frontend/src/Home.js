@@ -168,7 +168,7 @@ export default function Home() {
         charIndex++;
         if (charIndex === current.length) {
           isDeleting = true;
-          timeout = setTimeout(type, 1800);
+          timeout = setTimeout(type, 1600);
         } else {
           timeout = setTimeout(type, 100);
         }
