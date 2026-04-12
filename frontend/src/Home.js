@@ -517,7 +517,6 @@ export default function Home() {
       <button className="guide-modal-close" onClick={() => setShowHowItWorks(false)}>✕</button>
       <div className="guide-modal-inner">
         <h2 className="guide-modal-title">How MedExpense Works</h2>
-        <p className="guide-modal-subtitle">Hospitals are required by federal law to publish their prices. Most people don't know that — or where to find them. MedExpense does the work for you.</p>
 
         <div className="guide-section">
   <div className="guide-steps">
