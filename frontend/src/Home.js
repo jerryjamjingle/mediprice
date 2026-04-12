@@ -305,7 +305,6 @@ export default function Home() {
       {/* HERO SEARCH */}
       <section className="hero">
         <h2 className="hero-title">What medical procedure do you need?</h2>
-        <p className="hero-subtitle">Compare cash prices across 25 St. Louis hospitals instantly</p>
         
         <div className="hero-search">
         <input
