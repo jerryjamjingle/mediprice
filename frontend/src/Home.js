@@ -393,13 +393,14 @@ export default function Home() {
           ))}
         </div>
 
-<div style={{ textAlign: 'center', marginTop: '20px' }}>
-<button
-  onClick={() => setShowHowItWorks(true)}
-  className="shortcut-btn"
->
-  ❓ How does MedExpense work?
-</button>
+        <div style={{ maxWidth: '800px', margin: '20px auto 0 auto', padding: '0 24px' }}>
+  <button
+    onClick={() => setShowHowItWorks(true)}
+    className="shortcut-btn"
+    style={{ width: '100%' }}
+  >
+    ❓ How does MedExpense work?
+  </button>
 </div>
 </section>
 
