@@ -399,7 +399,7 @@ export default function Home() {
     className="shortcut-btn"
     style={{ width: '100%' }}
   >
-    ❓ How does MedExpense work?
+    How does it work?
   </button>
 </div>
 </section>
@@ -520,41 +520,18 @@ export default function Home() {
         <p className="guide-modal-subtitle">Hospitals are required by federal law to publish their prices. Most people don't know that — or where to find them. MedExpense does the work for you.</p>
 
         <div className="guide-section">
-          <h4 className="guide-section-title">🔍 What it is</h4>
-          <div className="guide-steps">
-            <div className="guide-step">MedExpense is a free price transparency tool for the St. Louis area. We collect real cash prices from 25 local hospitals and put them in one place so you can compare before you go.</div>
-            <div className="guide-step">The prices you see are the hospitals' own published cash prices — not estimates, not averages. Real numbers from their own files.</div>
-          </div>
-        </div>
+  <div className="guide-steps">
+    <div className="guide-step"><strong>🔍 Search any procedure</strong> — type what you need (MRI, blood test, knee replacement) and instantly see real prices from 25 St. Louis hospitals.</div>
+    <div className="guide-step"><strong>📊 Compare side by side</strong> — see exactly which hospital is cheapest for your procedure, with a color-coded chart that makes it obvious at a glance.</div>
+    <div className="guide-step"><strong>💰 See if cash beats insurance</strong> — use our built-in calculator to find out what you'd actually pay with your plan vs. paying cash. Sometimes cash wins.</div>
+    <div className="guide-step"><strong>💬 See what others paid</strong> — real patients share what they actually paid. Not what the hospital lists — what they walked out paying.</div>
+    <div className="guide-step"><strong>📋 Book with confidence</strong> — use our pre-booking checklist to lock in the price before your appointment and avoid surprise bills.</div>
+  </div>
+</div>
 
-        <div className="guide-section">
-          <h4 className="guide-section-title">⚡ How to use it</h4>
-          <div className="guide-steps">
-            <div className="guide-step"><strong>1. Search any procedure</strong> — type what you need (MRI, blood test, knee replacement) and see prices from every hospital that has published one.</div>
-            <div className="guide-step"><strong>2. Compare hospitals</strong> — click any hospital card to see all their matching procedures, total stay costs, and medication prices.</div>
-            <div className="guide-step"><strong>3. Click any procedure</strong> — see a side-by-side price comparison across all 25 hospitals with a color-coded bar chart.</div>
-            <div className="guide-step"><strong>4. Factor in your insurance</strong> — use the built-in calculator to see whether cash or insurance is cheaper for your situation.</div>
-            <div className="guide-step"><strong>5. Book with confidence</strong> — use the pre-booking checklist to confirm the price before your appointment.</div>
-          </div>
-        </div>
-
-        <div className="guide-section">
-          <h4 className="guide-section-title">💬 Community prices</h4>
-          <div className="guide-steps">
-            <div className="guide-step">Official prices don't always tell the whole story. That's why MedExpense lets patients share what they actually paid — anonymously. The more people share, the more accurate the picture gets.</div>
-          </div>
-        </div>
-
-        <div className="guide-section">
-          <h4 className="guide-section-title">💊 Medication & supply prices</h4>
-          <div className="guide-steps">
-            <div className="guide-step">Ever been charged $45 for a Tylenol on a hospital bill? Use our Medication & Supply Prices tool to look up what any hospital charges for any medication or supply — and compare across all 25 hospitals.</div>
-          </div>
-        </div>
-
-        <div className="guide-footer-note">
-          MedExpense is free, independent, and doesn't charge hospitals to be listed. We exist because you deserve to know what healthcare costs before you get the bill.
-        </div>
+<div className="guide-footer-note">
+  Free. Independent. No ads. No hospital partnerships. Just real prices.
+</div>
       </div>
     </div>
   </div>
