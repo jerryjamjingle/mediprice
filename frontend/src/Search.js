@@ -379,7 +379,7 @@ const data = await res.json();
     setAllMedicationsLoading(false);
   };
 
-  const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 10);
+  const prices = results.map(r => parseFloat(r.discounted_cash)).filter(p => !isNaN(p) && p >= 1);
 
   const providerPins = Object.entries(
     results.reduce((acc, r) => {
